@@ -1,14 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import Image from "next/image";
-import { ArrowLeft, ArrowRight, ArrowUpRight, Code2, Cpu, Sparkles } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpRight, Briefcase, ChevronDown, ChevronUp, Code2, Cpu, FlaskConical, Sparkles } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
-import { AnimatePresence, motion, useReducedMotion, useScroll, useTransform } from "motion/react";
+import { AnimatePresence, motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "motion/react";
 import DotField from "@/components/react-bits/dot-field";
-import BlobCursor from "@/components/react-bits/blob-cursor";
 import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler";
 import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
@@ -101,6 +100,98 @@ const works = [
   },
 ];
 
+const WORK_CATEGORIES = ["All", "AI Products", "Enterprise Software", "Business Platforms", "Automation"] as const;
+
+const worksWithCategory = works.map((w, i) => ({
+  ...w,
+  category: (["AI Products", "Business Platforms", "Enterprise Software", "AI Products", "Business Platforms", "Automation"] as const)[i],
+}));
+
+function WorkCard({
+  work,
+  originalIndex,
+  animationIndex,
+  isBento,
+  reduceMotion,
+}: {
+  work: typeof worksWithCategory[0];
+  originalIndex: number;
+  animationIndex: number;
+  isBento: boolean;
+  reduceMotion: boolean;
+}) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [hovered, setHovered] = useState(false);
+
+  const mouseX = useMotionValue(0.5);
+  const mouseY = useMotionValue(0.5);
+  const rotateX = useTransform(mouseY, [0, 1], [2.5, -2.5]);
+  const rotateY = useTransform(mouseX, [0, 1], [-2.5, 2.5]);
+  const springRX = useSpring(rotateX, { stiffness: 280, damping: 32 });
+  const springRY = useSpring(rotateY, { stiffness: 280, damping: 32 });
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (reduceMotion || !cardRef.current) return;
+    const r = cardRef.current.getBoundingClientRect();
+    mouseX.set((e.clientX - r.left) / r.width);
+    mouseY.set((e.clientY - r.top) / r.height);
+  };
+
+  const handleMouseLeave = () => {
+    mouseX.set(0.5);
+    mouseY.set(0.5);
+    setHovered(false);
+  };
+
+  return (
+    <motion.div
+      ref={cardRef}
+      className={`wb-card${isBento ? ` wb-item-${originalIndex}` : ""}`}
+      initial={{ opacity: 0, y: 22, scale: 0.96 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.62, delay: animationIndex * 0.075, ease: [0.16, 1, 0.3, 1] }}
+      style={reduceMotion ? {} : {
+        rotateX: springRX,
+        rotateY: springRY,
+        transformStyle: "preserve-3d",
+      }}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={handleMouseLeave}
+    >
+      {/* Image area */}
+      <div className="wb-image-wrap">
+        <motion.div
+          className="wb-image"
+          style={{ backgroundImage: `url(${work.image})` }}
+          animate={hovered && !reduceMotion ? { scale: 1.07, y: -9 } : { scale: 1, y: 0 }}
+          transition={{ duration: 0.52, ease: [0.16, 1, 0.3, 1] }}
+        />
+        <span className="wb-status">Concept</span>
+        <span className="wb-index">{String(originalIndex + 1).padStart(2, "0")}</span>
+      </div>
+
+      {/* Card body */}
+      <div className="wb-body">
+        <span className="wb-meta">{work.category}</span>
+        <h3 className="wb-title">{work.title}</h3>
+        <p className="wb-desc">{work.context}</p>
+        <div className="wb-footer">
+          <div className="wb-tags">
+            {work.stack.slice(0, 3).map(([name]) => (
+              <span key={name} className="wb-tag">{name}</span>
+            ))}
+          </div>
+          <a href="/contact" className="wb-arrow" aria-label={`Explore ${work.title}`}>
+            <ArrowUpRight size={15} />
+          </a>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
 const expandableProducts = [
   {
     title: "MIZAN",
@@ -136,27 +227,36 @@ const globeMarkers: GlobeMarker[] = [
   { lat: 1.35, lng: 103.82, src: "/projects/buildgrid.jpg", label: "Singapore · Enterprise delivery" },
 ];
 
-const principleSlides = [
+const whySlides = [
   {
-    cardTitle: "OPERATIONS",
-    label: "01 / REAL WORK",
-    title: "Built around the business problem",
-    body: "A clinic needs patient flow. A retailer needs stock control. A law firm needs secure documents. We begin with how the organization actually works, then engineer the right system around it.",
-    logo: "Problem first",
+    number: "01",
+    title: "Wisdom That Works for You",
+    text: "Our team's experience runs deep and wide. We bring real-world know-how from across industries, turning complex challenges into working software.",
+    image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=900&q=80",
   },
   {
-    cardTitle: "INTELLIGENCE",
-    label: "02 / AI WITH PURPOSE",
-    title: "Automation that earns its place",
-    body: "We use AI where it removes repetitive work, reveals useful insight, and helps teams serve customers faster—not as decoration, but as dependable product infrastructure.",
-    logo: "Useful intelligence",
+    number: "02",
+    title: "Guardians of Your Code",
+    text: "Every line is written to last — clean, documented, and built for the next developer, not just the next deadline.",
+    image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=900&q=80",
   },
   {
-    cardTitle: "SCALE",
-    label: "03 / BUILT TO GROW",
-    title: "One clean, connected system",
-    body: "Premium interfaces, scalable architecture, dashboards, secure data, and workflow automation come together as one coherent product your team can confidently grow into.",
-    logo: "System thinking",
+    number: "03",
+    title: "Speed You Can Feel",
+    text: "We move fast without cutting corners — from kickoff to launch, momentum never stalls.",
+    image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=900&q=80",
+  },
+  {
+    number: "04",
+    title: "Partners in Progress",
+    text: "We don't disappear after launch. Long-term support and iteration are part of the deal.",
+    image: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=900&q=80",
+  },
+  {
+    number: "05",
+    title: "Promises Kept, Every Time",
+    text: "Deadlines are commitments, not estimates. What we say ships, ships.",
+    image: "https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?auto=format&fit=crop&w=900&q=80",
   },
 ];
 
@@ -342,14 +442,108 @@ function CubeThemeToggle() {
   );
 }
 
-function Navbar() {
+function OurWorkDropdown() {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const onOutside = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    const onEsc = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
+    document.addEventListener("mousedown", onOutside);
+    document.addEventListener("keydown", onEsc);
+    return () => {
+      document.removeEventListener("mousedown", onOutside);
+      document.removeEventListener("keydown", onEsc);
+    };
+  }, []);
+
+  const go = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    setOpen(false);
+  };
+
   return (
-    <header className="nav-shell" data-glass>
+    <div className="nav-work-wrap" ref={ref}>
+      <button
+        className="nav-work-trigger"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        aria-haspopup="menu"
+      >
+        Our Work
+        <ChevronDown className="nav-work-chevron" aria-hidden="true" />
+      </button>
+      {open && (
+        <div className="nav-work-menu" role="menu">
+          <button className="nav-work-item" role="menuitem" onClick={() => go("client-projects")}>
+            <Briefcase aria-hidden="true" />
+            Client&apos;s Projects
+          </button>
+          <button className="nav-work-item" role="menuitem" onClick={() => go("labs-projects")}>
+            <FlaskConical aria-hidden="true" />
+            Labs Projects
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Navbar() {
+  const lastScrollY = useRef(0);
+  const navRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const nav = navRef.current;
+    if (!nav) return;
+
+    // Fire the premium stretch-and-settle entrance animation.
+    // Called only when transitioning from hidden → visible.
+    const triggerReveal = () => {
+      nav.classList.remove("nav--revealing");
+      void nav.offsetHeight; // force reflow so animation restarts cleanly
+      nav.classList.add("nav--revealing");
+      nav.addEventListener(
+        "animationend",
+        () => nav.classList.remove("nav--revealing"),
+        { once: true }
+      );
+    };
+
+    const handleScroll = () => {
+      const y = window.scrollY;
+      const wasHidden = nav.hasAttribute("data-hidden");
+      if (y < 50) {
+        nav.removeAttribute("data-hidden");
+        if (wasHidden) triggerReveal();
+      } else if (y > lastScrollY.current) {
+        nav.classList.remove("nav--revealing");
+        nav.dataset.hidden = "true";
+      } else {
+        nav.removeAttribute("data-hidden");
+        if (wasHidden) triggerReveal();
+      }
+      if (y > 60) {
+        nav.setAttribute("data-scrolled", "true");
+      } else {
+        nav.removeAttribute("data-scrolled");
+      }
+      lastScrollY.current = y;
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  return (
+    <header ref={navRef} className="nav-shell">
       <a className="nav-logo" href="#home" aria-label="CubeIT home"><LogoMark /></a>
       <nav className="nav-links" aria-label="Main navigation">
         <a href="#home">Home</a>
         <a href="#services">Services</a>
-        <a href="#work">Works</a>
+        <OurWorkDropdown />
       </nav>
       <div className="nav-actions">
         <CubeThemeToggle />
@@ -373,37 +567,113 @@ function SectionHeader({ eyebrow, title, subtitle, second = "See Work", secondHr
   );
 }
 
+/* ── Tech tagline data ─────────────────────────────────────────────────── */
+const TECH_TERMS = [
+  { label: "AI Products",         ghost: "AI"         },
+  { label: "Enterprise Software", ghost: "ENTERPRISE" },
+  { label: "Digital Systems",     ghost: "SYSTEMS"    },
+] as const;
+
+function TechTagline() {
+  const [active, setActive] = useState<number | null>(null);
+  return (
+    <div
+      className="tech-tagline"
+      role="text"
+      aria-label="AI Products · Enterprise Software · Digital Systems"
+    >
+      {/* Ghost word: key changes each time active changes so animation reruns */}
+      {active !== null && (
+        <span className="tech-tagline__ghost" aria-hidden="true" key={active}>
+          {TECH_TERMS[active].ghost}
+        </span>
+      )}
+      {TECH_TERMS.map((term, i) => (
+        <Fragment key={term.label}>
+          {i > 0 && (
+            <span
+              className="tech-tagline__sep"
+              aria-hidden="true"
+              style={{ animationDelay: `${0.2 + i * 0.22 - 0.08}s` } as CSSProperties}
+            />
+          )}
+          <span
+            className="tech-tagline__word-wrap"
+            style={{ animationDelay: `${0.1 + i * 0.22}s` } as CSSProperties}
+          >
+            <span
+              className="tech-tagline__term"
+              data-active={active === i ? "" : undefined}
+              data-dim={active !== null && active !== i ? "" : undefined}
+              onMouseEnter={() => setActive(i)}
+              onMouseLeave={() => setActive(null)}
+            >
+              {term.label}
+            </span>
+          </span>
+        </Fragment>
+      ))}
+    </div>
+  );
+}
+
 function Hero() {
   return (
     <div className="hero-stack" id="home">
       <section className="hero-section page-shell">
         <div className="hero-noise" aria-hidden="true" />
-        <p className="hero-kicker reveal-up"><span /> AI products · Enterprise software · Digital systems</p>
+        <TechTagline />
         <h1 className="hero-title" aria-label="We build the systems behind smarter companies">
-          <span className="hero-word hero-we">We build</span>
-          <span className="hero-media-chips" aria-hidden="true">
-            <span className="chip-img chip-img-a"><Code2 /></span>
-            <span className="chip-img chip-img-b"><Cpu /></span>
-            <span className="chip-img chip-img-c"><Sparkles /></span>
+
+          {/* ── Line 1: "We build [chips] the systems behind" ─────────────── */}
+          <span className="hero-line-1">
+            <span className="hero-word hero-we">We build</span>
+            <span className="hero-media-chips" aria-hidden="true">
+              <span className="chip-img chip-img-a"><Code2 /></span>
+              <span className="chip-img chip-img-b"><Cpu /></span>
+              <span className="chip-img chip-img-c"><Sparkles /></span>
+            </span>
+            <span className="hero-word">the systems</span>
+            <span className="hero-word">behind</span>
           </span>
-          <span className="hero-word">the systems</span>
-          <span className="hero-word line-break">behind</span>
-          <span className="hero-scribble" aria-hidden="true">
-            <svg viewBox="0 0 260 100" fill="none">
-              <path d="M12 65C52 4 105 2 105 47C105 76 137 77 150 43C166 0 106 0 80 72C119 43 190 39 240 79" stroke="currentColor" strokeWidth="8" strokeLinecap="round" />
-              <path d="M213 57L240 79L201 80" stroke="currentColor" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
+
+          {/* ── Lines 2+3: CSS grid — col1=arrow, col2=smarter/companies ─── *
+           *   grid-template-columns: max-content max-content
+           *   The grid automatically sizes col 1 to the scribble's rendered
+           *   width at every breakpoint, so "companies" (row 2, col 2) is
+           *   pixel-perfectly left-aligned with "smarter" (row 1, col 2)
+           *   without any manual calc() or hard-coded pixel offsets.
+           * ─────────────────────────────────────────────────────────────── */}
+          <span className="hero-lines-23">
+
+            {/* Row 1 col 1 — orange hand-drawn arrow */}
+            <span className="hero-scribble" aria-hidden="true">
+              <svg viewBox="0 0 260 100" fill="none">
+                <path d="M12 65C52 4 105 2 105 47C105 76 137 77 150 43C166 0 106 0 80 72C119 43 190 39 240 79" stroke="currentColor" strokeWidth="8" strokeLinecap="round" />
+                <path d="M213 57L240 79L201 80" stroke="currentColor" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
+
+            {/* Row 1 col 2 — "smarter" + cloth reel anchor */}
+            <span className="hero-smarter-group">
+              <span className="hero-word">smarter</span>
+              <span className="hero-video-origin" aria-hidden="true" />
+            </span>
+
+            {/* Row 2 col 2 — "companies", left-aligns with "smarter" via grid */}
+            <span className="hero-line-3">
+              <span className="hero-word">companies</span>
+            </span>
+
           </span>
-          <span className="hero-word">smarter</span>
-          <span className="hero-video-origin" aria-hidden="true" />
-          <span className="hero-word line-break">companies</span>
+
         </h1>
         <div className="hero-foot reveal-up">
           <p>From complex operations to clean, scalable platforms—CubeIT structures the idea, engineers the system, and prepares the business to grow.</p>
           <a href="#work" className="hero-scroll">Explore systems <ArrowUpRight /></a>
         </div>
       </section>
-      <section className="reel-section page-shell" aria-label="CubeIT reel">
+      <section className="reel-section" aria-label="CubeIT reel">
         <div className="reel-target" />
       </section>
       <ClothReel
@@ -482,46 +752,86 @@ function TechnologyStack() {
 }
 
 function Work() {
+  const [activeCategory, setActiveCategory] = useState<typeof WORK_CATEGORIES[number]>("All");
+  const reduced = useReducedMotion();
+  const isBento = activeCategory === "All";
+
+  const filtered = isBento
+    ? worksWithCategory
+    : worksWithCategory.filter((w) => w.category === activeCategory);
+
   return (
     <section className="work-section page-shell" id="work">
-      <LampContainer className="work-lamp">
-        <div className="work-lamp-copy">
-          <span className="pill">Things we build</span>
-          <h2>Systems For Real Business</h2>
-          <p>AI-powered product concepts and enterprise platforms tailored to complex industry needs.</p>
-          <div className="work-lamp-signals" aria-label="Product qualities">
-            <span>AI native</span><span>Industry aware</span><span>Built to scale</span>
-          </div>
+      <span id="labs-projects" aria-hidden="true" className="nav-anchor" />
+
+      {/* Decorative glowing dots */}
+      <span className="wb-dot wb-dot-1" aria-hidden="true" />
+      <span className="wb-dot wb-dot-2" aria-hidden="true" />
+      <span className="wb-dot wb-dot-3" aria-hidden="true" />
+
+      {/* ── Heading ─────────────────────────────────────────────────────── */}
+      <motion.div
+        className="wb-head"
+        initial={reduced ? undefined : { opacity: 0, y: 28 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-60px" }}
+        transition={{ duration: 0.72, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <div className="wb-label">
+          <Sparkles size={11} aria-hidden="true" />
+          Things We Build
         </div>
-      </LampContainer>
-      <div className="work-grid">
-        {works.map((work) => (
-          <article className="project-pin-shell reveal-card" key={work.title}>
-            <PinContainer title={`Explore ${work.title}`} href="/contact" containerClassName="project-pin-container" className="project-pin-inner">
-              <div className="project-pin-card">
-                <div className="project-pin-image" style={{ backgroundImage: `linear-gradient(180deg, rgba(5,8,15,.02), rgba(5,8,15,.5)), url(${work.image})` }} />
-                <div className="project-pin-grid" aria-hidden="true" />
-                <div className="project-pin-accent" aria-hidden="true" />
-                <span className="project-pin-index">{String(works.indexOf(work) + 1).padStart(2, "0")}</span>
-                <div className="project-pin-tech" aria-label={`${work.title} technology stack`}>
-                  {work.stack.map(([name, icon]) => (
-                    <span key={name}><Image src={icon} alt="" width={28} height={28} /><em>{name}</em></span>
-                  ))}
-                </div>
-                <div className="project-pin-copy">
-                  <div className="project-pin-copy-head">
-                    <span>{work.meta}</span>
-                    <i aria-hidden="true"><ArrowUpRight /></i>
-                  </div>
-                  <h3>{work.title}</h3>
-                  <p>{work.caption}</p>
-                  <small>{work.context}</small>
-                </div>
-              </div>
-            </PinContainer>
-          </article>
+        <h2 className="wb-heading">
+          Software Built For<br />
+          <span className="wb-accent">Modern</span> Businesses
+        </h2>
+        <p className="wb-description">
+          AI-powered platforms, enterprise systems, and intelligent tools—
+          engineered for scale and built for real business outcomes.
+        </p>
+      </motion.div>
+
+      {/* ── Category selector ───────────────────────────────────────────── */}
+      <div className="wb-categories" role="group" aria-label="Filter products by category">
+        {WORK_CATEGORIES.map((cat, i) => (
+          <motion.button
+            key={cat}
+            type="button"
+            className={`wb-cat-btn${activeCategory === cat ? " wb-cat-active" : ""}`}
+            initial={reduced ? undefined : { opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.08 + i * 0.055, ease: [0.16, 1, 0.3, 1] }}
+            onClick={() => setActiveCategory(cat)}
+            aria-pressed={activeCategory === cat}
+          >
+            {cat}
+          </motion.button>
         ))}
       </div>
+
+      {/* ── Bento / filtered grid ───────────────────────────────────────── */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activeCategory}
+          className={isBento ? "wb-grid" : "wb-grid-filtered"}
+          initial={reduced ? undefined : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={reduced ? undefined : { opacity: 0 }}
+          transition={{ duration: 0.18 }}
+        >
+          {filtered.map((work, i) => (
+            <WorkCard
+              key={work.title}
+              work={work}
+              originalIndex={worksWithCategory.indexOf(work)}
+              animationIndex={i}
+              isBento={isBento}
+              reduceMotion={!!reduced}
+            />
+          ))}
+        </motion.div>
+      </AnimatePresence>
     </section>
   );
 }
@@ -547,73 +857,116 @@ function ProductDepth() {
 }
 
 function WhyCubeIT() {
-  const [active, setActive] = useState(0);
+  const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState(1);
-  const [targetActive, setTargetActive] = useState(0);
-  const [flipPhase, setFlipPhase] = useState<"idle" | "out" | "in">("idle");
-  const item = principleSlides[active];
-  const navigate = (nextDirection: 1 | -1) => {
-    if (flipPhase !== "idle") return;
-    setDirection(nextDirection);
-    setTargetActive((active + nextDirection + principleSlides.length) % principleSlides.length);
-    setFlipPhase("out");
+  const [paused, setPaused] = useState(false);
+  const reduceMotion = useReducedMotion();
+  const slide = whySlides[index];
+
+  const next = () => {
+    setDirection(1);
+    setIndex((i) => (i + 1) % whySlides.length);
   };
-  const handleFlipComplete = () => {
-    if (flipPhase === "out") {
-      setActive(targetActive);
-      setFlipPhase("in");
-    } else if (flipPhase === "in") {
-      setFlipPhase("idle");
-    }
+  const prev = () => {
+    setDirection(-1);
+    setIndex((i) => (i - 1 + whySlides.length) % whySlides.length);
   };
 
+  // Auto-advance every 6 s; reset on any navigation; pause on hover/interaction
+  useEffect(() => {
+    if (paused || reduceMotion) return;
+    const id = setTimeout(() => {
+      setDirection(1);
+      setIndex((i) => (i + 1) % whySlides.length);
+    }, 6000);
+    return () => clearTimeout(id);
+  }, [index, paused, reduceMotion]);
+
   return (
-    <section className="awards-section page-shell" id="why">
-      <div className="section-blob section-blob-b" aria-hidden="true" />
-      <SectionHeader eyebrow="Why CubeIT" title="Software With A Point Of View" subtitle="Useful, beautiful systems shaped around real operations—not generic templates or disconnected tools." second="Our approach" secondHref="#metrics" />
-      <div className="why-stage reveal-card">
-        <div className="why-layout" aria-live="polite">
-          <div className="award-left">
-            <div className="why-card-viewport">
-              <motion.div
-                key={`${item.cardTitle}-${flipPhase === "in" ? "incoming" : "face"}`}
-                initial={flipPhase === "in" ? { rotateY: direction > 0 ? -90 : 90, rotateZ: -2, scale: 0.97 } : false}
-                animate={{ rotateY: flipPhase === "out" ? (direction > 0 ? 90 : -90) : 0, rotateZ: -2, scale: flipPhase === "out" ? 0.97 : 1 }}
-                transition={{ duration: 0.42, ease: [0.45, 0, 0.55, 1] }}
-                onAnimationComplete={handleFlipComplete}
-                className="tilt-certificate"
-              >
-                <div className="principle-card-meta"><span>{item.label}</span><b>CubeIT principle</b></div>
-                <h3>{item.cardTitle}</h3>
-                <div className="principle-card-rule" />
-                <div className="principle-card-footer"><span>Engineered by CubeIT</span><i>Structure · Build · Scale</i></div>
-              </motion.div>
-            </div>
-          </div>
-          <div className="award-right">
+    <section
+      className="why-section page-shell"
+      id="why"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
+      {/* Centered header */}
+      <div className="why-header reveal-up">
+        <span className="pill">Why us</span>
+        <h2>Why CubeIT?</h2>
+        <p className="why-tagline">Because We Deliver</p>
+        <p className="why-desc">We build systems that scale with your business, not just for launch day. Real expertise, clean code, and a commitment to every deadline.</p>
+      </div>
+
+      {/* Two-column carousel */}
+      <div className="why-carousel reveal-card">
+
+        {/* ── Left: stacked photo cards ── */}
+        <div className="why-photos">
+          <div className="why-photo-deck">
+            {/* Depth layers — static, purely visual */}
+            <div className="why-photo-layer why-photo-layer-2" aria-hidden="true" />
+            <div className="why-photo-layer why-photo-layer-1" aria-hidden="true" />
+
+            {/* Active photo — animated + draggable */}
             <AnimatePresence mode="wait" initial={false} custom={direction}>
               <motion.div
-                key={item.title}
+                key={index}
+                className="why-photo-main"
                 custom={direction}
-                initial={{ opacity: 0, y: direction > 0 ? 22 : -22, filter: "blur(10px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                exit={{ opacity: 0, y: direction > 0 ? -16 : 16, filter: "blur(8px)" }}
-                transition={{ duration: 0.48, ease: [0.22, 1, 0.36, 1] }}
-                className="why-copy"
-              >
-                <div className="award-logo-row"><span className="award-symbol">◇</span>{item.logo}</div>
-                <div className="cube-trophies" aria-hidden="true"><span /><span /><span /></div>
-                <h3>{item.title}</h3>
-                <p>{item.body}</p>
-              </motion.div>
+                style={{ backgroundImage: `url(${slide.image})` }}
+                initial={{ opacity: 0, scale: reduceMotion ? 1 : 0.96, x: reduceMotion ? 0 : direction * 52 }}
+                animate={{ opacity: 1, scale: 1, x: 0 }}
+                exit={{ opacity: 0, scale: reduceMotion ? 1 : 1.02, x: reduceMotion ? 0 : direction * -38 }}
+                transition={{ duration: reduceMotion ? 0 : 0.5, ease: [0.22, 1, 0.36, 1] }}
+                drag={reduceMotion ? false : "x"}
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.1}
+                onDragEnd={(_, info) => {
+                  if (info.offset.x < -60) next();
+                  else if (info.offset.x > 60) prev();
+                  setPaused(true);
+                }}
+                aria-label={`${slide.title} — slide ${slide.number} of ${whySlides.length}`}
+              />
             </AnimatePresence>
           </div>
         </div>
-        <div className="award-controls why-controls">
-          <button onClick={() => navigate(-1)} disabled={flipPhase !== "idle"} aria-label="Previous principle"><ArrowLeft /></button>
-          <span>{String(active + 1).padStart(2, "0")} / {String(principleSlides.length).padStart(2, "0")}</span>
-          <button onClick={() => navigate(1)} disabled={flipPhase !== "idle"} aria-label="Next principle"><ArrowRight /></button>
+
+        {/* ── Right: slide content ── */}
+        <div className="why-info">
+          <AnimatePresence mode="wait" initial={false} custom={direction}>
+            <motion.div
+              key={index}
+              custom={direction}
+              initial={{ opacity: 0, y: reduceMotion ? 0 : direction * 24, filter: reduceMotion ? "none" : "blur(9px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              exit={{ opacity: 0, y: reduceMotion ? 0 : direction * -16, filter: reduceMotion ? "none" : "blur(6px)" }}
+              transition={{ duration: reduceMotion ? 0 : 0.46, ease: [0.22, 1, 0.36, 1] }}
+              className="why-slide"
+            >
+              {/* Oversized watermark number */}
+              <span className="why-number" aria-hidden="true">{slide.number}</span>
+              <h3 className="why-slide-title">{slide.title}</h3>
+              <p className="why-slide-text">{slide.text}</p>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Progress + navigation */}
+          <div className="why-foot">
+            <span className="why-progress" aria-live="polite" aria-label={`Slide ${slide.number} of ${whySlides.length}`}>
+              {slide.number} / {String(whySlides.length).padStart(2, "0")}
+            </span>
+            <div className="why-nav" role="group" aria-label="Carousel navigation">
+              <button type="button" onClick={() => { prev(); setPaused(true); }} aria-label="Previous slide">
+                <ArrowLeft />
+              </button>
+              <button type="button" onClick={() => { next(); setPaused(true); }} aria-label="Next slide">
+                <ArrowRight />
+              </button>
+            </div>
+          </div>
         </div>
+
       </div>
     </section>
   );
@@ -621,17 +974,86 @@ function WhyCubeIT() {
 
 function GeminiStory() {
   const sectionRef = useRef<HTMLElement>(null);
-  const reduceMotion = useReducedMotion();
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end start"],
-  });
-  const output = reduceMotion ? [1, 1] : [0, 1];
-  const pathLength1 = useTransform(scrollYProgress, [0, 0.72], output);
-  const pathLength2 = useTransform(scrollYProgress, [0.08, 0.78], output);
-  const pathLength3 = useTransform(scrollYProgress, [0.16, 0.84], output);
-  const pathLength4 = useTransform(scrollYProgress, [0.24, 0.9], output);
-  const pathLength5 = useTransform(scrollYProgress, [0.32, 0.96], output);
+
+  // MotionValues driven by GSAP scrub via onUpdate (not useScroll/useTransform)
+  const pathLength1 = useMotionValue(0);
+  const pathLength2 = useMotionValue(0);
+  const pathLength3 = useMotionValue(0);
+  const pathLength4 = useMotionValue(0);
+  const pathLength5 = useMotionValue(0);
+
+  useEffect(() => {
+    // Register here so the plugin is available regardless of sibling effect order
+    gsap.registerPlugin(ScrollTrigger);
+
+    const el = sectionRef.current;
+    if (!el) return;
+
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) {
+      pathLength1.set(1); pathLength2.set(1); pathLength3.set(1);
+      pathLength4.set(1); pathLength5.set(1);
+      return;
+    }
+
+    const clamp = (v: number) => Math.min(1, Math.max(0, v));
+
+    // Same stagger windows as the original useTransform mapping
+    // pathN: [inputStart, inputEnd] → [0, 1]
+    const windows = [
+      [0,    0.72],
+      [0.08, 0.78],
+      [0.16, 0.84],
+      [0.24, 0.90],
+      [0.32, 0.96],
+    ] as const;
+    const setters = [pathLength1, pathLength2, pathLength3, pathLength4, pathLength5];
+
+    // GSAP pin: section stays fixed while animation plays; releases when done
+    const pin = ScrollTrigger.create({
+      trigger: el,
+      start: "top top",
+      end: "+=300%",
+      pin: true,
+      pinSpacing: true,
+      anticipatePin: 1,
+      scrub: 1.2,
+      invalidateOnRefresh: true,
+      onUpdate(self) {
+        const p = self.progress;
+        setters.forEach((mv, i) => {
+          const [s, e] = windows[i];
+          mv.set(clamp((p - s) / (e - s)));
+        });
+      },
+    });
+
+    // Signal badge animations (same timing as original, over the same scroll range)
+    const signalTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: el,
+        start: "top top",
+        end: "+=300%",
+        scrub: 0.35,
+        invalidateOnRefresh: true,
+      },
+    });
+    signalTl
+      .fromTo(".gemini-signal-one",   { x: -42, autoAlpha: 0 }, { x: 0,   autoAlpha: 1, duration: 0.11, ease: "power2.out" }, 0.04)
+      .to(    ".gemini-signal-one",   { x: 24,  autoAlpha: 0,   duration: 0.10, ease: "power2.in"  }, 0.20)
+      .fromTo(".gemini-signal-two",   { x: 42,  autoAlpha: 0 }, { x: 0,   autoAlpha: 1, duration: 0.11, ease: "power2.out" }, 0.23)
+      .to(    ".gemini-signal-two",   { x: -22, autoAlpha: 0,   duration: 0.10, ease: "power2.in"  }, 0.41)
+      .fromTo(".gemini-signal-three", { y: 32,  autoAlpha: 0 }, { y: 0,   autoAlpha: 1, duration: 0.11, ease: "power2.out" }, 0.45)
+      .to(    ".gemini-signal-three", { y: -20, autoAlpha: 0,   duration: 0.10, ease: "power2.in"  }, 0.63)
+      .fromTo(".gemini-signal-four",  { y: 28,  autoAlpha: 0 }, { y: 0,   autoAlpha: 1, duration: 0.11, ease: "power2.out" }, 0.67)
+      .to(    ".gemini-signal-four",  { y: -16, autoAlpha: 0,   duration: 0.10, ease: "power2.in"  }, 0.87);
+
+    return () => {
+      pin.kill();
+      signalTl.scrollTrigger?.kill();
+      signalTl.kill();
+    };
+  }, [pathLength1, pathLength2, pathLength3, pathLength4, pathLength5]);
 
   return (
     <section ref={sectionRef} className="gemini-story page-shell" aria-label="Connected workflows">
@@ -695,36 +1117,94 @@ function Metrics() {
 
 function GlobalCTA() {
   const reduceMotion = useReducedMotion();
+  const sectionRef  = useRef<HTMLElement>(null);
+  const parallaxRef = useRef<HTMLDivElement>(null);
+
+  // Enhanced globe: better atmosphere, rim lighting, slower rotation
   const globeConfig = useMemo(() => ({
     showAtmosphere: true,
-    atmosphereColor: "#9f7aea",
+    atmosphereColor: "#6B9EFF",
     atmosphereIntensity: 0.88,
     atmosphereBlur: 3,
     bumpScale: 0.8,
     autoRotateSpeed: reduceMotion ? 0 : 0.28,
     enableZoom: false,
     showWireframe: true,
-    wireframeColor: "#c4b5fd",
+    wireframeColor: "#1E63F4",
     ambientIntensity: 0.9,
     pointLightIntensity: 1.7,
     initialRotation: { x: 0.12, y: -0.72 },
   }), [reduceMotion]);
 
+  // Subtle mouse parallax on the globe
+  useEffect(() => {
+    if (reduceMotion) return;
+    const section = sectionRef.current;
+    const wrap = parallaxRef.current;
+    if (!section || !wrap) return;
+
+    const onMove = (e: MouseEvent) => {
+      const r  = section.getBoundingClientRect();
+      const dx = (e.clientX - (r.left + r.width  / 2)) / (r.width  / 2);
+      const dy = (e.clientY - (r.top  + r.height / 2)) / (r.height / 2);
+      gsap.to(wrap, {
+        x: dx * 11, y: dy * 5,
+        rotateY: dx * 4.5, rotateX: -dy * 2.5,
+        duration: 1.4, ease: "power3.out", overwrite: "auto",
+      });
+    };
+    const onLeave = () => {
+      gsap.to(wrap, {
+        x: 0, y: 0, rotateY: 0, rotateX: 0,
+        duration: 1.9, ease: "power3.out", overwrite: "auto",
+      });
+    };
+
+    section.addEventListener("mousemove", onMove);
+    section.addEventListener("mouseleave", onLeave);
+    return () => {
+      section.removeEventListener("mousemove", onMove);
+      section.removeEventListener("mouseleave", onLeave);
+    };
+  }, [reduceMotion]);
+
   return (
-    <section className="global-cta page-shell tilt-reveal" aria-labelledby="global-cta-title">
+    <section ref={sectionRef} className="global-cta page-shell tilt-reveal" aria-labelledby="global-cta-title">
+      {/* Ambient floating particles */}
+      <div className="gcta-particles" aria-hidden="true">
+        {[1,2,3,4,5,6].map(n => <span key={n} className={`gcta-p gcta-p${n}`} />)}
+      </div>
+
       <div className="global-cta-copy">
         <span className="pill">Built to travel</span>
         <h2 id="global-cta-title">One product core. Ready for every market.</h2>
         <p>We engineer secure, scalable platforms that can grow across teams, branches, industries, and regions without losing clarity.</p>
+
+        {/* Stats: thin-divider layout with premium number hierarchy */}
         <div className="global-cta-stats" aria-label="Platform qualities">
-          <span><strong>24/7</strong> intelligent operations</span>
-          <span><strong>1</strong> connected source of truth</span>
+          <div className="gcta-stat">
+            <strong>24/7</strong>
+            <span>intelligent operations</span>
+          </div>
+          <div className="gcta-divider" aria-hidden="true" />
+          <div className="gcta-stat">
+            <strong>1</strong>
+            <span>connected source of truth</span>
+          </div>
         </div>
+
         <a className="btn btn-primary" href="/contact">Build your platform <ArrowUpRight /></a>
       </div>
+
       <div className="global-globe" aria-label="CubeIT global product map">
-        <div className="global-globe-halo" aria-hidden="true" />
-        <Globe3D markers={globeMarkers} config={globeConfig} className="cubeit-globe" />
+        <div className="global-globe-halo"  aria-hidden="true" />
+        <div className="global-globe-rim"   aria-hidden="true" />
+        {/* parallaxRef receives GSAP x/y/rotate; inner div carries the CSS float */}
+        <div ref={parallaxRef} className="global-globe-parallax">
+          <div className="global-globe-float">
+            <Globe3D markers={globeMarkers} config={globeConfig} className="cubeit-globe" />
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -803,9 +1283,6 @@ function Backgrounds() {
           glowColor="rgba(255,255,255,.55)"
         />
       </div>
-      <div className="blob-cursor-layer" aria-hidden="true">
-        <BlobCursor />
-      </div>
     </>
   );
 }
@@ -842,9 +1319,9 @@ function useMotion() {
         );
       });
 
+      // Navbar shadow deepens on scroll through the services section
       gsap.to(".nav-shell", {
-        backgroundColor: "rgba(244,250,255,.68)",
-        backdropFilter: "blur(42px) saturate(165%)",
+        boxShadow: "0 1px 0 rgba(8,29,73,.06), 0 2px 8px rgba(8,29,73,.08), 0 12px 32px rgba(8,29,73,.10), 0 28px 56px rgba(8,29,73,.06)",
         scrollTrigger: { trigger: ".services-section", start: "top top", end: "bottom bottom", scrub: true },
       });
 
@@ -853,24 +1330,8 @@ function useMotion() {
         { y: 0, rotateX: 0, opacity: 1, duration: 1.05, stagger: 0.12, ease: "expo.out", scrollTrigger: { trigger: ".capability-bento", start: "top 82%", toggleActions: "play none none reverse" } }
       );
 
-      const geminiTimeline = gsap.timeline({
-        scrollTrigger: {
-          trigger: ".gemini-story",
-          start: "top top",
-          end: "bottom top",
-          scrub: 0.35,
-          invalidateOnRefresh: true,
-        },
-      });
-      geminiTimeline
-        .fromTo(".gemini-signal-one", { x: -42, autoAlpha: 0 }, { x: 0, autoAlpha: 1, duration: 0.11, ease: "power2.out" }, 0.04)
-        .to(".gemini-signal-one", { x: 24, autoAlpha: 0, duration: 0.1, ease: "power2.in" }, 0.2)
-        .fromTo(".gemini-signal-two", { x: 42, autoAlpha: 0 }, { x: 0, autoAlpha: 1, duration: 0.11, ease: "power2.out" }, 0.23)
-        .to(".gemini-signal-two", { x: -22, autoAlpha: 0, duration: 0.1, ease: "power2.in" }, 0.41)
-        .fromTo(".gemini-signal-three", { y: 32, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.11, ease: "power2.out" }, 0.45)
-        .to(".gemini-signal-three", { y: -20, autoAlpha: 0, duration: 0.1, ease: "power2.in" }, 0.63)
-        .fromTo(".gemini-signal-four", { y: 28, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.11, ease: "power2.out" }, 0.67)
-        .to(".gemini-signal-four", { y: -16, autoAlpha: 0, duration: 0.1, ease: "power2.in" }, 0.87);
+      // NOTE: Gemini section pinning + path animation is handled inside
+      // GeminiStory's own useEffect, co-located with the MotionValues.
 
       const lampTimeline = gsap.timeline({
         scrollTrigger: {
@@ -905,6 +1366,46 @@ function useMotion() {
   }, []);
 }
 
+function ScrollToTop() {
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setShow(window.scrollY > 400);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  return (
+    <AnimatePresence>
+      {show && (
+        <motion.button
+          key="scroll-top"
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          initial={{ opacity: 0, y: 16, scale: 0.9 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 12, scale: 0.9 }}
+          transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
+          whileHover={{ scale: 1.08 }}
+          whileTap={{ scale: 0.91 }}
+          className="scroll-to-top"
+          aria-label="Scroll to top"
+        >
+          {/* Static track — subtle base ring the arc travels on */}
+          <span className="scroll-to-top__track" aria-hidden="true" />
+          {/* Bloom glow — blurred copy of the arc for soft light effect */}
+          <span className="scroll-to-top__glow" aria-hidden="true" />
+          {/* Crisp traveling gradient arc */}
+          <span className="scroll-to-top__ring" aria-hidden="true" />
+          {/* Navy glass inner circle + arrow icon */}
+          <span className="scroll-to-top__inner">
+            <ChevronUp />
+          </span>
+        </motion.button>
+      )}
+    </AnimatePresence>
+  );
+}
+
 export default function CubeITSite() {
   useMotion();
   const schema = useMemo(() => ({
@@ -922,8 +1423,11 @@ export default function CubeITSite() {
       <Backgrounds />
       <Navbar />
       <main className="site-main">
-        <Hero />
-        <Services />
+        <div className="hero-services-wrapper">
+          <div className="hero-services-grid" aria-hidden="true" />
+          <Hero />
+          <Services />
+        </div>
         <CoverStatement />
         <TechnologyStack />
         <Work />
@@ -936,6 +1440,7 @@ export default function CubeITSite() {
         <Blog />
         <Footer />
       </main>
+      <ScrollToTop />
     </>
   );
 }

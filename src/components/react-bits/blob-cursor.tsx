@@ -1,92 +1,135 @@
 "use client";
 
+/**
+ * PremiumCursor v2
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Single 20 px rounded-square cursor — visible, clean, premium.
+ *
+ * Design decisions:
+ *   • ONE element only — no separate precision dot.
+ *   • Frame-rate-independent LERP via  f = 1 − e^(−speed × dt).
+ *     Feel is the same at 60 Hz, 120 Hz, 144 Hz.
+ *   • `scale` CSS property handles hover/press/moving states so it never
+ *     fights the JS translate3d(…) that drives position.
+ *   • `data-moving`  → scale 1.06  (barely perceptible "alive" feel)
+ *   • `data-hover`   → scale 1.13  (10–13 % — per spec)
+ *   • `data-pressed` → scale 0.83  (gentle compression, not extreme)
+ *   • No rotation, no stretching, no squashing.
+ */
+
 import { useEffect, useRef } from "react";
 
-type BlobCursorProps = { className?: string };
+const LERP_SPEED   = 14;   // higher = follows faster; 14 ≈ 0.21 factor @ 60 fps
+const INTERACTIVE  = "a, button, label, [data-cursor], input, select, textarea";
+const MOVE_TIMEOUT = 110;  // ms after last move before "moving" state clears
 
-export default function BlobCursor({ className = "" }: BlobCursorProps) {
-  const rootRef = useRef<HTMLDivElement>(null);
-  const dotRef = useRef<HTMLSpanElement>(null);
-  const blobRef = useRef<HTMLSpanElement>(null);
+export default function BlobCursor({ className = "" }: { className?: string }) {
+  const rootRef     = useRef<HTMLDivElement>(null);
+  const followerRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    const root = rootRef.current;
-    const dot = dotRef.current;
-    const blob = blobRef.current;
-    const fine = window.matchMedia("(pointer: fine)").matches;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (!root || !dot || !blob || !fine || reduce) return;
+    const root     = rootRef.current;
+    const follower = followerRef.current;
+
+    if (!root || !follower) return;
+    if (!window.matchMedia("(pointer: fine)").matches)         return;
+    if ( window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     root.dataset.enabled = "true";
     document.body.classList.add("has-elastic-cursor");
-    let targetX = -80;
-    let targetY = -80;
-    let blobX = targetX;
-    let blobY = targetY;
-    let previousX = targetX;
-    let previousY = targetY;
-    let frame = 0;
 
-    const requestTick = () => {
-      if (!frame) frame = requestAnimationFrame(tick);
-    };
+    let targetX   = -80, targetY   = -80;
+    let followerX = targetX, followerY = targetY;
+    let raf       = 0;
+    let lastTime  = 0;
+    let moveTimer = 0;
 
-    const move = (event: PointerEvent) => {
-      targetX = event.clientX;
-      targetY = event.clientY;
-      const interactive = (event.target as HTMLElement | null)?.closest<HTMLElement>(
-        "a, button, [data-cursor]"
-      );
-      root.dataset.hover = interactive ? "true" : "false";
-      dot.style.transform = `translate3d(${targetX}px, ${targetY}px, 0) translate(-50%, -50%)`;
-      requestTick();
-    };
-
-    const leave = () => {
-      root.dataset.visible = "false";
-    };
-
-    const enter = () => {
-      root.dataset.visible = "true";
-      requestTick();
-    };
-
-    const tick = () => {
-      frame = 0;
-      blobX += (targetX - blobX) * 0.16;
-      blobY += (targetY - blobY) * 0.16;
-      const dx = blobX - previousX;
-      const dy = blobY - previousY;
-      const speed = Math.min(18, Math.hypot(dx, dy));
-      const angle = Math.atan2(dy, dx) * (180 / Math.PI);
-      const stretch = 1 + speed * 0.018;
-      const squash = 1 / Math.sqrt(stretch);
-      blob.style.transform = `translate3d(${blobX}px, ${blobY}px, 0) translate(-50%, -50%) rotate(${angle}deg) scale(${stretch}, ${squash})`;
-      previousX = blobX;
-      previousY = blobY;
-      if (Math.abs(targetX - blobX) > 0.04 || Math.abs(targetY - blobY) > 0.04 || speed > 0.02) {
-        frame = requestAnimationFrame(tick);
+    // ── RAF loop — frame-rate independent ──────────────────────────────────
+    const scheduleFrame = () => {
+      if (!raf) {
+        lastTime = performance.now();
+        raf = requestAnimationFrame(tick);
       }
     };
 
-    window.addEventListener("pointermove", move, { passive: true });
-    document.documentElement.addEventListener("pointerleave", leave);
-    document.documentElement.addEventListener("pointerenter", enter);
-    requestTick();
+    const tick = (now: number) => {
+      raf = 0;
+      const dt = Math.min((now - lastTime) / 1000, 0.05); // cap large gaps
+      lastTime  = now;
+
+      // Exponential lerp — consistent feel at any refresh rate
+      const f = 1 - Math.exp(-LERP_SPEED * dt);
+
+      followerX += (targetX - followerX) * f;
+      followerY += (targetY - followerY) * f;
+
+      follower.style.transform =
+        `translate3d(${followerX}px,${followerY}px,0) translate(-50%,-50%)`;
+
+      // Keep looping until settled
+      if (Math.abs(targetX - followerX) > 0.06 ||
+          Math.abs(targetY - followerY) > 0.06) {
+        raf = requestAnimationFrame(tick);
+      }
+    };
+
+    // ── Pointer events ─────────────────────────────────────────────────────
+    const onMove = (e: PointerEvent) => {
+      if (e.pointerType === "touch") return;
+
+      targetX = e.clientX;
+      targetY = e.clientY;
+
+      const isInteractive =
+        !!(e.target as HTMLElement | null)?.closest(INTERACTIVE);
+      root.dataset.hover   = isInteractive ? "true" : "false";
+      root.dataset.moving  = "true";
+
+      // Clear "moving" shortly after pointer settles
+      clearTimeout(moveTimer);
+      moveTimer = window.setTimeout(() => {
+        root.dataset.moving = "false";
+      }, MOVE_TIMEOUT);
+
+      scheduleFrame();
+    };
+
+    const onDown   = () => { root.dataset.pressed = "true";  };
+    const onUp     = () => { root.dataset.pressed = "false"; };
+    const onLeave  = () => { root.dataset.visible = "false"; };
+    const onEnter  = () => { root.dataset.visible = "true";  scheduleFrame(); };
+
+    window.addEventListener("pointermove",   onMove,  { passive: true });
+    window.addEventListener("pointerdown",   onDown,  { passive: true });
+    window.addEventListener("pointerup",     onUp,    { passive: true });
+    window.addEventListener("pointercancel", onUp,    { passive: true });
+    document.documentElement.addEventListener("pointerleave", onLeave);
+    document.documentElement.addEventListener("pointerenter", onEnter);
+
+    scheduleFrame();
 
     return () => {
       document.body.classList.remove("has-elastic-cursor");
-      cancelAnimationFrame(frame);
-      window.removeEventListener("pointermove", move);
-      document.documentElement.removeEventListener("pointerleave", leave);
-      document.documentElement.removeEventListener("pointerenter", enter);
+      cancelAnimationFrame(raf);
+      clearTimeout(moveTimer);
+      window.removeEventListener("pointermove",   onMove);
+      window.removeEventListener("pointerdown",   onDown);
+      window.removeEventListener("pointerup",     onUp);
+      window.removeEventListener("pointercancel", onUp);
+      document.documentElement.removeEventListener("pointerleave", onLeave);
+      document.documentElement.removeEventListener("pointerenter", onEnter);
     };
   }, []);
 
   return (
-    <div ref={rootRef} className={`elastic-cursor ${className}`} data-visible="true" aria-hidden="true">
-      <span ref={blobRef} className="elastic-cursor__blob" />
-      <span ref={dotRef} className="elastic-cursor__dot" />
+    <div
+      ref={rootRef}
+      className={`elastic-cursor ${className}`}
+      data-visible="true"
+      aria-hidden="true"
+    >
+      {/* Single rounded-square cursor — JS drives translate, CSS drives scale */}
+      <span ref={followerRef} className="elastic-cursor__follower" />
     </div>
   );
 }

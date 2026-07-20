@@ -293,7 +293,7 @@ export default function ClothReel({ originSelector, targetSelector, stackSelecto
     <div className="cloth-reel" aria-hidden="true">
       <canvas ref={canvasRef} className="cloth-reel__canvas" />
       <div ref={fallbackRef} className="cloth-reel__fallback">
-        <video ref={videoRef} muted loop autoPlay playsInline preload="auto" crossOrigin="anonymous" poster={poster}>
+        <video ref={videoRef} muted loop autoPlay playsInline preload="auto" crossOrigin="anonymous" poster={poster} suppressHydrationWarning>
           <source src={src} type="video/mp4" />
         </video>
       </div>

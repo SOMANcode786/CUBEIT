@@ -72,7 +72,7 @@ const clientProjects = [
     image: "/client-work/dea-original.png",
     width: 1875,
     height: 862,
-    brief: "The earlier DEA website was designed around the company’s priorities at the time, presenting its engineering expertise, background, and service scope clearly.",
+    brief: "The earlier DEA website was designed around the company's priorities at the time, presenting its engineering expertise, background, and service scope clearly.",
     outcome: "A dependable first digital chapter that met the brief of its time.",
     tags: ["Original website", "Company profile", "Foundation"],
   },
@@ -96,17 +96,38 @@ export default function ClientWorkShowcase() {
   };
 
   return (
-    <section className="client-work-section page-shell" id="client-work" aria-labelledby="client-work-title">
-      <div className="client-work-heading reveal-up">
-        <div>
+    <section className="client-work-section page-shell" id="client-projects" aria-labelledby="client-work-title">
+
+      {/* ── Heading ── */}
+      <div className="client-work-heading">
+        <motion.div
+          className="client-work-heading-left"
+          initial={reduceMotion ? false : { opacity: 0, y: 32, filter: "blur(10px)" }}
+          whileInView={reduceMotion ? undefined : { opacity: 1, y: 0, filter: "blur(0px)" }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+        >
           <span className="pill">Selected client deliveries</span>
           <h2 id="client-work-title">Websites that moved the business forward.</h2>
-        </div>
-        <p>Six launches across SaaS, digital transformation, maritime operations, and industrial engineering—including a client who returned for their next chapter.</p>
+        </motion.div>
+
+        <motion.p
+          className="client-work-heading-desc"
+          initial={reduceMotion ? false : { opacity: 0, y: 22 }}
+          whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.78, delay: 0.14, ease: [0.22, 1, 0.36, 1] }}
+        >
+          Six launches across SaaS, digital transformation, maritime operations, and industrial engineering—including a client who returned for their next chapter.
+        </motion.p>
       </div>
 
+      {/* ── Theatre card ── */}
       <div className="client-work-theatre reveal-card">
         <div className="client-work-ambient" aria-hidden="true" />
+        <div className="client-work-ambient client-work-ambient--secondary" aria-hidden="true" />
+
+        {/* Left panel — project details */}
         <div className="client-work-details" aria-live="polite">
           <div className="client-work-counter">
             <span>{String(active + 1).padStart(2, "0")}</span>
@@ -140,6 +161,7 @@ export default function ClientWorkShowcase() {
           </div>
         </div>
 
+        {/* Right panel — browser mockup */}
         <div className="client-work-stage">
           <div className="client-work-browser">
             <div className="client-work-browser-bar" aria-hidden="true">
@@ -165,7 +187,7 @@ export default function ClientWorkShowcase() {
                     alt={`${project.name} website interface`}
                     width={project.width}
                     height={project.height}
-                    sizes="(max-width: 900px) 94vw, 64vw"
+                    sizes="(max-width: 900px) 94vw, 60vw"
                     priority={active === 0}
                   />
                 </motion.figure>
@@ -175,20 +197,42 @@ export default function ClientWorkShowcase() {
           </div>
         </div>
 
-        <div className="client-work-rail" aria-label="Choose a client project">
+        {/* ── Bento thumbnail grid ── */}
+        <div className="client-work-bento" aria-label="Choose a client project">
           {clientProjects.map((item, index) => (
-            <button
+            <motion.button
               type="button"
               key={item.name}
               onClick={() => select(index)}
               aria-pressed={active === index}
-              className={active === index ? "is-active" : undefined}
+              className={active === index ? "cw-bento-card is-active" : "cw-bento-card"}
+              initial={reduceMotion ? false : { opacity: 0, y: 18, scale: 0.96 }}
+              whileInView={reduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: true, margin: "-30px" }}
+              transition={{
+                duration: 0.58,
+                delay: index * 0.072,
+                ease: [0.22, 1, 0.36, 1],
+              }}
             >
-              <span className="client-work-thumb">
-                <Image src={item.image} alt="" width={item.width} height={item.height} sizes="160px" />
+              {/* Screenshot fill */}
+              <span className="cw-bento-img">
+                <Image
+                  src={item.image}
+                  alt=""
+                  width={item.width}
+                  height={item.height}
+                  sizes="(max-width: 780px) 50vw, (max-width: 1152px) 34vw, 320px"
+                />
               </span>
-              <span className="client-work-thumb-copy"><small>{String(index + 1).padStart(2, "0")}</small><b>{item.name}</b></span>
-            </button>
+              {/* Active indicator dot */}
+              <span className="cw-bento-dot" aria-hidden="true" />
+              {/* Project meta overlay */}
+              <span className="cw-bento-meta">
+                <span className="cw-bento-num">{String(index + 1).padStart(2, "0")}</span>
+                <span className="cw-bento-name">{item.name}</span>
+              </span>
+            </motion.button>
           ))}
         </div>
       </div>

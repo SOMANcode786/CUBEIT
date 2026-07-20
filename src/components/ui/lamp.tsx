@@ -21,8 +21,8 @@ export const LampContainer = ({
           style={{ backgroundImage: "conic-gradient(var(--conic-position), var(--tw-gradient-stops))" }}
           className="lamp-beam-left absolute inset-auto right-1/2 h-56 w-[30rem] overflow-visible bg-gradient-conic from-cyan-500 via-transparent to-transparent text-white [--conic-position:from_70deg_at_center_top]"
         >
-          <div className="absolute bottom-0 left-0 z-20 h-40 w-full bg-slate-950 [mask-image:linear-gradient(to_top,white,transparent)]" />
-          <div className="absolute bottom-0 left-0 z-20 h-full w-40 bg-slate-950 [mask-image:linear-gradient(to_right,white,transparent)]" />
+          <div className="lamp-mask absolute bottom-0 left-0 z-20 h-40 w-full [mask-image:linear-gradient(to_top,white,transparent)]" />
+          <div className="lamp-mask absolute bottom-0 left-0 z-20 h-full w-40 [mask-image:linear-gradient(to_right,white,transparent)]" />
         </motion.div>
         <motion.div
           initial={{ opacity: 0.5, width: "15rem" }}
@@ -31,10 +31,10 @@ export const LampContainer = ({
           style={{ backgroundImage: "conic-gradient(var(--conic-position), var(--tw-gradient-stops))" }}
           className="lamp-beam-right absolute inset-auto left-1/2 h-56 w-[30rem] bg-gradient-conic from-transparent via-transparent to-cyan-500 text-white [--conic-position:from_290deg_at_center_top]"
         >
-          <div className="absolute bottom-0 right-0 z-20 h-full w-40 bg-slate-950 [mask-image:linear-gradient(to_left,white,transparent)]" />
-          <div className="absolute bottom-0 right-0 z-20 h-40 w-full bg-slate-950 [mask-image:linear-gradient(to_top,white,transparent)]" />
+          <div className="lamp-mask absolute bottom-0 right-0 z-20 h-full w-40 [mask-image:linear-gradient(to_left,white,transparent)]" />
+          <div className="lamp-mask absolute bottom-0 right-0 z-20 h-40 w-full [mask-image:linear-gradient(to_top,white,transparent)]" />
         </motion.div>
-        <div className="absolute top-1/2 h-48 w-full translate-y-12 scale-x-150 bg-slate-950 blur-2xl" />
+        <div className="lamp-mask absolute top-1/2 h-48 w-full translate-y-12 scale-x-150 blur-2xl" />
         <div className="absolute top-1/2 z-50 h-48 w-full bg-transparent opacity-10 backdrop-blur-md" />
         <div className="lamp-glow-haze absolute inset-auto z-50 h-36 w-[28rem] -translate-y-1/2 rounded-full bg-cyan-500 opacity-50 blur-3xl" />
         <motion.div
@@ -49,7 +49,7 @@ export const LampContainer = ({
           transition={{ delay: 0.3, duration: 0.8, ease: "easeInOut" }}
           className="lamp-light-line absolute inset-auto z-50 h-0.5 w-[30rem] -translate-y-[7rem] bg-cyan-400"
         />
-        <div className="absolute inset-auto z-40 h-44 w-full -translate-y-[12.5rem] bg-slate-950" />
+        <div className="lamp-mask absolute inset-auto z-40 h-44 w-full -translate-y-[12.5rem]" />
       </div>
 
       <div className="lamp-content relative z-50 flex -translate-y-80 flex-col items-center px-5">

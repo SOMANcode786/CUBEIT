@@ -1,10 +1,21 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Geist, Syne } from "next/font/google";
+import { Nunito_Sans } from "next/font/google";
 import { cn } from "@/lib/utils";
+import LoadingScreen from "@/components/loading-screen";
 
-const geist = Geist({ subsets: ["latin"], variable: "--font-geist" });
-const syne = Syne({ subsets: ["latin"], variable: "--font-syne" });
+/**
+ * Nunito Sans — rounded, premium, variable-weight Google Font.
+ * On Apple devices, `ui-rounded` / "SF Pro Rounded" is used directly via CSS;
+ * Nunito Sans is the high-quality non-Apple fallback in --font-display / --font-body.
+ */
+const nunitoSans = Nunito_Sans({
+  subsets: ["latin"],
+  variable: "--font-rounded",
+  display: "swap",
+  // Variable font — all weights 200–900 available including intermediate values
+  axes: ["wdth"],
+});
 
 export const metadata: Metadata = {
   title: "CubeIT | Intelligent Software for Modern Businesses",
@@ -18,8 +29,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={cn("antialiased", geist.variable, syne.variable)}>
-      <body>{children}</body>
+    <html lang="en" className={cn("antialiased", nunitoSans.variable)}>
+      <body suppressHydrationWarning>
+        <LoadingScreen />
+        {children}
+      </body>
     </html>
   );
 }
