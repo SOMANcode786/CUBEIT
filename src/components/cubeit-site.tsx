@@ -2,7 +2,7 @@
 
 import { Fragment, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import Image from "next/image";
-import { ArrowLeft, ArrowRight, ArrowUpRight, Briefcase, ChevronDown, ChevronUp, Code2, Cpu, FlaskConical, Sparkles } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpRight, Briefcase, Check, ChevronDown, ChevronUp, Code2, Cpu, FlaskConical, Sparkles } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
@@ -162,15 +162,15 @@ function WorkCard({
 
   const mouseX = useMotionValue(0.5);
   const mouseY = useMotionValue(0.5);
-  const rotateX = useTransform(mouseY, [0, 1], [3, -3]);
-  const rotateY = useTransform(mouseX, [0, 1], [-3, 3]);
-  const imgY = useTransform(mouseY, [0, 1], [-5, 5]);
-  const imgX = useTransform(mouseX, [0, 1], [-5, 5]);
+  const rotateX = useTransform(mouseY, [0, 1], [3.5, -3.5]);
+  const rotateY = useTransform(mouseX, [0, 1], [-3.5, 3.5]);
+  const imgY = useTransform(mouseY, [0, 1], [-7, 7]);
+  const imgX = useTransform(mouseX, [0, 1], [-7, 7]);
 
-  const springRX = useSpring(rotateX, { stiffness: 260, damping: 28 });
-  const springRY = useSpring(rotateY, { stiffness: 260, damping: 28 });
-  const springImgY = useSpring(imgY, { stiffness: 260, damping: 28 });
-  const springImgX = useSpring(imgX, { stiffness: 260, damping: 28 });
+  const springRX = useSpring(rotateX, { stiffness: 280, damping: 26 });
+  const springRY = useSpring(rotateY, { stiffness: 280, damping: 26 });
+  const springImgY = useSpring(imgY, { stiffness: 280, damping: 26 });
+  const springImgX = useSpring(imgX, { stiffness: 280, damping: 26 });
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (reduceMotion || !cardRef.current) return;
@@ -188,7 +188,7 @@ function WorkCard({
   return (
     <motion.div
       ref={cardRef}
-      className={`group relative flex flex-col justify-between overflow-hidden rounded-[28px] bg-white border border-slate-200/90 shadow-[0_10px_30px_-15px_rgba(15,23,42,0.05)] transition-all duration-500 hover:border-[#2563EB]/80 hover:shadow-[0_25px_60px_-15px_rgba(37,99,235,0.16)] dark:bg-slate-900/90 dark:border-slate-800 dark:hover:border-blue-500/80 ${
+      className={`group relative flex flex-col justify-between overflow-hidden rounded-[28px] bg-white border border-slate-200/90 shadow-[0_10px_30px_-15px_rgba(15,23,42,0.05)] transition-all duration-500 hover:-translate-y-3 hover:border-[#2563EB] hover:shadow-[0_30px_70px_-15px_rgba(37,99,235,0.20)] dark:bg-slate-900/90 dark:border-slate-800 dark:hover:border-blue-500/80 ${
         isBento ? work.gridClass : ""
       } ${work.featured ? "p-7 lg:p-9" : work.wideBanner ? "p-7 lg:p-9" : "p-6 lg:p-7"}`}
       initial={reduceMotion ? undefined : { opacity: 0, y: 32, scale: 0.96 }}
@@ -208,19 +208,25 @@ function WorkCard({
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={handleMouseLeave}
     >
-      {/* Background blueprint grid texture */}
+      {/* Micro light sweep sheen */}
       <div
-        className="pointer-events-none absolute inset-0 opacity-[0.03] group-hover:opacity-[0.06] transition-opacity duration-500"
+        className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-[linear-gradient(110deg,transparent_20%,rgba(37,99,235,0.04)_40%,rgba(37,99,235,0.12)_50%,rgba(37,99,235,0.04)_60%,transparent_80%)] bg-[length:200%_100%] animate-none group-hover:animate-shimmer"
+        aria-hidden="true"
+      />
+
+      {/* Blueprint grid background lines */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.035] group-hover:opacity-[0.07] transition-opacity duration-500"
         style={{
           backgroundImage:
             "radial-gradient(#0f172a 1px, transparent 1px), linear-gradient(to right, #0f172a 1px, transparent 1px)",
-          backgroundSize: "16px 16px, 32px 32px",
+          backgroundSize: "20px 20px, 40px 40px",
         }}
         aria-hidden="true"
       />
 
-      {/* Hover corner dot */}
-      <div className="absolute top-5 right-5 w-2 h-2 rounded-full bg-[#2563EB] opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-[0_0_10px_#2563eb]" aria-hidden="true" />
+      {/* Hover corner glow dot */}
+      <div className="absolute top-5 right-5 w-2.5 h-2.5 rounded-full bg-[#2563EB] opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-[0_0_12px_#2563eb]" aria-hidden="true" />
 
       {work.wideBanner ? (
         /* Wide Banner Card Layout (SupportIQ) */
@@ -252,9 +258,9 @@ function WorkCard({
                 {work.highlights?.map((h) => (
                   <span
                     key={h}
-                    className="text-xs text-slate-600 dark:text-slate-400 bg-slate-100/90 dark:bg-slate-800 px-3 py-1 rounded-md border border-slate-200/60 dark:border-slate-700/60 font-medium"
+                    className="text-xs text-slate-700 dark:text-slate-300 bg-slate-100/90 dark:bg-slate-800 px-3 py-1 rounded-md border border-slate-200/60 dark:border-slate-700/60 font-medium flex items-center gap-1.5"
                   >
-                    ✓ {h}
+                    <Check className="w-3.5 h-3.5 text-[#2563EB]" /> {h}
                   </span>
                 ))}
               </div>
@@ -262,11 +268,12 @@ function WorkCard({
 
             <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
               <div className="flex items-center gap-2">
-                {work.stack.map(([name]) => (
+                {work.stack.map(([name, logo]) => (
                   <span
                     key={name}
-                    className="text-xs font-medium text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-200/50 dark:border-slate-700/50"
+                    className="text-xs font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-200/60 dark:border-slate-700/60 flex items-center gap-1.5"
                   >
+                    <Image src={logo} alt={name} width={14} height={14} className="object-contain" />
                     {name}
                   </span>
                 ))}
@@ -290,10 +297,10 @@ function WorkCard({
                   x: reduceMotion ? 0 : springImgX,
                   y: reduceMotion ? 0 : springImgY,
                 }}
-                animate={hovered && !reduceMotion ? { scale: 1.05, y: -6 } : { scale: 1, y: 0 }}
+                animate={hovered && !reduceMotion ? { scale: 1.07, y: -8 } : { scale: 1, y: 0 }}
                 transition={{ duration: 0.52, ease: [0.16, 1, 0.3, 1] }}
               />
-              <span className="absolute top-3 left-3 text-[10px] font-bold text-slate-400 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-md">
+              <span className="absolute top-3 left-3 text-[10px] font-bold text-white/90 bg-slate-900/80 backdrop-blur-md px-2.5 py-1 rounded-md border border-white/10">
                 06
               </span>
             </div>
@@ -317,12 +324,12 @@ function WorkCard({
                 x: reduceMotion ? 0 : springImgX,
                 y: reduceMotion ? 0 : springImgY,
               }}
-              animate={hovered && !reduceMotion ? { scale: 1.06, y: -6 } : { scale: 1, y: 0 }}
+              animate={hovered && !reduceMotion ? { scale: 1.07, y: -8 } : { scale: 1, y: 0 }}
               transition={{ duration: 0.52, ease: [0.16, 1, 0.3, 1] }}
             />
 
             {/* Micro light sweep */}
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent opacity-0 group-hover/img:opacity-100 transition-opacity duration-500" aria-hidden="true" />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-transparent via-white/15 to-transparent opacity-0 group-hover/img:opacity-100 transition-opacity duration-500" aria-hidden="true" />
 
             {/* Badges overlay */}
             <div className="absolute top-3.5 left-3.5 flex items-center gap-2">
@@ -364,9 +371,9 @@ function WorkCard({
                   {work.highlights?.map((h) => (
                     <span
                       key={h}
-                      className="text-xs text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-md border border-slate-200/80 dark:border-slate-700/80 font-medium"
+                      className="text-xs text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-md border border-slate-200/80 dark:border-slate-700/80 font-medium flex items-center gap-1.5"
                     >
-                      ✓ {h}
+                      <Check className="w-3.5 h-3.5 text-[#2563EB]" /> {h}
                     </span>
                   ))}
                 </div>
@@ -376,11 +383,12 @@ function WorkCard({
             {/* Footer */}
             <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800">
               <div className="flex items-center gap-1.5 flex-wrap">
-                {work.stack.slice(0, 3).map(([name]) => (
+                {work.stack.slice(0, 3).map(([name, logo]) => (
                   <span
                     key={name}
-                    className="text-[11px] font-medium text-slate-600 dark:text-slate-400 bg-slate-100/90 dark:bg-slate-800 px-2.5 py-1 rounded-md border border-slate-200/60 dark:border-slate-700/60"
+                    className="text-[11px] font-medium text-slate-700 dark:text-slate-300 bg-slate-100/90 dark:bg-slate-800 px-2.5 py-1 rounded-md border border-slate-200/60 dark:border-slate-700/60 flex items-center gap-1.5"
                   >
+                    <Image src={logo} alt={name} width={13} height={13} className="object-contain" />
                     {name}
                   </span>
                 ))}
