@@ -51,7 +51,7 @@ export default function LoadingScreen() {
 
     if (nav?.type !== "navigate" && nav?.type !== "reload") return;
 
-    setVisible(true);
+    queueMicrotask(() => setVisible(true));
     const startTime = performance.now();
 
     const msgTimer = setInterval(

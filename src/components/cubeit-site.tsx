@@ -12,8 +12,6 @@ import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler";
 import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 import { ThreeDMarquee, type ThreeDMarqueeItem } from "@/components/ui/3d-marquee";
-import { LampContainer } from "@/components/ui/lamp";
-import { PinContainer } from "@/components/ui/3d-pin";
 import { Cover } from "@/components/ui/cover";
 import Globe3D, { type GlobeMarker } from "@/components/ui/3d-globe";
 import { GoogleGeminiEffect } from "@/components/ui/google-gemini-effect";
