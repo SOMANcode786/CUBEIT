@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+<defs><linearGradient id="g" x1=".05" y1=".1" x2=".95" y2=".9"><stop stop-color="#49F0FF"/><stop offset=".48" stop-color="#2DB9FF"/><stop offset="1" stop-color="#3864FF"/></linearGradient></defs>
+<path fill="url(#g)" fill-rule="evenodd" d="M64 16a48 48 0 1 1 0 96 48 48 0 0 1 0-96Zm0 18a30 30 0 1 0 0 60 30 30 0 0 0 0-60Z"/>
+<circle cx="96" cy="38" r="8" fill="#69F4FF"/>
+</svg>

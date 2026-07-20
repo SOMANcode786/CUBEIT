@@ -1,14 +1,13 @@
 "use client";
 
-import { Fragment, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
-import { ArrowLeft, ArrowRight, ArrowUpRight, Briefcase, Check, ChevronDown, ChevronUp, Code2, Cpu, FlaskConical, Sparkles } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpRight, Briefcase, Check, ChevronDown, ChevronUp, Code2, Cpu, FlaskConical, Menu, Moon, Sparkles, Sun, X } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
 import { AnimatePresence, motion, useMotionValue, useReducedMotion } from "motion/react";
 import DotField from "@/components/react-bits/dot-field";
-import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler";
 import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 import { ThreeDMarquee, type ThreeDMarqueeItem } from "@/components/ui/3d-marquee";
@@ -19,6 +18,7 @@ import { ExpandableCards } from "@/components/ui/expandable-cards";
 import ClothReel from "@/components/motion/cloth-reel";
 import { CursorFill } from "@/components/motion/cursor-fill";
 import ClientWorkShowcase from "@/components/client-work-showcase";
+import KineticCursorTrail from "@/components/kinetic-cursor-trail";
 
 const serviceCards = [
   {
@@ -542,8 +542,6 @@ function LogoMark({ withWord = false }: { withWord?: boolean }) {
 
 function CubeThemeToggle() {
   const [theme, setTheme] = useState<"light" | "dark">("light");
-  const [burst, setBurst] = useState(false);
-  const [burstStyle, setBurstStyle] = useState<CSSProperties>({});
 
   useEffect(() => {
     const saved = localStorage.getItem("cubeit-theme") === "dark" ? "dark" : "light";
@@ -554,40 +552,36 @@ function CubeThemeToggle() {
     document.documentElement.classList.toggle("dark", theme === "dark");
   }, [theme]);
 
-  const handleThemeChange = (next: "light" | "dark") => {
+  const toggle = () => {
+    const next = theme === "dark" ? "light" : "dark";
     setTheme(next);
     localStorage.setItem("cubeit-theme", next);
   };
 
-  const handleLaunch = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const rect = event.currentTarget.getBoundingClientRect();
-    setBurstStyle({
-      left: rect.left + rect.width / 2,
-      top: rect.top + rect.height / 2,
-      "--dx": `${window.innerWidth / 2 - (rect.left + rect.width / 2)}px`,
-      "--dy": `${window.innerHeight / 2 - (rect.top + rect.height / 2)}px`,
-    } as CSSProperties);
-    setBurst(true);
-    window.setTimeout(() => setBurst(false), 720);
-  };
-
   return (
-    <>
-      <AnimatedThemeToggler
-        variant="star"
-        fromCenter
-        duration={720}
-        theme={theme}
-        onThemeChange={handleThemeChange}
-        onClick={handleLaunch}
-        className="theme-toggle-star"
-      />
-      {burst ? (
-        <span className="theme-toggle-burst" style={burstStyle} aria-hidden="true">
-          {theme === "dark" ? "☀" : "✦"}
-        </span>
-      ) : null}
-    </>
+    <button
+      type="button"
+      onClick={toggle}
+      className="relative flex items-center w-14 h-7.5 rounded-full bg-slate-100 border border-slate-200/90 dark:bg-slate-800 dark:border-slate-700 p-0.5 transition-colors duration-300 shadow-inner cursor-pointer"
+      aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
+    >
+      <span className="sr-only">Toggle theme</span>
+      <div className="flex items-center justify-between w-full px-1.5 text-slate-400">
+        <Sun className="w-3.5 h-3.5 text-amber-500" />
+        <Moon className="w-3.5 h-3.5 text-blue-400" />
+      </div>
+      <motion.div
+        className="absolute top-0.5 left-0.5 w-6.5 h-6.5 rounded-full bg-white dark:bg-slate-900 shadow-md flex items-center justify-center border border-slate-200/80 dark:border-slate-700"
+        animate={{ x: theme === "dark" ? 26 : 0 }}
+        transition={{ type: "spring", stiffness: 400, damping: 30 }}
+      >
+        {theme === "dark" ? (
+          <Moon className="w-3.5 h-3.5 text-blue-400 fill-blue-400" />
+        ) : (
+          <Sun className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+        )}
+      </motion.div>
+    </button>
   );
 }
 
@@ -614,90 +608,185 @@ function OurWorkDropdown() {
   };
 
   return (
-    <div className="nav-work-wrap" ref={ref}>
+    <div className="relative" ref={ref}>
       <button
-        className="nav-work-trigger"
+        type="button"
+        className="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800 transition-colors duration-200 cursor-pointer"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-haspopup="menu"
       >
         Our Work
-        <ChevronDown className="nav-work-chevron" aria-hidden="true" />
+        <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${open ? "rotate-180 text-[#2563EB]" : ""}`} aria-hidden="true" />
       </button>
-      {open && (
-        <div className="nav-work-menu" role="menu">
-          <button className="nav-work-item" role="menuitem" onClick={() => go("client-projects")}>
-            <Briefcase aria-hidden="true" />
-            Client&apos;s Projects
-          </button>
-          <button className="nav-work-item" role="menuitem" onClick={() => go("labs-projects")}>
-            <FlaskConical aria-hidden="true" />
-            Labs Projects
-          </button>
-        </div>
-      )}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            className="absolute top-full right-0 mt-2 w-52 rounded-2xl bg-white border border-slate-200/90 shadow-xl p-2 z-50 dark:bg-slate-900 dark:border-slate-800"
+            role="menu"
+            initial={{ opacity: 0, y: -8, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -6, scale: 0.96 }}
+            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <button
+              className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 hover:text-[#2563EB] dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-blue-400 transition-colors cursor-pointer"
+              role="menuitem"
+              onClick={() => go("client-projects")}
+            >
+              <Briefcase className="w-4 h-4 text-[#2563EB]" aria-hidden="true" />
+              Client&apos;s Projects
+            </button>
+            <button
+              className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 hover:text-[#2563EB] dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-blue-400 transition-colors cursor-pointer"
+              role="menuitem"
+              onClick={() => go("labs-projects")}
+            >
+              <FlaskConical className="w-4 h-4 text-[#2563EB]" aria-hidden="true" />
+              Labs Projects
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
 
 function Navbar() {
-  const lastScrollY = useRef(0);
-  const navRef = useRef<HTMLElement>(null);
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    const nav = navRef.current;
-    if (!nav) return;
-
-    // Fire the premium stretch-and-settle entrance animation.
-    // Called only when transitioning from hidden → visible.
-    const triggerReveal = () => {
-      nav.classList.remove("nav--revealing");
-      void nav.offsetHeight; // force reflow so animation restarts cleanly
-      nav.classList.add("nav--revealing");
-      nav.addEventListener(
-        "animationend",
-        () => nav.classList.remove("nav--revealing"),
-        { once: true }
-      );
-    };
-
     const handleScroll = () => {
-      const y = window.scrollY;
-      const wasHidden = nav.hasAttribute("data-hidden");
-      if (y < 50) {
-        nav.removeAttribute("data-hidden");
-        if (wasHidden) triggerReveal();
-      } else if (y > lastScrollY.current) {
-        nav.classList.remove("nav--revealing");
-        nav.dataset.hidden = "true";
-      } else {
-        nav.removeAttribute("data-hidden");
-        if (wasHidden) triggerReveal();
-      }
-      if (y > 60) {
-        nav.setAttribute("data-scrolled", "true");
-      } else {
-        nav.removeAttribute("data-scrolled");
-      }
-      lastScrollY.current = y;
+      setScrolled(window.scrollY > 40);
     };
-
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
-    <header ref={navRef} className="nav-shell">
-      <a className="nav-logo" href="#home" aria-label="CubeIT home"><LogoMark /></a>
-      <nav className="nav-links" aria-label="Main navigation">
-        <a href="#home">Home</a>
-        <a href="#services">Services</a>
-        <OurWorkDropdown />
-      </nav>
-      <div className="nav-actions">
-        <CubeThemeToggle />
-        <a className="nav-cta" href="/contact">Start a project <ArrowUpRight /></a>
+    <header className="sticky top-4 z-50 w-full px-4 sm:px-6">
+      <div
+        className={`w-[min(100%,1240px)] mx-auto flex items-center justify-between bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl shadow-[0_10px_30px_-10px_rgba(15,23,42,0.08)] transition-all duration-300 px-5 sm:px-6 ${
+          scrolled ? "py-2.5 shadow-lg" : "py-4"
+        }`}
+      >
+        <a href="#home" className="flex items-center gap-2.5" aria-label="CubeIT home">
+          <LogoMark withWord />
+        </a>
+
+        <nav className="hidden md:flex items-center gap-1 bg-slate-50/90 dark:bg-slate-800/60 p-1 rounded-full border border-slate-200/60 dark:border-slate-700/60">
+          <a
+            href="#home"
+            className="px-4 py-1.5 rounded-full text-xs font-semibold text-slate-700 hover:text-slate-900 hover:bg-white dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800 transition-all duration-200 shadow-2xs"
+          >
+            Home
+          </a>
+          <a
+            href="#services"
+            className="px-4 py-1.5 rounded-full text-xs font-semibold text-slate-700 hover:text-slate-900 hover:bg-white dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800 transition-all duration-200 shadow-2xs"
+          >
+            Services
+          </a>
+          <OurWorkDropdown />
+        </nav>
+
+        <div className="flex items-center gap-3">
+          <div className="hidden sm:block">
+            <CubeThemeToggle />
+          </div>
+
+          <a
+            href="/contact"
+            className="group relative hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-[#1E63F4] to-[#2563EB] text-white text-xs font-semibold shadow-[0_4px_14px_rgba(37,99,235,0.3)] hover:shadow-[0_8px_25px_rgba(37,99,235,0.45)] hover:scale-[1.03] active:scale-[0.98] transition-all duration-300 overflow-hidden"
+          >
+            <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/25 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out" />
+            <span>Start a project</span>
+            <ArrowUpRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+          </a>
+
+          <button
+            type="button"
+            className="md:hidden w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-700 dark:text-slate-200 cursor-pointer"
+            onClick={() => setMobileOpen(true)}
+            aria-label="Open mobile menu"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+        </div>
       </div>
+
+      <AnimatePresence>
+        {mobileOpen && (
+          <>
+            <motion.div
+              className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 md:hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMobileOpen(false)}
+            />
+            <motion.div
+              className="fixed top-0 right-0 bottom-0 w-[300px] bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-800 p-6 z-50 flex flex-col justify-between shadow-2xl md:hidden"
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <div>
+                <div className="flex items-center justify-between pb-6 border-b border-slate-100 dark:border-slate-800">
+                  <LogoMark withWord />
+                  <button
+                    type="button"
+                    onClick={() => setMobileOpen(false)}
+                    className="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 cursor-pointer"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <div className="flex flex-col gap-3 mt-6">
+                  <a
+                    href="#home"
+                    onClick={() => setMobileOpen(false)}
+                    className="px-4 py-3 rounded-xl text-sm font-semibold text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                  >
+                    Home
+                  </a>
+                  <a
+                    href="#services"
+                    onClick={() => setMobileOpen(false)}
+                    className="px-4 py-3 rounded-xl text-sm font-semibold text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                  >
+                    Services
+                  </a>
+                  <a
+                    href="#work"
+                    onClick={() => setMobileOpen(false)}
+                    className="px-4 py-3 rounded-xl text-sm font-semibold text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                  >
+                    Our Work
+                  </a>
+                </div>
+              </div>
+
+              <div className="pt-6 border-t border-slate-100 dark:border-slate-800 flex flex-col gap-4">
+                <div className="flex items-center justify-between px-2">
+                  <span className="text-xs font-semibold text-slate-500">Appearance</span>
+                  <CubeThemeToggle />
+                </div>
+                <a
+                  href="/contact"
+                  onClick={() => setMobileOpen(false)}
+                  className="w-full py-3 rounded-xl bg-[#2563EB] text-white text-center text-sm font-semibold flex items-center justify-center gap-2 shadow-md"
+                >
+                  Start a project <ArrowUpRight className="w-4 h-4" />
+                </a>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </header>
   );
 }
@@ -724,102 +813,147 @@ const TECH_TERMS = [
 ] as const;
 
 function TechTagline() {
-  const [active, setActive] = useState<number | null>(null);
+  const [active, setActive] = useState<number>(0);
+  const [userInteracted, setUserInteracted] = useState(false);
+
+  useEffect(() => {
+    if (userInteracted) return;
+    const interval = setInterval(() => {
+      setActive((prev) => (prev + 1) % TECH_TERMS.length);
+    }, 3500);
+    return () => clearInterval(interval);
+  }, [userInteracted]);
+
   return (
     <div
-      className="tech-tagline"
-      role="text"
-      aria-label="AI Products · Enterprise Software · Digital Systems"
+      className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-8"
+      role="tablist"
+      aria-label="Category Navigation"
     >
-      {/* Ghost word: key changes each time active changes so animation reruns */}
-      {active !== null && (
-        <span className="tech-tagline__ghost" aria-hidden="true" key={active}>
-          {TECH_TERMS[active].ghost}
-        </span>
-      )}
-      {TECH_TERMS.map((term, i) => (
-        <Fragment key={term.label}>
-          {i > 0 && (
-            <span
-              className="tech-tagline__sep"
-              aria-hidden="true"
-              style={{ animationDelay: `${0.2 + i * 0.22 - 0.08}s` } as CSSProperties}
-            />
-          )}
-          <span
-            className="tech-tagline__word-wrap"
-            style={{ animationDelay: `${0.1 + i * 0.22}s` } as CSSProperties}
+      {TECH_TERMS.map((term, i) => {
+        const isSelected = active === i;
+        return (
+          <button
+            key={term.label}
+            type="button"
+            role="tab"
+            aria-selected={isSelected}
+            onClick={() => {
+              setActive(i);
+              setUserInteracted(true);
+            }}
+            onMouseEnter={() => {
+              setActive(i);
+              setUserInteracted(true);
+            }}
+            className={`relative px-4 py-2 rounded-full text-xs font-semibold tracking-wider uppercase transition-colors duration-200 cursor-pointer ${
+              isSelected
+                ? "text-[#2563EB] dark:text-blue-400"
+                : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
+            }`}
           >
-            <span
-              className="tech-tagline__term"
-              data-active={active === i ? "" : undefined}
-              data-dim={active !== null && active !== i ? "" : undefined}
-              onMouseEnter={() => setActive(i)}
-              onMouseLeave={() => setActive(null)}
-            >
-              {term.label}
-            </span>
-          </span>
-        </Fragment>
-      ))}
+            {term.label}
+            {isSelected && (
+              <motion.div
+                layoutId="techTaglineUnderline"
+                className="absolute bottom-0 left-3 right-3 h-0.5 bg-[#2563EB] dark:bg-blue-400 rounded-full"
+                transition={{ type: "spring", stiffness: 380, damping: 30 }}
+              />
+            )}
+          </button>
+        );
+      })}
     </div>
   );
 }
 
 function Hero() {
+  const heroSectionRef = useRef<HTMLElement>(null);
+
   return (
     <div className="hero-stack" id="home">
-      <section className="hero-section page-shell">
-        <div className="hero-noise" aria-hidden="true" />
-        <TechTagline />
-        <h1 className="hero-title" aria-label="We build the systems behind smarter companies">
+      <section ref={heroSectionRef} className="hero-section page-shell relative overflow-hidden">
+        {/* Kinetic SVG Cursor Physics Trail Overlay (Z-INDEX 1) */}
+        <KineticCursorTrail containerRef={heroSectionRef} />
 
-          {/* ── Line 1: "We build [chips] the systems behind" ─────────────── */}
-          <span className="hero-line-1">
-            <span className="hero-word hero-we">We build</span>
-            <span className="hero-media-chips" aria-hidden="true">
-              <span className="chip-img chip-img-a"><Code2 /></span>
-              <span className="chip-img chip-img-b"><Cpu /></span>
-              <span className="chip-img chip-img-c"><Sparkles /></span>
-            </span>
-            <span className="hero-word">the systems</span>
-            <span className="hero-word">behind</span>
-          </span>
+        {/* Hero Background Noise */}
+        <div className="hero-noise pointer-events-none" aria-hidden="true" />
 
-          {/* ── Lines 2+3: CSS grid — col1=arrow, col2=smarter/companies ─── *
-           *   grid-template-columns: max-content max-content
-           *   The grid automatically sizes col 1 to the scribble's rendered
-           *   width at every breakpoint, so "companies" (row 2, col 2) is
-           *   pixel-perfectly left-aligned with "smarter" (row 1, col 2)
-           *   without any manual calc() or hard-coded pixel offsets.
-           * ─────────────────────────────────────────────────────────────── */}
-          <span className="hero-lines-23">
+        {/* Hero Main Content (Z-INDEX 10) */}
+        <div className="relative z-10 w-full flex flex-col items-center">
+          <TechTagline />
 
-            {/* Row 1 col 1 — orange hand-drawn arrow */}
-            <span className="hero-scribble" aria-hidden="true">
-              <svg viewBox="0 0 260 100" fill="none">
-                <path d="M12 65C52 4 105 2 105 47C105 76 137 77 150 43C166 0 106 0 80 72C119 43 190 39 240 79" stroke="currentColor" strokeWidth="8" strokeLinecap="round" />
-                <path d="M213 57L240 79L201 80" stroke="currentColor" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </span>
-
-            {/* Row 1 col 2 — "smarter" + cloth reel anchor */}
-            <span className="hero-smarter-group">
-              <span className="hero-word">smarter</span>
-              <span className="hero-video-origin" aria-hidden="true" />
-            </span>
-
-            {/* Row 2 col 2 — "companies", left-aligns with "smarter" via grid */}
-            <span className="hero-line-3">
-              <span className="hero-word">companies</span>
+          <h1 className="hero-title" aria-label="We Architect the Digital Engine of Modern Enterprise">
+            <span className="hero-line-1">
+              <span className="hero-word hero-we">We Architect</span>
+              <span className="hero-media-chips" aria-hidden="true">
+                <motion.span
+                  className="chip-img chip-img-a flex items-center justify-center"
+                  animate={{ y: [0, -6, 0] }}
+                  transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  <Code2 />
+                </motion.span>
+                <motion.span
+                  className="chip-img chip-img-b flex items-center justify-center"
+                  animate={{ y: [0, 6, 0] }}
+                  transition={{ duration: 3.6, repeat: Infinity, ease: "easeInOut", delay: 0.4 }}
+                >
+                  <Cpu />
+                </motion.span>
+                <motion.span
+                  className="chip-img chip-img-c flex items-center justify-center"
+                  animate={{ y: [0, -5, 0] }}
+                  transition={{ duration: 3.4, repeat: Infinity, ease: "easeInOut", delay: 0.8 }}
+                >
+                  <Sparkles />
+                </motion.span>
+              </span>
+              <span className="hero-word">the Digital Engine</span>
             </span>
 
-          </span>
+            <span className="hero-lines-23">
+              <span className="hero-scribble" aria-hidden="true">
+                <svg viewBox="0 0 260 100" fill="none">
+                  <motion.path
+                    d="M12 65C52 4 105 2 105 47C105 76 137 77 150 43C166 0 106 0 80 72C119 43 190 39 240 79"
+                    stroke="currentColor"
+                    strokeWidth="8"
+                    strokeLinecap="round"
+                    initial={{ pathLength: 0 }}
+                    whileInView={{ pathLength: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 1.2, ease: "easeInOut", delay: 0.3 }}
+                  />
+                  <motion.path
+                    d="M213 57L240 79L201 80"
+                    stroke="currentColor"
+                    strokeWidth="8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    initial={{ pathLength: 0 }}
+                    whileInView={{ pathLength: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, ease: "easeOut", delay: 1.3 }}
+                  />
+                </svg>
+              </span>
 
-        </h1>
-        <div className="hero-foot reveal-up">
-          <p>From complex operations to clean, scalable platforms—CubeIT structures the idea, engineers the system, and prepares the business to grow.</p>
-          <a href="#work" className="hero-scroll">Explore systems <ArrowUpRight /></a>
+              <span className="hero-smarter-group">
+                <span className="hero-word">of Modern</span>
+                <span className="hero-video-origin" aria-hidden="true" />
+              </span>
+
+              <span className="hero-line-3">
+                <span className="hero-word">Enterprise.</span>
+              </span>
+            </span>
+          </h1>
+
+          <div className="hero-foot reveal-up">
+            <p>CubeIT engineers high-volume AI products, resilient enterprise platforms, and scalable digital systems for ambitious organizations.</p>
+            <a href="#work" className="hero-scroll">Explore systems <ArrowUpRight /></a>
+          </div>
         </div>
       </section>
       <section className="reel-section" aria-label="CubeIT reel">
