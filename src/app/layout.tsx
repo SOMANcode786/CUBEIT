@@ -20,6 +20,13 @@ const nunitoSans = Nunito_Sans({
 export const metadata: Metadata = {
   title: "CubeIT | Intelligent Software for Modern Businesses",
   description: "CubeIT builds AI products, enterprise software, intelligent automation, and scalable digital platforms for modern businesses.",
+  icons: {
+    icon: [
+      { url: "/brand/cubeit-logo.png", type: "image/png" },
+    ],
+    shortcut: ["/brand/cubeit-logo.png"],
+    apple: ["/brand/cubeit-logo.png"],
+  },
   openGraph: {
     title: "CubeIT | Intelligent Software for Modern Businesses",
     description: "AI products, enterprise software, intelligent automation, and scalable digital platforms.",
