@@ -157,19 +157,17 @@ function WorkCard({
   isBento: boolean;
   reduceMotion: boolean;
 }) {
-  const cardRef = useRef<HTMLDivElement>(null);
   const [hovered, setHovered] = useState(false);
 
   return (
     <motion.div
-      ref={cardRef}
-      className={`group relative flex flex-col justify-between overflow-hidden rounded-[24px] bg-white border border-slate-200/80 shadow-[0_4px_20px_rgba(0,0,0,0.03)] transition-all duration-300 hover:-translate-y-1.5 hover:border-[#2563EB]/60 hover:shadow-[0_20px_45px_-12px_rgba(37,99,235,0.12)] dark:bg-slate-900/90 dark:border-slate-800 dark:hover:border-blue-500/60 ${
+      className={`group relative flex flex-col justify-between overflow-hidden rounded-[24px] bg-white border border-slate-200/90 shadow-[0_4px_20px_rgba(0,0,0,0.03)] transition-all duration-300 hover:-translate-y-1.5 hover:border-[#2563EB]/60 hover:shadow-[0_20px_45px_-10px_rgba(37,99,235,0.12)] dark:bg-slate-900/90 dark:border-slate-800 dark:hover:border-blue-500/60 ${
         isBento ? work.gridClass : ""
       } ${work.featured ? "p-7 lg:p-9" : work.wideBanner ? "p-7 lg:p-9" : "p-6 lg:p-7"}`}
       initial={reduceMotion ? undefined : { opacity: 0, y: 24, scale: 0.98 }}
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true, margin: "-40px" }}
-      transition={{ duration: 0.55, delay: animationIndex * 0.07, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: 0.52, delay: animationIndex * 0.07, ease: [0.16, 1, 0.3, 1] }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
