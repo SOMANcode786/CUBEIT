@@ -49,61 +49,100 @@ const serviceCards = [
 
 const works = [
   {
+    id: "mizan",
     title: "MIZAN",
-    caption: "AI legal case management",
-    meta: "Legal intelligence · Concept",
+    subtitle: "AI Legal Case Management System",
+    eyebrow: "AI Legal Intelligence",
+    badge: "Enterprise V1.0",
+    category: "AI Products",
     image: "/projects/mizan-legal.jpg",
-    context: "Drafting, evidence, hearings, and secure matter workflows in one legal operating system.",
+    context: "Drafting, evidence vaults, hearing schedules, and secure matter workflows in one unified legal operating system.",
     stack: [["Python", "/logos-png/python.png"], ["React", "/logos-png/react.png"], ["Postgres", "/logos-png/postgresql.png"]],
+    gridClass: "lg:col-span-8 lg:row-span-2",
+    featured: true,
+    highlights: ["AI Case Drafting", "Evidence Vault", "Deadline Automation"],
   },
   {
+    id: "shopiq",
     title: "ShopIQ",
-    caption: "Retail and inventory intelligence",
-    meta: "Forecasting · Concept",
+    subtitle: "Retail & Inventory Intelligence",
+    eyebrow: "Retail Operations",
+    badge: "Production Concept",
+    category: "Business Platforms",
     image: "/projects/shopiq.jpg",
-    context: "Live stock movement, demand forecasting, and branch performance for modern retail teams.",
+    context: "Live stock movement, predictive demand forecasting, and multi-branch performance analytics for retail.",
     stack: [["Next.js", "/logos-png/nextjs.png"], ["Node.js", "/logos-png/nodejs.png"], ["Postgres", "/logos-png/postgresql.png"]],
+    gridClass: "lg:col-span-4 lg:row-span-1",
+    featured: false,
+    highlights: ["Demand Forecasting", "Real-time Stock"],
   },
   {
+    id: "clinova",
     title: "Clinova",
-    caption: "Hospital and clinic operations",
-    meta: "Healthcare systems · Concept",
+    subtitle: "Hospital & Clinic Operations",
+    eyebrow: "Healthcare Systems",
+    badge: "Production Concept",
+    category: "Enterprise Software",
     image: "/projects/clinova.jpg",
-    context: "A calmer patient journey connecting appointments, records, billing, and clinical documentation.",
+    context: "A calmer patient journey connecting appointments, medical records, billing, and clinical documentation.",
     stack: [["React", "/logos-png/react.png"], ["TypeScript", "/logos-png/typescript.png"], ["Docker", "/logos-png/docker.png"]],
+    gridClass: "lg:col-span-4 lg:row-span-1",
+    featured: false,
+    highlights: ["EHR Sync", "Patient Portal"],
   },
   {
+    id: "documind",
     title: "DocuMind",
-    caption: "AI document intelligence",
-    meta: "OCR and workflows · Concept",
+    subtitle: "AI Document Intelligence",
+    eyebrow: "Document Automation",
+    badge: "Enterprise V1.0",
+    category: "AI Products",
     image: "/projects/documind.jpg",
-    context: "OCR, semantic search, approvals, and document chat for high-volume operations.",
+    context: "OCR, semantic search, automated approval routing, and document chat for high-volume operations.",
     stack: [["Python", "/logos-png/python.png"], ["Next.js", "/logos-png/nextjs.png"], ["Docker", "/logos-png/docker.png"]],
+    gridClass: "lg:col-span-7 lg:row-span-1",
+    featured: false,
+    highlights: ["Semantic Search", "OCR Pipeline"],
   },
   {
+    id: "buildgrid",
     title: "BuildGrid",
-    caption: "Construction project control",
-    meta: "Budgets and site progress · Concept",
+    subtitle: "Construction Project Control",
+    eyebrow: "Site Operations",
+    badge: "Field Operations",
+    category: "Automation",
     image: "/projects/buildgrid.jpg",
-    context: "Field progress, budgets, procurement, and contractor activity made visible in real time.",
+    context: "Field progress tracking, budget management, procurement, and contractor activity in real time.",
     stack: [["TypeScript", "/logos-png/typescript.png"], ["Node.js", "/logos-png/nodejs.png"], ["Postgres", "/logos-png/postgresql.png"]],
+    gridClass: "lg:col-span-5 lg:row-span-1",
+    featured: false,
+    highlights: ["Field Sync", "Budget Control"],
   },
   {
+    id: "supportiq",
     title: "SupportIQ",
-    caption: "AI customer support platform",
-    meta: "Agents and ticketing · Concept",
+    subtitle: "AI Support & Ticket Intelligence",
+    eyebrow: "Support Infrastructure",
+    badge: "Enterprise V1.0",
+    category: "Internal Tools",
     image: "/projects/supportiq.jpg",
-    context: "AI-assisted conversations, ticket routing, knowledge, and support analytics in one workspace.",
+    context: "Autonomous conversation routing, ticket intelligence, support knowledge graphs, and real-time agent copilot.",
     stack: [["React", "/logos-png/react.png"], ["Python", "/logos-png/python.png"], ["Tailwind", "/logos-png/tailwind.png"]],
+    gridClass: "lg:col-span-12 lg:row-span-1",
+    featured: false,
+    wideBanner: true,
+    highlights: ["Agent Copilot", "Ticket Routing", "Knowledge Graph"],
   },
 ];
 
-const WORK_CATEGORIES = ["All", "AI Products", "Enterprise Software", "Business Platforms", "Automation"] as const;
-
-const worksWithCategory = works.map((w, i) => ({
-  ...w,
-  category: (["AI Products", "Business Platforms", "Enterprise Software", "AI Products", "Business Platforms", "Automation"] as const)[i],
-}));
+const WORK_CATEGORIES = [
+  "All",
+  "AI Products",
+  "Enterprise Software",
+  "Business Platforms",
+  "Automation",
+  "Internal Tools",
+] as const;
 
 function WorkCard({
   work,
@@ -112,7 +151,7 @@ function WorkCard({
   isBento,
   reduceMotion,
 }: {
-  work: typeof worksWithCategory[0];
+  work: (typeof works)[0];
   originalIndex: number;
   animationIndex: number;
   isBento: boolean;
@@ -123,10 +162,15 @@ function WorkCard({
 
   const mouseX = useMotionValue(0.5);
   const mouseY = useMotionValue(0.5);
-  const rotateX = useTransform(mouseY, [0, 1], [2.5, -2.5]);
-  const rotateY = useTransform(mouseX, [0, 1], [-2.5, 2.5]);
-  const springRX = useSpring(rotateX, { stiffness: 280, damping: 32 });
-  const springRY = useSpring(rotateY, { stiffness: 280, damping: 32 });
+  const rotateX = useTransform(mouseY, [0, 1], [3, -3]);
+  const rotateY = useTransform(mouseX, [0, 1], [-3, 3]);
+  const imgY = useTransform(mouseY, [0, 1], [-5, 5]);
+  const imgX = useTransform(mouseX, [0, 1], [-5, 5]);
+
+  const springRX = useSpring(rotateX, { stiffness: 260, damping: 28 });
+  const springRY = useSpring(rotateY, { stiffness: 260, damping: 28 });
+  const springImgY = useSpring(imgY, { stiffness: 260, damping: 28 });
+  const springImgX = useSpring(imgX, { stiffness: 260, damping: 28 });
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (reduceMotion || !cardRef.current) return;
@@ -144,48 +188,215 @@ function WorkCard({
   return (
     <motion.div
       ref={cardRef}
-      className={`wb-card${isBento ? ` wb-item-${originalIndex}` : ""}`}
-      initial={{ opacity: 0, y: 22, scale: 0.96 }}
+      className={`group relative flex flex-col justify-between overflow-hidden rounded-[28px] bg-white border border-slate-200/90 shadow-[0_10px_30px_-15px_rgba(15,23,42,0.05)] transition-all duration-500 hover:border-[#2563EB]/80 hover:shadow-[0_25px_60px_-15px_rgba(37,99,235,0.16)] dark:bg-slate-900/90 dark:border-slate-800 dark:hover:border-blue-500/80 ${
+        isBento ? work.gridClass : ""
+      } ${work.featured ? "p-7 lg:p-9" : work.wideBanner ? "p-7 lg:p-9" : "p-6 lg:p-7"}`}
+      initial={reduceMotion ? undefined : { opacity: 0, y: 32, scale: 0.96 }}
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true, margin: "-40px" }}
-      transition={{ duration: 0.62, delay: animationIndex * 0.075, ease: [0.16, 1, 0.3, 1] }}
-      style={reduceMotion ? {} : {
-        rotateX: springRX,
-        rotateY: springRY,
-        transformStyle: "preserve-3d",
-      }}
+      transition={{ duration: 0.68, delay: animationIndex * 0.08, ease: [0.16, 1, 0.3, 1] }}
+      style={
+        reduceMotion
+          ? {}
+          : {
+              rotateX: springRX,
+              rotateY: springRY,
+              transformStyle: "preserve-3d",
+            }
+      }
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={handleMouseLeave}
     >
-      {/* Image area */}
-      <div className="wb-image-wrap">
-        <motion.div
-          className="wb-image"
-          style={{ backgroundImage: `url(${work.image})` }}
-          animate={hovered && !reduceMotion ? { scale: 1.07, y: -9 } : { scale: 1, y: 0 }}
-          transition={{ duration: 0.52, ease: [0.16, 1, 0.3, 1] }}
-        />
-        <span className="wb-status">Concept</span>
-        <span className="wb-index">{String(originalIndex + 1).padStart(2, "0")}</span>
-      </div>
+      {/* Background blueprint grid texture */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.03] group-hover:opacity-[0.06] transition-opacity duration-500"
+        style={{
+          backgroundImage:
+            "radial-gradient(#0f172a 1px, transparent 1px), linear-gradient(to right, #0f172a 1px, transparent 1px)",
+          backgroundSize: "16px 16px, 32px 32px",
+        }}
+        aria-hidden="true"
+      />
 
-      {/* Card body */}
-      <div className="wb-body">
-        <span className="wb-meta">{work.category}</span>
-        <h3 className="wb-title">{work.title}</h3>
-        <p className="wb-desc">{work.context}</p>
-        <div className="wb-footer">
-          <div className="wb-tags">
-            {work.stack.slice(0, 3).map(([name]) => (
-              <span key={name} className="wb-tag">{name}</span>
-            ))}
+      {/* Hover corner dot */}
+      <div className="absolute top-5 right-5 w-2 h-2 rounded-full bg-[#2563EB] opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-[0_0_10px_#2563eb]" aria-hidden="true" />
+
+      {work.wideBanner ? (
+        /* Wide Banner Card Layout (SupportIQ) */
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center w-full z-10">
+          <div className="lg:col-span-6 flex flex-col justify-between h-full space-y-5">
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <span className="px-3 py-1 rounded-full bg-blue-50 text-[#2563EB] border border-blue-100 text-[11px] font-bold tracking-wider uppercase dark:bg-blue-950/60 dark:border-blue-900/60 dark:text-blue-400">
+                  {work.eyebrow}
+                </span>
+                <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200/80 text-[10px] font-semibold flex items-center gap-1 dark:bg-emerald-950/40 dark:border-emerald-900/40 dark:text-emerald-400">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  {work.badge}
+                </span>
+              </div>
+
+              <h3 className="text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white tracking-tight">
+                {work.title}
+              </h3>
+              <p className="text-sm font-semibold text-[#2563EB] dark:text-blue-400 mt-1 mb-3">
+                {work.subtitle}
+              </p>
+              <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed max-w-xl">
+                {work.context}
+              </p>
+
+              {/* Highlights */}
+              <div className="flex flex-wrap gap-2 mt-4">
+                {work.highlights?.map((h) => (
+                  <span
+                    key={h}
+                    className="text-xs text-slate-600 dark:text-slate-400 bg-slate-100/90 dark:bg-slate-800 px-3 py-1 rounded-md border border-slate-200/60 dark:border-slate-700/60 font-medium"
+                  >
+                    ✓ {h}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
+              <div className="flex items-center gap-2">
+                {work.stack.map(([name]) => (
+                  <span
+                    key={name}
+                    className="text-xs font-medium text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-200/50 dark:border-slate-700/50"
+                  >
+                    {name}
+                  </span>
+                ))}
+              </div>
+              <a
+                href="/contact"
+                className="w-11 h-11 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-slate-900 dark:text-white group-hover:bg-[#2563EB] group-hover:border-[#2563EB] group-hover:text-white transition-all duration-300 flex items-center justify-center shadow-sm group-hover:shadow-[0_8px_20px_rgba(37,99,235,0.35)]"
+                aria-label={`Explore ${work.title}`}
+              >
+                <ArrowUpRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              </a>
+            </div>
           </div>
-          <a href="/contact" className="wb-arrow" aria-label={`Explore ${work.title}`}>
-            <ArrowUpRight size={15} />
-          </a>
+
+          <div className="lg:col-span-6 relative">
+            <div className="relative overflow-hidden rounded-2xl border border-slate-200/70 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 shadow-inner h-[240px] lg:h-[300px] group/img">
+              <motion.div
+                className="w-full h-full bg-cover bg-center transition-transform duration-700 ease-out"
+                style={{
+                  backgroundImage: `url(${work.image})`,
+                  x: reduceMotion ? 0 : springImgX,
+                  y: reduceMotion ? 0 : springImgY,
+                }}
+                animate={hovered && !reduceMotion ? { scale: 1.05, y: -6 } : { scale: 1, y: 0 }}
+                transition={{ duration: 0.52, ease: [0.16, 1, 0.3, 1] }}
+              />
+              <span className="absolute top-3 left-3 text-[10px] font-bold text-slate-400 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-md">
+                06
+              </span>
+            </div>
+          </div>
         </div>
-      </div>
+      ) : (
+        /* Standard Bento Card (Large, Medium, Wide) */
+        <div className="flex flex-col h-full justify-between space-y-6 z-10">
+          {/* Screenshot / Floating Image Area */}
+          <div
+            className={`relative overflow-hidden rounded-2xl border border-slate-200/70 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 shadow-inner group/img ${
+              work.featured
+                ? "h-[260px] lg:h-[340px]"
+                : "h-[200px] lg:h-[230px]"
+            }`}
+          >
+            <motion.div
+              className="w-full h-full bg-cover bg-center transition-transform duration-700 ease-out"
+              style={{
+                backgroundImage: `url(${work.image})`,
+                x: reduceMotion ? 0 : springImgX,
+                y: reduceMotion ? 0 : springImgY,
+              }}
+              animate={hovered && !reduceMotion ? { scale: 1.06, y: -6 } : { scale: 1, y: 0 }}
+              transition={{ duration: 0.52, ease: [0.16, 1, 0.3, 1] }}
+            />
+
+            {/* Micro light sweep */}
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent opacity-0 group-hover/img:opacity-100 transition-opacity duration-500" aria-hidden="true" />
+
+            {/* Badges overlay */}
+            <div className="absolute top-3.5 left-3.5 flex items-center gap-2">
+              <span className="px-3 py-1 rounded-full bg-white/90 dark:bg-slate-900/90 backdrop-blur-md text-[#2563EB] dark:text-blue-400 border border-blue-100 dark:border-blue-900/60 text-[10px] font-bold tracking-wider uppercase shadow-sm">
+                {work.category}
+              </span>
+            </div>
+
+            <div className="absolute top-3.5 right-3.5">
+              <span className="px-2.5 py-0.5 rounded-full bg-slate-900/80 dark:bg-black/80 backdrop-blur-md text-white text-[10px] font-semibold flex items-center gap-1 border border-white/20 shadow-sm">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                {work.badge}
+              </span>
+            </div>
+
+            <span className="absolute bottom-3 left-3.5 text-[11px] font-mono font-bold text-white/90 bg-slate-900/70 backdrop-blur-md px-2.5 py-0.5 rounded-md border border-white/10">
+              {String(originalIndex + 1).padStart(2, "0")}
+            </span>
+          </div>
+
+          {/* Body Content */}
+          <div className="flex flex-col justify-between flex-1 space-y-4">
+            <div>
+              <span className="text-[11px] font-bold tracking-wider uppercase text-[#2563EB] dark:text-blue-400 block mb-1">
+                {work.eyebrow}
+              </span>
+              <h3 className="text-2xl lg:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
+                {work.title}
+              </h3>
+              <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5 mb-2">
+                {work.subtitle}
+              </p>
+              <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                {work.context}
+              </p>
+
+              {work.featured && (
+                <div className="flex flex-wrap gap-2 mt-4 pt-2">
+                  {work.highlights?.map((h) => (
+                    <span
+                      key={h}
+                      className="text-xs text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-md border border-slate-200/80 dark:border-slate-700/80 font-medium"
+                    >
+                      ✓ {h}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                {work.stack.slice(0, 3).map(([name]) => (
+                  <span
+                    key={name}
+                    className="text-[11px] font-medium text-slate-600 dark:text-slate-400 bg-slate-100/90 dark:bg-slate-800 px-2.5 py-1 rounded-md border border-slate-200/60 dark:border-slate-700/60"
+                  >
+                    {name}
+                  </span>
+                ))}
+              </div>
+
+              <a
+                href="/contact"
+                className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-slate-900 dark:text-white group-hover:bg-[#2563EB] group-hover:border-[#2563EB] group-hover:text-white transition-all duration-300 flex items-center justify-center shadow-sm group-hover:shadow-[0_6px_20px_rgba(37,99,235,0.35)] shrink-0"
+                aria-label={`Explore ${work.title}`}
+              >
+                <ArrowUpRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </motion.div>
   );
 }
@@ -755,81 +966,108 @@ function Work() {
   const isBento = activeCategory === "All";
 
   const filtered = isBento
-    ? worksWithCategory
-    : worksWithCategory.filter((w) => w.category === activeCategory);
+    ? works
+    : works.filter((w) => w.category === activeCategory);
 
   return (
-    <section className="work-section page-shell" id="work">
+    <section className="work-section w-full" id="work">
       <span id="labs-projects" aria-hidden="true" className="nav-anchor" />
 
-      {/* Decorative glowing dots */}
-      <span className="wb-dot wb-dot-1" aria-hidden="true" />
-      <span className="wb-dot wb-dot-2" aria-hidden="true" />
-      <span className="wb-dot wb-dot-3" aria-hidden="true" />
-
-      {/* ── Heading ─────────────────────────────────────────────────────── */}
-      <motion.div
-        className="wb-head"
-        initial={reduced ? undefined : { opacity: 0, y: 28 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-60px" }}
-        transition={{ duration: 0.72, ease: [0.16, 1, 0.3, 1] }}
-      >
-        <div className="wb-label">
-          <Sparkles size={11} aria-hidden="true" />
-          Things We Build
-        </div>
-        <h2 className="wb-heading">
-          Software Built For<br />
-          <span className="wb-accent">Modern</span> Businesses
-        </h2>
-        <p className="wb-description">
-          AI-powered platforms, enterprise systems, and intelligent tools—
-          engineered for scale and built for real business outcomes.
-        </p>
-      </motion.div>
-
-      {/* ── Category selector ───────────────────────────────────────────── */}
-      <div className="wb-categories" role="group" aria-label="Filter products by category">
-        {WORK_CATEGORIES.map((cat, i) => (
-          <motion.button
-            key={cat}
-            type="button"
-            className={`wb-cat-btn${activeCategory === cat ? " wb-cat-active" : ""}`}
-            initial={reduced ? undefined : { opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.08 + i * 0.055, ease: [0.16, 1, 0.3, 1] }}
-            onClick={() => setActiveCategory(cat)}
-            aria-pressed={activeCategory === cat}
-          >
-            {cat}
-          </motion.button>
-        ))}
-      </div>
-
-      {/* ── Bento / filtered grid ───────────────────────────────────────── */}
-      <AnimatePresence mode="wait">
+      <div className="mx-auto w-[min(100%-48px,1440px)]">
+        {/* ── Section Heading ─────────────────────────────────────────────── */}
         <motion.div
-          key={activeCategory}
-          className={isBento ? "wb-grid" : "wb-grid-filtered"}
-          initial={reduced ? undefined : { opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={reduced ? undefined : { opacity: 0 }}
-          transition={{ duration: 0.18 }}
+          className="flex flex-col items-center text-center max-w-3xl mx-auto mb-14"
+          initial={reduced ? undefined : { opacity: 0, y: 32 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.76, ease: [0.16, 1, 0.3, 1] }}
         >
-          {filtered.map((work, i) => (
-            <WorkCard
-              key={work.title}
-              work={work}
-              originalIndex={worksWithCategory.indexOf(work)}
-              animationIndex={i}
-              isBento={isBento}
-              reduceMotion={!!reduced}
-            />
-          ))}
+          {/* Small Label Pill */}
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-[#2563EB] text-xs font-extrabold tracking-widest uppercase mb-5 shadow-xs dark:bg-blue-950/60 dark:border-blue-900/60 dark:text-blue-400">
+            <Sparkles size={12} className="text-[#2563EB] dark:text-blue-400" aria-hidden="true" />
+            THINGS WE BUILD
+          </div>
+
+          {/* Large Heading */}
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-slate-900 dark:text-white leading-[1.05] mb-5">
+            Software Built For{" "}
+            <span className="text-[#2563EB] dark:text-blue-500 relative inline-block">
+              Modern
+              <svg
+                className="absolute -bottom-2 left-0 w-full h-2 text-[#2563EB]/30"
+                viewBox="0 0 100 20"
+                preserveAspectRatio="none"
+                aria-hidden="true"
+              >
+                <path d="M0 15 Q 50 0, 100 15" stroke="currentColor" strokeWidth="4" fill="none" />
+              </svg>
+            </span>{" "}
+            Businesses
+          </h2>
+
+          {/* Description */}
+          <p className="text-slate-600 dark:text-slate-300 text-base sm:text-lg leading-relaxed max-w-[680px]">
+            AI-powered platforms, enterprise systems, and intelligent tools—engineered for scale, refined for human work, and built for real business outcomes.
+          </p>
         </motion.div>
-      </AnimatePresence>
+
+        {/* ── Category Selector (Segmented Control) ────────────────────── */}
+        <div
+          className="flex flex-wrap items-center justify-center gap-2.5 mb-16"
+          role="group"
+          aria-label="Filter products by category"
+        >
+          {WORK_CATEGORIES.map((cat, i) => {
+            const isActive = activeCategory === cat;
+            return (
+              <motion.button
+                key={cat}
+                type="button"
+                className={`px-5 py-2.5 rounded-full text-xs font-semibold tracking-wide transition-all duration-300 ${
+                  isActive
+                    ? "bg-[#2563EB] text-white shadow-[0_8px_20px_-4px_rgba(37,99,235,0.4)] border border-[#2563EB]"
+                    : "bg-white text-slate-600 border border-slate-200/90 hover:border-blue-300 hover:text-slate-900 hover:-translate-y-0.5 hover:shadow-md dark:bg-slate-900 dark:text-slate-300 dark:border-slate-800 dark:hover:border-slate-700"
+                }`}
+                initial={reduced ? undefined : { opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.06 + i * 0.04, ease: [0.16, 1, 0.3, 1] }}
+                onClick={() => setActiveCategory(cat)}
+                aria-pressed={isActive}
+              >
+                {cat}
+              </motion.button>
+            );
+          })}
+        </div>
+
+        {/* ── Product Showcase (Bento / Filtered Grid) ────────────────── */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeCategory}
+            className={
+              isBento
+                ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch"
+                : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 items-stretch"
+            }
+            initial={reduced ? undefined : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={reduced ? undefined : { opacity: 0 }}
+            transition={{ duration: 0.22 }}
+          >
+            {filtered.map((work, i) => (
+              <WorkCard
+                key={work.id}
+                work={work}
+                originalIndex={works.indexOf(work)}
+                animationIndex={i}
+                isBento={isBento}
+                reduceMotion={!!reduced}
+              />
+            ))}
+          </motion.div>
+        </AnimatePresence>
+      </div>
     </section>
   );
 }
