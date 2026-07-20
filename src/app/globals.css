@@ -1661,7 +1661,7 @@ body.has-elastic-cursor button { cursor: none !important; }
 .work-section {
   position: relative;
   overflow: visible;
-  padding-block: 180px;
+  padding-block: clamp(60px, 10vw, 180px);
   background-color: #F8FAFC;
 }
 .work-section::before {

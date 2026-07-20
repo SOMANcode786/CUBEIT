@@ -6,7 +6,7 @@ import { ArrowLeft, ArrowRight, ArrowUpRight, Briefcase, Check, ChevronDown, Che
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
-import { AnimatePresence, motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "motion/react";
+import { AnimatePresence, motion, useMotionValue, useReducedMotion } from "motion/react";
 import DotField from "@/components/react-bits/dot-field";
 import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler";
 import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
@@ -160,85 +160,30 @@ function WorkCard({
   const cardRef = useRef<HTMLDivElement>(null);
   const [hovered, setHovered] = useState(false);
 
-  const mouseX = useMotionValue(0.5);
-  const mouseY = useMotionValue(0.5);
-  const rotateX = useTransform(mouseY, [0, 1], [3.5, -3.5]);
-  const rotateY = useTransform(mouseX, [0, 1], [-3.5, 3.5]);
-  const imgY = useTransform(mouseY, [0, 1], [-7, 7]);
-  const imgX = useTransform(mouseX, [0, 1], [-7, 7]);
-
-  const springRX = useSpring(rotateX, { stiffness: 280, damping: 26 });
-  const springRY = useSpring(rotateY, { stiffness: 280, damping: 26 });
-  const springImgY = useSpring(imgY, { stiffness: 280, damping: 26 });
-  const springImgX = useSpring(imgX, { stiffness: 280, damping: 26 });
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (reduceMotion || !cardRef.current) return;
-    const r = cardRef.current.getBoundingClientRect();
-    mouseX.set((e.clientX - r.left) / r.width);
-    mouseY.set((e.clientY - r.top) / r.height);
-  };
-
-  const handleMouseLeave = () => {
-    mouseX.set(0.5);
-    mouseY.set(0.5);
-    setHovered(false);
-  };
-
   return (
     <motion.div
       ref={cardRef}
-      className={`group relative flex flex-col justify-between overflow-hidden rounded-[28px] bg-white border border-slate-200/90 shadow-[0_10px_30px_-15px_rgba(15,23,42,0.05)] transition-all duration-500 hover:-translate-y-3 hover:border-[#2563EB] hover:shadow-[0_30px_70px_-15px_rgba(37,99,235,0.20)] dark:bg-slate-900/90 dark:border-slate-800 dark:hover:border-blue-500/80 ${
+      className={`group relative flex flex-col justify-between overflow-hidden rounded-[24px] bg-white border border-slate-200/80 shadow-[0_4px_20px_rgba(0,0,0,0.03)] transition-all duration-300 hover:-translate-y-1.5 hover:border-[#2563EB]/60 hover:shadow-[0_20px_45px_-12px_rgba(37,99,235,0.12)] dark:bg-slate-900/90 dark:border-slate-800 dark:hover:border-blue-500/60 ${
         isBento ? work.gridClass : ""
       } ${work.featured ? "p-7 lg:p-9" : work.wideBanner ? "p-7 lg:p-9" : "p-6 lg:p-7"}`}
-      initial={reduceMotion ? undefined : { opacity: 0, y: 32, scale: 0.96 }}
+      initial={reduceMotion ? undefined : { opacity: 0, y: 24, scale: 0.98 }}
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true, margin: "-40px" }}
-      transition={{ duration: 0.68, delay: animationIndex * 0.08, ease: [0.16, 1, 0.3, 1] }}
-      style={
-        reduceMotion
-          ? {}
-          : {
-              rotateX: springRX,
-              rotateY: springRY,
-              transformStyle: "preserve-3d",
-            }
-      }
-      onMouseMove={handleMouseMove}
+      transition={{ duration: 0.55, delay: animationIndex * 0.07, ease: [0.16, 1, 0.3, 1] }}
       onMouseEnter={() => setHovered(true)}
-      onMouseLeave={handleMouseLeave}
+      onMouseLeave={() => setHovered(false)}
     >
-      {/* Micro light sweep sheen */}
-      <div
-        className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-[linear-gradient(110deg,transparent_20%,rgba(37,99,235,0.04)_40%,rgba(37,99,235,0.12)_50%,rgba(37,99,235,0.04)_60%,transparent_80%)] bg-[length:200%_100%] animate-none group-hover:animate-shimmer"
-        aria-hidden="true"
-      />
-
-      {/* Blueprint grid background lines */}
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.035] group-hover:opacity-[0.07] transition-opacity duration-500"
-        style={{
-          backgroundImage:
-            "radial-gradient(#0f172a 1px, transparent 1px), linear-gradient(to right, #0f172a 1px, transparent 1px)",
-          backgroundSize: "20px 20px, 40px 40px",
-        }}
-        aria-hidden="true"
-      />
-
-      {/* Hover corner glow dot */}
-      <div className="absolute top-5 right-5 w-2.5 h-2.5 rounded-full bg-[#2563EB] opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-[0_0_12px_#2563eb]" aria-hidden="true" />
-
       {work.wideBanner ? (
         /* Wide Banner Card Layout (SupportIQ) */
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center w-full z-10">
           <div className="lg:col-span-6 flex flex-col justify-between h-full space-y-5">
             <div>
               <div className="flex items-center gap-2 mb-3">
-                <span className="px-3 py-1 rounded-full bg-blue-50 text-[#2563EB] border border-blue-100 text-[11px] font-bold tracking-wider uppercase dark:bg-blue-950/60 dark:border-blue-900/60 dark:text-blue-400">
+                <span className="px-3 py-1 rounded-full bg-blue-50/80 text-[#2563EB] border border-blue-100/80 text-[11px] font-semibold tracking-wide uppercase dark:bg-blue-950/60 dark:border-blue-900/60 dark:text-blue-400">
                   {work.eyebrow}
                 </span>
-                <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200/80 text-[10px] font-semibold flex items-center gap-1 dark:bg-emerald-950/40 dark:border-emerald-900/40 dark:text-emerald-400">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200/70 text-[10px] font-medium flex items-center gap-1.5 dark:bg-emerald-950/40 dark:border-emerald-900/40 dark:text-emerald-400">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                   {work.badge}
                 </span>
               </div>
@@ -246,7 +191,7 @@ function WorkCard({
               <h3 className="text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white tracking-tight">
                 {work.title}
               </h3>
-              <p className="text-sm font-semibold text-[#2563EB] dark:text-blue-400 mt-1 mb-3">
+              <p className="text-xs font-semibold text-[#2563EB] dark:text-blue-400 uppercase tracking-wider mt-1 mb-3">
                 {work.subtitle}
               </p>
               <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed max-w-xl">
@@ -258,7 +203,7 @@ function WorkCard({
                 {work.highlights?.map((h) => (
                   <span
                     key={h}
-                    className="text-xs text-slate-700 dark:text-slate-300 bg-slate-100/90 dark:bg-slate-800 px-3 py-1 rounded-md border border-slate-200/60 dark:border-slate-700/60 font-medium flex items-center gap-1.5"
+                    className="text-xs text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/80 px-3 py-1 rounded-md border border-slate-200/70 dark:border-slate-700/70 font-medium flex items-center gap-1.5"
                   >
                     <Check className="w-3.5 h-3.5 text-[#2563EB]" /> {h}
                   </span>
@@ -271,7 +216,7 @@ function WorkCard({
                 {work.stack.map(([name, logo]) => (
                   <span
                     key={name}
-                    className="text-xs font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-200/60 dark:border-slate-700/60 flex items-center gap-1.5"
+                    className="text-xs font-medium text-slate-700 dark:text-slate-300 bg-slate-100/80 dark:bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-200/60 dark:border-slate-700/60 flex items-center gap-1.5"
                   >
                     <Image src={logo} alt={name} width={14} height={14} className="object-contain" />
                     {name}
@@ -280,27 +225,23 @@ function WorkCard({
               </div>
               <a
                 href="/contact"
-                className="w-11 h-11 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-slate-900 dark:text-white group-hover:bg-[#2563EB] group-hover:border-[#2563EB] group-hover:text-white transition-all duration-300 flex items-center justify-center shadow-sm group-hover:shadow-[0_8px_20px_rgba(37,99,235,0.35)]"
+                className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-slate-800 dark:text-white group-hover:bg-[#2563EB] group-hover:border-[#2563EB] group-hover:text-white transition-all duration-200 flex items-center justify-center"
                 aria-label={`Explore ${work.title}`}
               >
-                <ArrowUpRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                <ArrowUpRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </a>
             </div>
           </div>
 
           <div className="lg:col-span-6 relative">
-            <div className="relative overflow-hidden rounded-2xl border border-slate-200/70 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 shadow-inner h-[240px] lg:h-[300px] group/img">
+            <div className="relative overflow-hidden rounded-xl border border-slate-200/80 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 h-[240px] lg:h-[300px]">
               <motion.div
-                className="w-full h-full bg-cover bg-center transition-transform duration-700 ease-out"
-                style={{
-                  backgroundImage: `url(${work.image})`,
-                  x: reduceMotion ? 0 : springImgX,
-                  y: reduceMotion ? 0 : springImgY,
-                }}
-                animate={hovered && !reduceMotion ? { scale: 1.07, y: -8 } : { scale: 1, y: 0 }}
-                transition={{ duration: 0.52, ease: [0.16, 1, 0.3, 1] }}
+                className="w-full h-full bg-cover bg-center"
+                style={{ backgroundImage: `url(${work.image})` }}
+                animate={hovered && !reduceMotion ? { scale: 1.03 } : { scale: 1 }}
+                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
               />
-              <span className="absolute top-3 left-3 text-[10px] font-bold text-white/90 bg-slate-900/80 backdrop-blur-md px-2.5 py-1 rounded-md border border-white/10">
+              <span className="absolute top-3 left-3 text-[10px] font-mono font-medium text-slate-500 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md px-2.5 py-0.5 rounded-md border border-slate-200/60 dark:border-slate-800">
                 06
               </span>
             </div>
@@ -309,43 +250,36 @@ function WorkCard({
       ) : (
         /* Standard Bento Card (Large, Medium, Wide) */
         <div className="flex flex-col h-full justify-between space-y-6 z-10">
-          {/* Screenshot / Floating Image Area */}
+          {/* Screenshot / Image Area */}
           <div
-            className={`relative overflow-hidden rounded-2xl border border-slate-200/70 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 shadow-inner group/img ${
+            className={`relative overflow-hidden rounded-xl border border-slate-200/80 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 ${
               work.featured
                 ? "h-[260px] lg:h-[340px]"
                 : "h-[200px] lg:h-[230px]"
             }`}
           >
             <motion.div
-              className="w-full h-full bg-cover bg-center transition-transform duration-700 ease-out"
-              style={{
-                backgroundImage: `url(${work.image})`,
-                x: reduceMotion ? 0 : springImgX,
-                y: reduceMotion ? 0 : springImgY,
-              }}
-              animate={hovered && !reduceMotion ? { scale: 1.07, y: -8 } : { scale: 1, y: 0 }}
-              transition={{ duration: 0.52, ease: [0.16, 1, 0.3, 1] }}
+              className="w-full h-full bg-cover bg-center"
+              style={{ backgroundImage: `url(${work.image})` }}
+              animate={hovered && !reduceMotion ? { scale: 1.03 } : { scale: 1 }}
+              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
             />
 
-            {/* Micro light sweep */}
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-transparent via-white/15 to-transparent opacity-0 group-hover/img:opacity-100 transition-opacity duration-500" aria-hidden="true" />
-
             {/* Badges overlay */}
-            <div className="absolute top-3.5 left-3.5 flex items-center gap-2">
-              <span className="px-3 py-1 rounded-full bg-white/90 dark:bg-slate-900/90 backdrop-blur-md text-[#2563EB] dark:text-blue-400 border border-blue-100 dark:border-blue-900/60 text-[10px] font-bold tracking-wider uppercase shadow-sm">
+            <div className="absolute top-3 left-3 flex items-center gap-2">
+              <span className="px-2.5 py-1 rounded-md bg-white/95 dark:bg-slate-900/95 text-[#2563EB] dark:text-blue-400 border border-slate-200/80 dark:border-slate-800 text-[10px] font-semibold tracking-wider uppercase shadow-2xs">
                 {work.category}
               </span>
             </div>
 
-            <div className="absolute top-3.5 right-3.5">
-              <span className="px-2.5 py-0.5 rounded-full bg-slate-900/80 dark:bg-black/80 backdrop-blur-md text-white text-[10px] font-semibold flex items-center gap-1 border border-white/20 shadow-sm">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <div className="absolute top-3 right-3">
+              <span className="px-2.5 py-0.5 rounded-full bg-slate-900/85 dark:bg-black/85 text-white text-[10px] font-medium flex items-center gap-1.5 shadow-2xs">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
                 {work.badge}
               </span>
             </div>
 
-            <span className="absolute bottom-3 left-3.5 text-[11px] font-mono font-bold text-white/90 bg-slate-900/70 backdrop-blur-md px-2.5 py-0.5 rounded-md border border-white/10">
+            <span className="absolute bottom-3 left-3 text-[10px] font-mono font-medium text-slate-500 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md px-2 py-0.5 rounded-md border border-slate-200/60 dark:border-slate-800">
               {String(originalIndex + 1).padStart(2, "0")}
             </span>
           </div>
@@ -353,7 +287,7 @@ function WorkCard({
           {/* Body Content */}
           <div className="flex flex-col justify-between flex-1 space-y-4">
             <div>
-              <span className="text-[11px] font-bold tracking-wider uppercase text-[#2563EB] dark:text-blue-400 block mb-1">
+              <span className="text-[11px] font-semibold tracking-wider uppercase text-[#2563EB] dark:text-blue-400 block mb-1">
                 {work.eyebrow}
               </span>
               <h3 className="text-2xl lg:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
@@ -371,7 +305,7 @@ function WorkCard({
                   {work.highlights?.map((h) => (
                     <span
                       key={h}
-                      className="text-xs text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-md border border-slate-200/80 dark:border-slate-700/80 font-medium flex items-center gap-1.5"
+                      className="text-xs text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/80 px-3 py-1 rounded-md border border-slate-200/70 dark:border-slate-700/70 font-medium flex items-center gap-1.5"
                     >
                       <Check className="w-3.5 h-3.5 text-[#2563EB]" /> {h}
                     </span>
@@ -386,7 +320,7 @@ function WorkCard({
                 {work.stack.slice(0, 3).map(([name, logo]) => (
                   <span
                     key={name}
-                    className="text-[11px] font-medium text-slate-700 dark:text-slate-300 bg-slate-100/90 dark:bg-slate-800 px-2.5 py-1 rounded-md border border-slate-200/60 dark:border-slate-700/60 flex items-center gap-1.5"
+                    className="text-[11px] font-medium text-slate-700 dark:text-slate-300 bg-slate-100/80 dark:bg-slate-800 px-2.5 py-1 rounded-md border border-slate-200/60 dark:border-slate-700/60 flex items-center gap-1.5"
                   >
                     <Image src={logo} alt={name} width={13} height={13} className="object-contain" />
                     {name}
@@ -396,10 +330,10 @@ function WorkCard({
 
               <a
                 href="/contact"
-                className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-slate-900 dark:text-white group-hover:bg-[#2563EB] group-hover:border-[#2563EB] group-hover:text-white transition-all duration-300 flex items-center justify-center shadow-sm group-hover:shadow-[0_6px_20px_rgba(37,99,235,0.35)] shrink-0"
+                className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-slate-800 dark:text-white group-hover:bg-[#2563EB] group-hover:border-[#2563EB] group-hover:text-white transition-all duration-200 flex items-center justify-center shrink-0"
                 aria-label={`Explore ${work.title}`}
               >
-                <ArrowUpRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                <ArrowUpRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </a>
             </div>
           </div>
