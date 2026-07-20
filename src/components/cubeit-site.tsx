@@ -2,7 +2,7 @@
 
 import { Fragment, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import Image from "next/image";
-import { ArrowLeft, ArrowRight, ArrowUpRight, Briefcase, Check, ChevronDown, ChevronUp, Code2, Cpu, FlaskConical, Sparkles } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpRight, Briefcase, ChevronDown, ChevronUp, Code2, Cpu, FlaskConical, Sparkles } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
@@ -59,7 +59,7 @@ const works = [
     image: "/projects/mizan-legal.jpg",
     context: "Drafting, evidence vaults, hearing schedules, and secure matter workflows in one unified legal operating system.",
     stack: [["Python", "/logos-png/python.png"], ["React", "/logos-png/react.png"], ["Postgres", "/logos-png/postgresql.png"]],
-    gridClass: "lg:col-span-8 lg:row-span-2",
+    gridClass: "lg:col-span-4 lg:row-span-2",
     featured: true,
     highlights: ["AI Case Drafting", "Evidence Vault", "Deadline Automation"],
   },
@@ -101,7 +101,7 @@ const works = [
     image: "/projects/documind.jpg",
     context: "OCR, semantic search, automated approval routing, and document chat for high-volume operations.",
     stack: [["Python", "/logos-png/python.png"], ["Next.js", "/logos-png/nextjs.png"], ["Docker", "/logos-png/docker.png"]],
-    gridClass: "lg:col-span-7 lg:row-span-1",
+    gridClass: "lg:col-span-4 lg:row-span-1",
     featured: false,
     highlights: ["Semantic Search", "OCR Pipeline"],
   },
@@ -115,7 +115,7 @@ const works = [
     image: "/projects/buildgrid.jpg",
     context: "Field progress tracking, budget management, procurement, and contractor activity in real time.",
     stack: [["TypeScript", "/logos-png/typescript.png"], ["Node.js", "/logos-png/nodejs.png"], ["Postgres", "/logos-png/postgresql.png"]],
-    gridClass: "lg:col-span-5 lg:row-span-1",
+    gridClass: "lg:col-span-4 lg:row-span-1",
     featured: false,
     highlights: ["Field Sync", "Budget Control"],
   },
@@ -129,7 +129,7 @@ const works = [
     image: "/projects/supportiq.jpg",
     context: "Autonomous conversation routing, ticket intelligence, support knowledge graphs, and real-time agent copilot.",
     stack: [["React", "/logos-png/react.png"], ["Python", "/logos-png/python.png"], ["Tailwind", "/logos-png/tailwind.png"]],
-    gridClass: "lg:col-span-12 lg:row-span-1",
+    gridClass: "lg:col-span-4 lg:row-span-1",
     featured: false,
     wideBanner: true,
     highlights: ["Agent Copilot", "Ticket Routing", "Knowledge Graph"],
@@ -158,186 +158,49 @@ function WorkCard({
   isBento: boolean;
   reduceMotion: boolean;
 }) {
-  const [hovered, setHovered] = useState(false);
-
   return (
     <motion.div
-      className={`group relative flex flex-col justify-between overflow-hidden rounded-[24px] bg-white border border-slate-200/90 shadow-[0_4px_20px_rgba(0,0,0,0.03)] transition-all duration-300 hover:-translate-y-1.5 hover:border-[#2563EB]/60 hover:shadow-[0_20px_45px_-10px_rgba(37,99,235,0.12)] dark:bg-slate-900/90 dark:border-slate-800 dark:hover:border-blue-500/60 ${
-        isBento ? work.gridClass : ""
-      } ${work.featured ? "p-7 lg:p-9" : work.wideBanner ? "p-7 lg:p-9" : "p-6 lg:p-7"}`}
+      className="work-bento-card group"
       initial={reduceMotion ? undefined : { opacity: 0, y: 24, scale: 0.98 }}
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.52, delay: animationIndex * 0.07, ease: [0.16, 1, 0.3, 1] }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
     >
-      {work.wideBanner ? (
-        /* Wide Banner Card Layout (SupportIQ) */
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center w-full z-10">
-          <div className="lg:col-span-6 flex flex-col justify-between h-full space-y-5">
-            <div>
-              <div className="flex items-center gap-2 mb-3">
-                <span className="px-3 py-1 rounded-full bg-blue-50/80 text-[#2563EB] border border-blue-100/80 text-[11px] font-semibold tracking-wide uppercase dark:bg-blue-950/60 dark:border-blue-900/60 dark:text-blue-400">
-                  {work.eyebrow}
-                </span>
-                <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200/70 text-[10px] font-medium flex items-center gap-1.5 dark:bg-emerald-950/40 dark:border-emerald-900/40 dark:text-emerald-400">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                  {work.badge}
-                </span>
-              </div>
+      {/* Background image via CSS background-image */}
+      <div
+        className="work-bento-bg"
+        style={{ backgroundImage: `url(${work.image})` }}
+        aria-hidden="true"
+      />
 
-              <h3 className="text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white tracking-tight">
-                {work.title}
-              </h3>
-              <p className="text-xs font-semibold text-[#2563EB] dark:text-blue-400 uppercase tracking-wider mt-1 mb-3">
-                {work.subtitle}
-              </p>
-              <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed max-w-xl">
-                {work.context}
-              </p>
+      {/* Dark gradient overlay */}
+      <div className="work-bento-overlay" aria-hidden="true" />
 
-              {/* Highlights */}
-              <div className="flex flex-wrap gap-2 mt-4">
-                {work.highlights?.map((h) => (
-                  <span
-                    key={h}
-                    className="text-xs text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/80 px-3 py-1 rounded-md border border-slate-200/70 dark:border-slate-700/70 font-medium flex items-center gap-1.5"
-                  >
-                    <Check className="w-3.5 h-3.5 text-[#2563EB]" /> {h}
-                  </span>
-                ))}
-              </div>
-            </div>
+      {/* Top-left: category badge */}
+      <span className="work-bento-category">{work.category}</span>
 
-            <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
-              <div className="flex items-center gap-2">
-                {work.stack.map(([name, logo]) => (
-                  <span
-                    key={name}
-                    className="text-xs font-medium text-slate-700 dark:text-slate-300 bg-slate-100/80 dark:bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-200/60 dark:border-slate-700/60 flex items-center gap-1.5"
-                  >
-                    <Image src={logo} alt={name} width={14} height={14} className="object-contain" />
-                    {name}
-                  </span>
-                ))}
-              </div>
-              <a
-                href="/contact"
-                className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-slate-800 dark:text-white group-hover:bg-[#2563EB] group-hover:border-[#2563EB] group-hover:text-white transition-all duration-200 flex items-center justify-center"
-                aria-label={`Explore ${work.title}`}
-              >
-                <ArrowUpRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-              </a>
-            </div>
-          </div>
+      {/* Top-right: status badge */}
+      <span className="work-bento-status">
+        <span className="work-bento-dot" aria-hidden="true" />
+        {work.badge}
+      </span>
 
-          <div className="lg:col-span-6 relative">
-            <div className="relative overflow-hidden rounded-xl border border-slate-200/80 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 h-[240px] lg:h-[300px]">
-              <motion.div
-                className="w-full h-full bg-cover bg-center"
-                style={{ backgroundImage: `url(${work.image})` }}
-                animate={hovered && !reduceMotion ? { scale: 1.03 } : { scale: 1 }}
-                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-              />
-              <span className="absolute top-3 left-3 text-[10px] font-mono font-medium text-slate-500 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md px-2.5 py-0.5 rounded-md border border-slate-200/60 dark:border-slate-800">
-                06
-              </span>
-            </div>
-          </div>
-        </div>
-      ) : (
-        /* Standard Bento Card (Large, Medium, Wide) */
-        <div className="flex flex-col h-full justify-between space-y-6 z-10">
-          {/* Screenshot / Image Area */}
-          <div
-            className={`relative overflow-hidden rounded-xl border border-slate-200/80 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 ${
-              work.featured
-                ? "h-[260px] lg:h-[340px]"
-                : "h-[200px] lg:h-[230px]"
-            }`}
-          >
-            <motion.div
-              className="w-full h-full bg-cover bg-center"
-              style={{ backgroundImage: `url(${work.image})` }}
-              animate={hovered && !reduceMotion ? { scale: 1.03 } : { scale: 1 }}
-              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            />
+      {/* Bottom meta — always visible */}
+      <div className="work-bento-meta">
+        <span className="work-bento-num">{String(originalIndex + 1).padStart(2, "0")}</span>
+        <span className="work-bento-title">{work.title}</span>
+        <span className="work-bento-sub">{work.subtitle}</span>
+      </div>
 
-            {/* Badges overlay */}
-            <div className="absolute top-3 left-3 flex items-center gap-2">
-              <span className="px-2.5 py-1 rounded-md bg-white/95 dark:bg-slate-900/95 text-[#2563EB] dark:text-blue-400 border border-slate-200/80 dark:border-slate-800 text-[10px] font-semibold tracking-wider uppercase shadow-2xs">
-                {work.category}
-              </span>
-            </div>
-
-            <div className="absolute top-3 right-3">
-              <span className="px-2.5 py-0.5 rounded-full bg-slate-900/85 dark:bg-black/85 text-white text-[10px] font-medium flex items-center gap-1.5 shadow-2xs">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                {work.badge}
-              </span>
-            </div>
-
-            <span className="absolute bottom-3 left-3 text-[10px] font-mono font-medium text-slate-500 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md px-2 py-0.5 rounded-md border border-slate-200/60 dark:border-slate-800">
-              {String(originalIndex + 1).padStart(2, "0")}
-            </span>
-          </div>
-
-          {/* Body Content */}
-          <div className="flex flex-col justify-between flex-1 space-y-4">
-            <div>
-              <span className="text-[11px] font-semibold tracking-wider uppercase text-[#2563EB] dark:text-blue-400 block mb-1">
-                {work.eyebrow}
-              </span>
-              <h3 className="text-2xl lg:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
-                {work.title}
-              </h3>
-              <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5 mb-2">
-                {work.subtitle}
-              </p>
-              <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-                {work.context}
-              </p>
-
-              {work.featured && (
-                <div className="flex flex-wrap gap-2 mt-4 pt-2">
-                  {work.highlights?.map((h) => (
-                    <span
-                      key={h}
-                      className="text-xs text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/80 px-3 py-1 rounded-md border border-slate-200/70 dark:border-slate-700/70 font-medium flex items-center gap-1.5"
-                    >
-                      <Check className="w-3.5 h-3.5 text-[#2563EB]" /> {h}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Footer */}
-            <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800">
-              <div className="flex items-center gap-1.5 flex-wrap">
-                {work.stack.slice(0, 3).map(([name, logo]) => (
-                  <span
-                    key={name}
-                    className="text-[11px] font-medium text-slate-700 dark:text-slate-300 bg-slate-100/80 dark:bg-slate-800 px-2.5 py-1 rounded-md border border-slate-200/60 dark:border-slate-700/60 flex items-center gap-1.5"
-                  >
-                    <Image src={logo} alt={name} width={13} height={13} className="object-contain" />
-                    {name}
-                  </span>
-                ))}
-              </div>
-
-              <a
-                href="/contact"
-                className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-slate-800 dark:text-white group-hover:bg-[#2563EB] group-hover:border-[#2563EB] group-hover:text-white transition-all duration-200 flex items-center justify-center shrink-0"
-                aria-label={`Explore ${work.title}`}
-              >
-                <ArrowUpRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-              </a>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Arrow link */}
+      <a
+        href="/contact"
+        className="work-bento-arrow"
+        aria-label={`Explore ${work.title}`}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <ArrowUpRight className="w-4 h-4" />
+      </a>
     </motion.div>
   );
 }
@@ -902,7 +765,7 @@ function Work() {
     <section className="work-section w-full" id="work">
       <span id="labs-projects" aria-hidden="true" className="nav-anchor" />
 
-      <div className="mx-auto w-[min(100%-48px,1440px)]">
+      <div className="mx-auto w-[min(100%-48px,1200px)]">
         {/* ── Section Heading ─────────────────────────────────────────────── */}
         <motion.div
           className="flex flex-col items-center text-center max-w-3xl mx-auto mb-14"
@@ -911,13 +774,7 @@ function Work() {
           viewport={{ once: true, margin: "-60px" }}
           transition={{ duration: 0.76, ease: [0.16, 1, 0.3, 1] }}
         >
-          {/* Small Label Pill */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-[#2563EB] text-xs font-extrabold tracking-widest uppercase mb-5 shadow-xs dark:bg-blue-950/60 dark:border-blue-900/60 dark:text-blue-400">
-            <Sparkles size={12} className="text-[#2563EB] dark:text-blue-400" aria-hidden="true" />
-            THINGS WE BUILD
-          </div>
-
-          {/* Large Heading */}
+          <span className="pill">Things we build</span>
           <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-slate-900 dark:text-white leading-[1.05] mb-5">
             Software Built For{" "}
             <span className="text-[#2563EB] dark:text-blue-500 relative inline-block">
@@ -933,8 +790,6 @@ function Work() {
             </span>{" "}
             Businesses
           </h2>
-
-          {/* Description */}
           <p className="text-slate-600 dark:text-slate-300 text-base sm:text-lg leading-relaxed max-w-[680px]">
             AI-powered platforms, enterprise systems, and intelligent tools—engineered for scale, refined for human work, and built for real business outcomes.
           </p>
@@ -974,11 +829,7 @@ function Work() {
         <AnimatePresence mode="wait">
           <motion.div
             key={activeCategory}
-            className={
-              isBento
-                ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch"
-                : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 items-stretch"
-            }
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 work-bento-grid"
             initial={reduced ? undefined : { opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={reduced ? undefined : { opacity: 0 }}

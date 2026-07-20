@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpRight, Briefcase } from "lucide-react";
 import {
   AnimatePresence,
   motion,
@@ -99,28 +99,33 @@ export default function ClientWorkShowcase() {
     <section className="client-work-section page-shell" id="client-projects" aria-labelledby="client-work-title">
 
       {/* ── Heading ── */}
-      <div className="client-work-heading">
-        <motion.div
-          className="client-work-heading-left"
-          initial={reduceMotion ? false : { opacity: 0, y: 32, filter: "blur(10px)" }}
-          whileInView={reduceMotion ? undefined : { opacity: 1, y: 0, filter: "blur(0px)" }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <span className="pill">Selected client deliveries</span>
-          <h2 id="client-work-title">Websites that moved the business forward.</h2>
-        </motion.div>
-
-        <motion.p
-          className="client-work-heading-desc"
-          initial={reduceMotion ? false : { opacity: 0, y: 22 }}
-          whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.78, delay: 0.14, ease: [0.22, 1, 0.36, 1] }}
-        >
+      <motion.div
+        className="flex flex-col items-center text-center max-w-3xl mx-auto mb-14"
+        initial={reduceMotion ? false : { opacity: 0, y: 32 }}
+        whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-60px" }}
+        transition={{ duration: 0.76, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <span className="pill">Selected client deliveries</span>
+        <h2 id="client-work-title" className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-slate-900 dark:text-white leading-[1.05] mb-5">
+          Websites that moved the{" "}
+          <span className="text-[#2563EB] dark:text-blue-500 relative inline-block">
+            business
+            <svg
+              className="absolute -bottom-2 left-0 w-full h-2 text-[#2563EB]/30"
+              viewBox="0 0 100 20"
+              preserveAspectRatio="none"
+              aria-hidden="true"
+            >
+              <path d="M0 15 Q 50 0, 100 15" stroke="currentColor" strokeWidth="4" fill="none" />
+            </svg>
+          </span>{" "}
+          forward.
+        </h2>
+        <p className="text-slate-600 dark:text-slate-300 text-base sm:text-lg leading-relaxed max-w-[680px]">
           Six launches across SaaS, digital transformation, maritime operations, and industrial engineering—including a client who returned for their next chapter.
-        </motion.p>
-      </div>
+        </p>
+      </motion.div>
 
       {/* ── Theatre card ── */}
       <div className="client-work-theatre reveal-card">

@@ -393,9 +393,9 @@ interface SceneProps {
 function Scene({ markers, config, onMarkerClick, onMarkerHover }: SceneProps) {
   const { camera } = useThree();
 
-  // Set initial camera position (pulled back to accommodate markers)
+  // Set initial camera position (pulled back to accommodate markers without clipping)
   React.useEffect(() => {
-    camera.position.set(config.radius * 0.12, config.radius * 0.08, config.radius * 3.35);
+    camera.position.set(config.radius * 0.12, config.radius * 0.08, config.radius * 3.85);
     camera.lookAt(0, 0, 0);
   }, [camera, config.radius]);
 
@@ -539,7 +539,7 @@ export function Globe3D({
           fov: 45,
           near: 0.1,
           far: 1000,
-          position: [0, 0, mergedConfig.radius * 3.5],
+          position: [0, 0, mergedConfig.radius * 3.85],
         }}
         style={{
           background: mergedConfig.backgroundColor || "transparent",
