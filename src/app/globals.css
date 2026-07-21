@@ -4715,3 +4715,232 @@ h4 {
   .ls-cube           { animation: none; opacity: 1; transform: none; }
   .ls-progress-fill  { animation: none; }
 }
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   SYSTEM-WIDE DARK THEME REFINEMENTS (Theme-Aware Variables & High Contrast)
+══════════════════════════════════════════════════════════════════════════════ */
+
+/* 1. Navbar & Lockups */
+.dark .brand-logo-tile {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.16);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.dark .nav-links a {
+  color: rgba(255, 255, 255, 0.80);
+}
+
+.dark .nav-links a:hover {
+  color: #FFFFFF;
+}
+
+.dark .nav-work-menu {
+  background: #0D162A;
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+}
+
+.dark .nav-work-item {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.dark .nav-work-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #FFFFFF;
+}
+
+.dark .nav-work-item svg {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.dark .nav-work-item:hover svg {
+  color: #FFFFFF;
+}
+
+/* 2. Hero Section */
+.dark .hero-services-grid {
+  display: block;
+  opacity: 0.25;
+  background-color: transparent;
+  background-image:
+    linear-gradient(to right,  rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  mask-image: linear-gradient(to bottom, black 0%, black 80%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 80%, transparent 100%);
+}
+
+.dark .chip-img {
+  border-color: rgba(255, 255, 255, 0.22);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+}
+
+.dark .chip-img-a {
+  background: linear-gradient(135deg, #E04E10, #E68000);
+}
+
+.dark .chip-img-b {
+  background: linear-gradient(135deg, #1E3A8A, #2563EB);
+}
+
+.dark .chip-img-c {
+  background: linear-gradient(135deg, #2A2D3A, #0A0D16);
+  color: #60A5FA;
+}
+
+.dark .hero-scribble {
+  color: #FF7B38;
+}
+
+.dark .hero-foot {
+  border-top-color: rgba(255, 255, 255, 0.12);
+}
+
+.dark .hero-scroll {
+  color: var(--cubeit-blue-light);
+}
+
+.dark .hero-scroll:hover {
+  color: #FFFFFF;
+}
+
+/* 3. Services Section */
+.dark .service-card {
+  background: var(--surface-strong) !important;
+  border: 1px solid var(--line) !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4) !important;
+}
+
+.dark .service-bottom p {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.dark .service-tags span {
+  border-color: rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.65);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.dark .service-tags span:hover {
+  background: #2563EB;
+  border-color: #2563EB;
+  color: #FFFFFF;
+}
+
+/* 4. Technology Stack & Cover Statement */
+.dark .technology-marquee li {
+  background: rgba(15, 23, 42, 0.8) !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+}
+
+.dark .technology-marquee-overlay {
+  background: radial-gradient(circle at 50% 50%, transparent 25%, rgba(6, 9, 18, 0.4) 60%, rgba(6, 9, 18, 0.95) 100%),
+              linear-gradient(180deg, rgba(6, 9, 18, 0.3), transparent 26%, transparent 70%, rgba(6, 9, 18, 0.75));
+}
+
+.dark .cover-statement {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: radial-gradient(circle at 50% -18%, rgba(99, 102, 241, 0.18), transparent 45%),
+              linear-gradient(145deg, rgba(15, 23, 42, 0.9), rgba(9, 14, 28, 0.85));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 30px 80px rgba(0, 0, 0, 0.4);
+}
+
+/* 5. Work / Projects Section */
+.dark .work-bento-card {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: #09101F;
+}
+
+.dark .work-bento-card:hover {
+  border-color: rgba(96, 165, 250, 0.45);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(96, 165, 250, 0.2);
+}
+
+.dark .work-bento-category,
+.dark .work-bento-status,
+.dark .work-bento-arrow {
+  background: rgba(9, 16, 31, 0.85);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #60A5FA;
+}
+
+.dark .work-bento-arrow:hover {
+  background: #2563EB;
+  border-color: #2563EB;
+  color: #FFFFFF;
+}
+
+/* 6. Why Us Section */
+.dark .why-nav button:first-child {
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #FFFFFF;
+}
+
+.dark .why-nav button:first-child:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.dark .why-nav button:last-child {
+  background: #2563EB;
+  color: #FFFFFF;
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+}
+
+.dark .why-nav button:last-child:hover {
+  background: #1D4ED8;
+  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.55);
+}
+
+/* 7. Metrics & Blog (Product Notes) */
+.dark .metrics-card {
+  background: #0C1427;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+}
+
+.dark .metrics-list strong {
+  color: #FFFFFF;
+  background: linear-gradient(135deg, #FFFFFF 30%, #60A5FA 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.dark .blog-card {
+  background: #0C1427;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.dark .blog-copy {
+  background: #0C1427;
+  color: var(--ink);
+}
+
+.dark .blog-copy h3 {
+  color: #FFFFFF;
+}
+
+.dark .blog-copy time {
+  color: #60A5FA;
+}
+
+/* 8. Footer Section */
+.dark .footer-card {
+  background: linear-gradient(145deg, rgba(15, 23, 42, 0.9), rgba(8, 14, 27, 0.8));
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+}
+
+.dark .footer-links a {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.dark .footer-links a:hover {
+  color: #60A5FA;
+}
+
+.dark .footer-bottom {
+  border-top-color: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.55);
+}

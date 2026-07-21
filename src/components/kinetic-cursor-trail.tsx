@@ -143,11 +143,7 @@ export default function KineticCursorTrail({
       }
     };
 
-    const spawnParticle = (
-      clientX: number,
-      clientY: number,
-      opts?: { isClick?: boolean }
-    ) => {
+    const spawnParticle = (clientX: number, clientY: number) => {
       const assetIndex = getNextSvgIndex();
       const asset = KINETIC_SVG_ASSETS[assetIndex];
 
@@ -168,15 +164,13 @@ export default function KineticCursorTrail({
       img.style.pointerEvents = "none";
       img.style.willChange = "transform";
 
-      const isClick = opts?.isClick ?? false;
+      const offsetX = (Math.random() - 0.5) * 12;
+      const offsetY = (Math.random() - 0.5) * 12;
 
-      const offsetX = (Math.random() - 0.5) * (isClick ? 24 : 12);
-      const offsetY = (Math.random() - 0.5) * (isClick ? 24 : 12);
-
-      const randomVx = (Math.random() - 0.5) * (isClick ? 220 : 90);
-      const randomVy = (Math.random() - 0.55) * (isClick ? 200 : 80) - (isClick ? 80 : 15);
-      const mouseVxInfluence = isClick ? 0 : Math.max(-120, Math.min(120, mouseVelRef.current.vx * 0.12));
-      const mouseVyInfluence = isClick ? 0 : Math.max(-80, Math.min(80, mouseVelRef.current.vy * 0.08));
+      const randomVx = (Math.random() - 0.5) * 90;
+      const randomVy = (Math.random() - 0.55) * 80 - 15;
+      const mouseVxInfluence = Math.max(-120, Math.min(120, mouseVelRef.current.vx * 0.12));
+      const mouseVyInfluence = Math.max(-80, Math.min(80, mouseVelRef.current.vy * 0.08));
 
       const particle: Particle = {
         el: img,
@@ -185,7 +179,7 @@ export default function KineticCursorTrail({
         vx: randomVx + mouseVxInfluence,
         vy: randomVy + mouseVyInfluence,
         rotation: Math.random() * 360,
-        angularVelocity: (Math.random() - 0.5) * (isClick ? 360 : 220),
+        angularVelocity: (Math.random() - 0.5) * 220,
         gravity: 340 + Math.random() * 120,
         scale: 0.85 + Math.random() * 0.35,
         createdAt: performance.now(),
@@ -214,23 +208,6 @@ export default function KineticCursorTrail({
       }
       lastMousePosRef.current = { x: e.clientX, y: e.clientY, time: now };
 
-      // Gentle proximity reaction for nearest active floating icons
-      const REACTION_RADIUS = 130;
-      const particles = particlesRef.current;
-      for (let i = 0; i < particles.length; i++) {
-        const p = particles[i];
-        const dx = p.x - e.clientX;
-        const dy = p.y - e.clientY;
-        const dist = Math.hypot(dx, dy);
-        if (dist < REACTION_RADIUS && dist > 0) {
-          const factor = 1 - dist / REACTION_RADIUS;
-          const pushAngle = Math.atan2(dy, dx);
-          p.vx += Math.cos(pushAngle) * factor * 110;
-          p.vy += Math.sin(pushAngle) * factor * 110;
-          p.angularVelocity += (Math.random() - 0.5) * 140 * factor;
-        }
-      }
-
       if (!lastSpawnPosRef.current) {
         lastSpawnPosRef.current = { x: e.clientX, y: e.clientY };
         lastSpawnTimeRef.current = now;
@@ -248,34 +225,10 @@ export default function KineticCursorTrail({
       }
     };
 
-    const handlePointerDown = (e: PointerEvent) => {
-      if (!isPointerInHeroCanvas(e.clientX, e.clientY)) return;
-
-      const CLICK_REACTION_RADIUS = 200;
-      const particles = particlesRef.current;
-      for (let i = 0; i < particles.length; i++) {
-        const p = particles[i];
-        const dx = p.x - e.clientX;
-        const dy = p.y - e.clientY;
-        const dist = Math.hypot(dx, dy);
-        if (dist < CLICK_REACTION_RADIUS && dist > 0) {
-          const factor = 1 - dist / CLICK_REACTION_RADIUS;
-          const pushAngle = Math.atan2(dy, dx);
-          p.vx += Math.cos(pushAngle) * factor * 350;
-          p.vy += Math.sin(pushAngle) * factor * 350 - 60;
-          p.angularVelocity += (Math.random() - 0.5) * 360 * factor;
-        }
-      }
-
-      spawnParticle(e.clientX, e.clientY, { isClick: true });
-    };
-
     window.addEventListener("pointermove", handlePointerMove, { passive: true });
-    window.addEventListener("pointerdown", handlePointerDown, { passive: true });
 
     return () => {
       window.removeEventListener("pointermove", handlePointerMove);
-      window.removeEventListener("pointerdown", handlePointerDown);
       if (animFrameIdRef.current) cancelAnimationFrame(animFrameIdRef.current);
       if (layer) layer.innerHTML = "";
     };

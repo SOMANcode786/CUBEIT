@@ -54,6 +54,35 @@ const CARDS: CardDef[] = [
 // 3-card subset shown inline below the headline on mobile
 const MOBILE_CARDS: CardDef[] = [CARDS[0], CARDS[1], CARDS[3]];
 
+// ─── Section 2 data ────────────────────────────────────────────────────────────
+type ProblemCardDef = {
+  readonly label: string;
+  readonly top: string;
+  readonly left: string;
+  /** Initial CSS rotation in degrees */
+  readonly rotate: number;
+  /** Additional drift applied on scroll-in (desktop GSAP) */
+  readonly drift: { x: number; y: number; r: number };
+};
+
+const PROBLEM_CARDS: ProblemCardDef[] = [
+  { label: "Ads running alone",            top: " 6%", left: " 2%", rotate: -5, drift: { x: -28, y: -22, r: -4 } },
+  { label: "Social media, no strategy",    top: "28%", left: "36%", rotate:  7, drift: { x:  32, y: -18, r:  5 } },
+  { label: "Website that doesn't convert", top: "12%", left: "58%", rotate: -3, drift: { x:  22, y: -26, r: -3 } },
+  { label: "Leads with no follow-up",      top: "54%", left: " 8%", rotate:  6, drift: { x: -22, y:  28, r:  4 } },
+  { label: "No clear data",               top: "62%", left: "50%", rotate: -7, drift: { x:  28, y:  32, r: -5 } },
+];
+
+// ─── Section 3 data ────────────────────────────────────────────────────────────
+const GROWTH_STAGES = [
+  { num: "01", label: "Attract",   desc: "Put your business in front of the right people." },
+  { num: "02", label: "Engage",    desc: "Give them a reason to stop, notice and care." },
+  { num: "03", label: "Convert",   desc: "Turn interest into messages, enquiries and sales." },
+  { num: "04", label: "Reconnect", desc: "Bring interested people back instead of losing them." },
+  { num: "05", label: "Retain",    desc: "Stay connected so customers return." },
+  { num: "06", label: "Scale",     desc: "Use what works to grow smarter and faster." },
+] as const;
+
 // ─── Nav ────────────────────────────────────────────────────────────────────────
 // Reuses .nav-shell / .nav-links / .nav-actions from globals.css
 function CubeIQNav() {
@@ -409,6 +438,466 @@ function HeroSection() {
   );
 }
 
+// ─── Section 2: The Problem ─────────────────────────────────────────────────────
+function ProblemSection() {
+  const sectionRef   = useRef<HTMLElement>(null);
+  const cardRefs     = useRef<(HTMLDivElement | null)[]>([]);
+  const mobileRefs   = useRef<(HTMLDivElement | null)[]>([]);
+
+  useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reducedMotion) return;
+
+    const isMobile = window.innerWidth < 768;
+
+    if (isMobile) {
+      const cards = mobileRefs.current.filter((c): c is HTMLDivElement => c !== null);
+      gsap.set(cards, { opacity: 0, y: 20 });
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              gsap.to(entry.target, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" });
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.3 }
+      );
+      cards.forEach((c) => observer.observe(c));
+      return () => observer.disconnect();
+    }
+
+    // Desktop: initial rotation via gsap.set, then scroll-linked drift
+    const cards = cardRefs.current.filter((c): c is HTMLDivElement => c !== null);
+    cards.forEach((card, i) => {
+      gsap.set(card, { rotation: PROBLEM_CARDS[i].rotate });
+    });
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: "top bottom",
+        end: "bottom top",
+        scrub: 1,
+      },
+    });
+
+    cards.forEach((card, i) => {
+      const { drift, rotate } = PROBLEM_CARDS[i];
+      // 0%→80%: drift outward to peak scatter
+      tl.to(card, { x: drift.x, y: drift.y, rotation: rotate + drift.r, ease: "none", duration: 0.8 }, 0);
+      // 80%→100%: partial recovery hinting at future order
+      tl.to(card, { x: drift.x * 0.7, y: drift.y * 0.7, rotation: rotate + drift.r * 0.5, ease: "none", duration: 0.2 }, 0.8);
+    });
+
+    return () => { tl.kill(); };
+  }, []);
+
+  return (
+    <section
+      ref={sectionRef}
+      id="cubeiq-problem"
+      aria-label="The problem CubeIQ solves"
+      style={{ padding: "clamp(80px, 10vw, 130px) 0", overflow: "hidden" }}
+    >
+      <div
+        className="page-shell"
+        style={{
+          display: "grid",
+          gridTemplateColumns: "45fr 55fr",
+          gap: "clamp(32px, 4vw, 64px)",
+          alignItems: "flex-start",
+        }}
+      >
+        {/* ── Left: text ───────────────────────────────────────────── */}
+        <div>
+          <span
+            style={{
+              display: "block",
+              fontSize: 10.5,
+              fontWeight: 750,
+              letterSpacing: "0.16em",
+              textTransform: "uppercase",
+              color: BLUE,
+              marginBottom: 22,
+            }}
+          >
+            The Problem
+          </span>
+
+          <h2
+            style={{
+              fontFamily: "var(--font-display)",
+              fontSize: "clamp(2rem, 4.5vw, 3.75rem)",
+              fontWeight: 800,
+              letterSpacing: "-0.04em",
+              lineHeight: 1.05,
+              color: "var(--ink)",
+              margin: "0 0 28px",
+            }}
+          >
+            Running ads is easy.
+            <br />
+            Building growth is harder.
+          </h2>
+
+          <p
+            style={{
+              fontSize: 15,
+              lineHeight: 1.7,
+              color: "var(--muted)",
+              maxWidth: "45ch",
+              margin: 0,
+            }}
+          >
+            Most businesses end up with pieces that don&apos;t talk to each
+            other — ads running on their own, social media managed separately,
+            a website that doesn&apos;t convert, and customers who enquire but
+            never get a follow-up. Nobody can see what&apos;s actually working.
+          </p>
+
+          {/* Mobile-only card stack */}
+          <div
+            className="cubeiq-problem-mobile"
+            style={{ display: "none", flexDirection: "column", gap: 10, marginTop: 36 }}
+          >
+            {PROBLEM_CARDS.slice(0, 3).map((card, i) => (
+              <div
+                key={card.label}
+                ref={(el) => { mobileRefs.current[i] = el; }}
+                style={{
+                  display: "inline-flex",
+                  alignSelf: "flex-start",
+                  padding: "10px 16px",
+                  borderRadius: 10,
+                  background: "var(--surface-strong)",
+                  border: "1px solid var(--line)",
+                  opacity: 0.82,
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: 13,
+                    fontWeight: 600,
+                    color: "var(--muted)",
+                    letterSpacing: "-0.02em",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {card.label}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ── Right: scattered fragment cards ──────────────────────── */}
+        <div
+          className="cubeiq-problem-cluster"
+          style={{ position: "relative", minHeight: 460, overflow: "visible" }}
+        >
+          {PROBLEM_CARDS.map((card, i) => (
+            <div
+              key={card.label}
+              ref={(el) => { cardRefs.current[i] = el; }}
+              style={{
+                position: "absolute",
+                top: card.top,
+                left: card.left,
+                display: "inline-flex",
+                alignItems: "center",
+                padding: "11px 17px",
+                borderRadius: 12,
+                background: "var(--surface-strong)",
+                border: "1px solid var(--line)",
+                opacity: 0.82,
+                boxShadow: "0 4px 14px rgba(8,29,73,0.06), 0 1px 3px rgba(8,29,73,0.04)",
+                backdropFilter: "blur(10px)",
+                WebkitBackdropFilter: "blur(10px)",
+                willChange: "transform",
+                transformOrigin: "center",
+                // Initial rotation set via gsap.set in useEffect (avoids SSR flash)
+              }}
+            >
+              <span
+                style={{
+                  fontSize: 12.5,
+                  fontWeight: 600,
+                  color: "var(--muted)",
+                  letterSpacing: "-0.02em",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {card.label}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── Section 3: Growth System ────────────────────────────────────────────────────
+function GrowthSystemSection() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const stageRefs  = useRef<(HTMLDivElement | null)[]>([]);
+  const railRef    = useRef<HTMLDivElement>(null);
+  const dotRef     = useRef<HTMLDivElement>(null);
+
+  // Desktop pinned sequence
+  useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const isMobile = window.innerWidth < 768;
+    if (reducedMotion || isMobile) return;
+
+    const stages = stageRefs.current.filter((s): s is HTMLDivElement => s !== null);
+
+    // All stages start hidden except stage 0
+    stages.forEach((stage, i) => {
+      gsap.set(stage, { opacity: i === 0 ? 1 : 0, y: i === 0 ? 0 : 60 });
+    });
+
+    const TOTAL_SCROLL = (GROWTH_STAGES.length - 1) * window.innerHeight;
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: "top top",
+        end: `+=${TOTAL_SCROLL}`,
+        pin: true,
+        scrub: 1,
+        onUpdate: (self) => {
+          const rail = railRef.current;
+          const dot  = dotRef.current;
+          if (rail && dot) {
+            gsap.set(dot, { top: self.progress * Math.max(0, rail.offsetHeight - 10) });
+          }
+        },
+      },
+    });
+
+    for (let i = 0; i < GROWTH_STAGES.length - 1; i++) {
+      tl.to(stages[i],     { opacity: 0, y: -50, ease: "none", duration: 0.3 })
+        .to(stages[i + 1]!, { opacity: 1, y:   0, ease: "none", duration: 0.3 }, "<0.1")
+        .to({},             { duration: 0.7 }); // hold — user scrolls through this
+    }
+
+    return () => { tl.kill(); };
+  }, []);
+
+  // Mobile: simple IntersectionObserver fade-up (no pinning)
+  useEffect(() => {
+    const isMobile = window.innerWidth < 768;
+    if (!isMobile) return;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reducedMotion) return;
+
+    const stages = stageRefs.current.filter((s): s is HTMLDivElement => s !== null);
+    stages.forEach((s) => s.classList.add("cubeiq-stage--hidden"));
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.remove("cubeiq-stage--hidden");
+            entry.target.classList.add("cubeiq-stage--visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.2 }
+    );
+    stages.forEach((s) => observer.observe(s));
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <section
+      ref={sectionRef}
+      id="cubeiq-growth-system"
+      aria-label="CubeIQ growth system"
+      style={{ overflow: "hidden" }}
+    >
+      {/*
+        This div is 100vh tall — GSAP pins it for TOTAL_SCROLL scroll distance.
+        On mobile + reduced-motion the height override removes the fixed 100vh.
+      */}
+      <div className="cubeiq-growth-inner" style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
+        <div
+          className="page-shell"
+          style={{ flex: 1, display: "flex", flexDirection: "column" }}
+        >
+          {/* Section header */}
+          <div
+            className="cubeiq-growth-header"
+            style={{
+              paddingTop: "clamp(100px, 14vh, 140px)",
+              paddingBottom: "clamp(32px, 5vh, 52px)",
+              flexShrink: 0,
+            }}
+          >
+            <span
+              style={{
+                display: "block",
+                fontSize: 10.5,
+                fontWeight: 750,
+                letterSpacing: "0.16em",
+                textTransform: "uppercase",
+                color: BLUE,
+                marginBottom: 22,
+              }}
+            >
+              Our Growth System
+            </span>
+            <h2
+              style={{
+                fontFamily: "var(--font-display)",
+                fontSize: "clamp(2rem, 4.5vw, 3.75rem)",
+                fontWeight: 800,
+                letterSpacing: "-0.04em",
+                lineHeight: 1.05,
+                color: "var(--ink)",
+                margin: 0,
+              }}
+            >
+              One system.
+              <br />
+              Six connected stages.
+            </h2>
+          </div>
+
+          {/* Rail + stages */}
+          <div
+            style={{
+              flex: 1,
+              display: "grid",
+              gridTemplateColumns: "28px 1fr",
+              gap: 40,
+              paddingBottom: "clamp(60px, 8vh, 100px)",
+              overflow: "hidden",
+            }}
+          >
+            {/* Progress rail — blue only here */}
+            <div className="cubeiq-rail-col" style={{ position: "relative" }}>
+              <div
+                ref={railRef}
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  bottom: 0,
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  width: 1,
+                  background: "var(--line)",
+                }}
+              />
+              <div
+                ref={dotRef}
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  width: 10,
+                  height: 10,
+                  borderRadius: "50%",
+                  background: BLUE,
+                  zIndex: 1,
+                }}
+              />
+            </div>
+
+            {/* Stage container — all stages absolutely stacked */}
+            <div className="cubeiq-stage-container" style={{ position: "relative" }}>
+              {GROWTH_STAGES.map((stage, i) => (
+                <div
+                  key={stage.label}
+                  ref={(el) => { stageRefs.current[i] = el; }}
+                  className="cubeiq-stage"
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    display: "flex",
+                    alignItems: "center",
+                    // SSR-safe initial state: stage 0 visible, rest hidden
+                    opacity: i === 0 ? 1 : 0,
+                  }}
+                >
+                  {/* Oversized faint numeral — editorial depth detail */}
+                  <div
+                    aria-hidden="true"
+                    style={{
+                      position: "absolute",
+                      left: -16,
+                      top: "50%",
+                      transform: "translateY(-56%)",
+                      fontFamily: "var(--font-display)",
+                      fontSize: "clamp(7rem, 16vw, 13rem)",
+                      fontWeight: 200,
+                      letterSpacing: "-0.06em",
+                      lineHeight: 1,
+                      color: "var(--ink)",
+                      opacity: 0.04,
+                      userSelect: "none",
+                      pointerEvents: "none",
+                    }}
+                  >
+                    {stage.num}
+                  </div>
+
+                  {/* Stage label + description */}
+                  <div style={{ position: "relative", paddingLeft: 4 }}>
+                    <p
+                      style={{
+                        fontSize: 10.5,
+                        fontWeight: 700,
+                        letterSpacing: "0.1em",
+                        textTransform: "uppercase",
+                        color: "var(--muted)",
+                        margin: "0 0 16px",
+                      }}
+                    >
+                      {stage.num}
+                    </p>
+                    <h3
+                      style={{
+                        fontFamily: "var(--font-display)",
+                        fontSize: "clamp(3rem, 6.5vw, 5.5rem)",
+                        fontWeight: 800,
+                        letterSpacing: "-0.04em",
+                        lineHeight: 1.0,
+                        color: "var(--ink)",
+                        margin: "0 0 24px",
+                      }}
+                    >
+                      {stage.label}
+                    </h3>
+                    <p
+                      style={{
+                        fontSize: 16,
+                        lineHeight: 1.65,
+                        color: "var(--muted)",
+                        maxWidth: "38ch",
+                        margin: 0,
+                      }}
+                    >
+                      {stage.desc}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // ─── Content placeholder (Phase 2+) ────────────────────────────────────────────
 function ContentPlaceholder() {
   return (
@@ -479,6 +968,61 @@ export default function CubeIQPage() {
         .dark .cubeiq-hero-right > div {
           box-shadow: 0 8px 28px rgba(0,0,0,0.32), 0 2px 8px rgba(0,0,0,0.18) !important;
         }
+
+        /* ── Section 2: Problem ── */
+        @media (max-width: 767px) {
+          .cubeiq-problem-cluster { display: none !important; }
+          .cubeiq-problem-mobile  { display: flex !important; }
+          /* problem section: single column */
+          #cubeiq-problem .page-shell {
+            grid-template-columns: 1fr !important;
+          }
+        }
+        .dark .cubeiq-problem-cluster > div {
+          box-shadow: 0 4px 16px rgba(0,0,0,0.22), 0 1px 4px rgba(0,0,0,0.14) !important;
+        }
+
+        /* ── Section 3: Growth System ── */
+
+        /* Mobile animation classes */
+        .cubeiq-stage--hidden {
+          opacity: 0;
+          transform: translateY(28px);
+          transition: opacity 0.65s ease, transform 0.65s ease;
+        }
+        .cubeiq-stage--visible {
+          opacity: 1 !important;
+          transform: translateY(0) !important;
+          transition: opacity 0.65s ease, transform 0.65s ease;
+        }
+
+        /* Mobile overrides: unstack stages, remove pinned sizing */
+        @media (max-width: 767px) {
+          .cubeiq-growth-inner   { height: auto !important; }
+          .cubeiq-growth-header  { padding-top: 64px !important; }
+          .cubeiq-rail-col       { display: none !important; }
+          .cubeiq-stage-container { overflow: visible !important; }
+          /* Undo absolute stacking so stages flow normally */
+          .cubeiq-stage {
+            position: relative !important;
+            inset: auto !important;
+            padding-bottom: clamp(48px, 8vw, 64px);
+          }
+        }
+
+        /* Reduced-motion overrides: show all stages as a plain list */
+        @media (prefers-reduced-motion: reduce) {
+          .cubeiq-growth-inner   { height: auto !important; }
+          .cubeiq-rail-col       { display: none !important; }
+          .cubeiq-stage-container { overflow: visible !important; }
+          .cubeiq-stage {
+            position: relative !important;
+            inset: auto !important;
+            opacity: 1 !important;
+            transform: none !important;
+            padding-bottom: clamp(48px, 8vw, 64px);
+          }
+        }
       `}</style>
 
       <div
@@ -492,6 +1036,8 @@ export default function CubeIQPage() {
         <CubeIQNav />
         <main>
           <HeroSection />
+          <ProblemSection />
+          <GrowthSystemSection />
           <ContentPlaceholder />
         </main>
       </div>
