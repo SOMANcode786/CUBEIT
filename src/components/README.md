@@ -1,41 +1,46 @@
-# CubeIQ page for the existing CubeIT website
+  <section ref={systemRef} id="services" className={styles.systemSection}>
+          <div className={styles.systemSticky}>
+            <div className={styles.systemBackdrop} aria-hidden="true" />
+            <SceneLayer
+              mode="system"
+              progress={systemProgress}
+              velocity={systemVelocity}
+              pointer={pointer}
+              active={systemActive}
+              reducedMotion={reducedMotion}
+            />
 
-This is a page package, not a separate project.
+            <header className={styles.systemHeader} data-cubeiq-system-intro>
+              <span>THE CUBEIQ SYSTEM</span>
+              <p>Most agencies stop at the ad. We connect what happens next.</p>
+            </header>
 
-## Place the files
+            <div className={styles.stageRail} aria-hidden="true">
+              {GROWTH_STAGES.map((stage) => (
+                <span key={stage.id}>{stage.title}</span>
+              ))}
+            </div>
 
-```text
-app/
-└── cubeiq/
-    ├── page.tsx
-    └── cubeiq.module.css
-```
+            <div className={styles.stageViewport}>
+              {GROWTH_STAGES.map((stage, index) => (
+                <article
+                  className={styles.stage}
+                  key={stage.id}
+                  data-cubeiq-stage={index}
+                  aria-label={`${stage.title}: ${stage.statement}`}
+                >
+                  <div className={styles.stageNumber}>{stage.number}</div>
+                  <h2>{stage.title}</h2>
+                  <p>{stage.statement}</p>
+                  <div className={styles.stageServices}>{stage.services}</div>
+                </article>
+              ))}
+            </div>
 
-The page intentionally does **not** render another navbar or footer. It should inherit CubeIT's existing shared layout.
-
-## Existing packages used
-
-```text
-next
-react
-three
-@react-three/fiber
-@react-three/drei
-gsap
-framer-motion
-lucide-react
-```
-
-## Existing public assets used
-
-The page uses the current `/public/cubeiq-assets/*` images and platform SVGs plus `/public/brand/cubeit-logo.png`. No remote assets or placeholders are included.
-
-## Existing navigation
-
-Add one item to the current shared CubeIT navigation data/component without restructuring it:
-
-```tsx
-{ label: "CubeIQ", href: "/cubeiq" }
-```
-
-Keep the shared navbar and mobile-menu implementation exactly as they already are.
+            <div className={styles.systemFooterLine} aria-hidden="true">
+              <span>Attract</span>
+              <i />
+              <span>Scale</span>
+            </div>
+          </div>
+        </section>
