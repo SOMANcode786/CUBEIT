@@ -1,0 +1,661 @@
+Implement a new premium page for **CubeIQ**, CubeIT’s dedicated digital marketing and business growth division.
+
+IMPORTANT SCOPE RULES:
+
+* Do NOT redesign, refactor, restyle, or modify unrelated parts of the existing CubeIT website.
+* Do NOT change existing pages, components, global styles, animations, routing behavior, or shared functionality unless absolutely necessary for adding this page.
+* Preserve the current website exactly as it is.
+* Only:
+
+  1. Create the new CubeIQ page.
+  2. Add one appropriate **CubeIQ nav link** to the existing navigation.
+  3. Reuse existing CubeIT design tokens/components where appropriate without altering their current behavior.
+* The implementation must not introduce regressions, layout shifts, hydration issues, broken routes, scroll bugs, performance problems, or dependency conflicts.
+* Follow the existing project architecture and conventions you already understand.
+
+## PAGE PURPOSE
+
+CubeIQ should feel like a premium modern digital growth agency operating under CubeIT.
+
+Do NOT present CubeIQ as a generic agency that simply “runs ads.”
+
+The page should communicate, in extremely simple non-technical language, that CubeIQ helps businesses:
+
+**Get noticed → build trust → attract customers → convert them → reconnect → grow repeatedly.**
+
+The underlying idea is:
+
+**Attract → Engage → Convert → Reconnect → Retain → Scale**
+
+But explain everything through business outcomes rather than marketing jargon.
+
+Someone with zero knowledge of digital marketing should immediately understand:
+
+* What CubeIQ does
+* Why their business may need it
+* How CubeIQ helps
+* What services are available
+* What happens when they work with us
+* Why CubeIQ is different from a normal marketing agency
+
+The copy should feel confident, clear, premium and intelligent.
+
+Avoid excessive terminology such as ROAS, funnels, attribution, CTR, CRM architecture, etc. unless briefly explained in plain language.
+
+## VISUAL DIRECTION
+
+Keep the page completely consistent with the existing **CubeIT visual identity**:
+
+* Premium
+* Minimal
+* Modern
+* Intelligent
+* Engineering-level polish
+* White / very light primary canvas
+* Deep navy typography
+* Electric blue as the dominant accent
+* Orange only as a very subtle secondary highlight where genuinely useful
+* Large clean typography
+* Generous spacing
+* Strong hierarchy
+* Refined grid/cube-inspired details
+* Soft gradients
+* Glass-like surfaces where appropriate
+* Subtle depth
+* Elegant micro-interactions
+
+Do not make it look like a colorful generic social-media agency template.
+
+It should feel like:
+
+**A technology company built a world-class growth agency.**
+
+The page should visually belong to CubeIT while having its own slightly more expressive marketing personality.
+
+## MOTION / THREE.JS / SCROLL EXPERIENCE
+
+Make this page visually memorable using a carefully optimized combination of:
+
+* Three.js / React Three Fiber if already compatible with the project
+* Smooth scroll-linked motion
+* Canvas-rendered visual elements
+* Image-based WebGL effects
+* Subtle parallax
+* Mouse interaction
+* Scroll-triggered transformations
+* Section transitions
+* Mask/reveal animations
+* Depth-based image movement
+* Distortion only where tasteful
+* Smooth interpolation / damping
+
+The experience should feel exceptionally fluid on high-refresh-rate displays.
+
+Do NOT add animation simply for decoration.
+
+Animations should help communicate the story.
+
+### Three.js visual concept
+
+Create a sophisticated interactive canvas experience representing the idea that CubeIQ connects multiple parts of business growth into one system.
+
+Possible visual language:
+
+* Floating image planes
+* Campaign visuals
+* Content cards
+* Website/device screens
+* Search/social/content/customer touchpoints
+* Abstract geometric CubeIT-inspired objects
+* Thin flowing connection lines
+* Floating layers moving through 3D space
+* Cards/images gradually organizing themselves into a connected system
+
+As the user scrolls, fragmented marketing elements can initially appear separated, then gradually become more coordinated and connected.
+
+This metaphor should visually communicate:
+
+**Ads alone are not enough. Everything works better when the entire growth system is connected.**
+
+Use actual image textures/assets where appropriate rather than making the entire page abstract geometry.
+
+Image planes may have:
+
+* Gentle perspective depth
+* Slight WebGL bending
+* Soft wave/distortion during scroll
+* Subtle hover response
+* Smooth scale transitions
+* Depth movement
+
+Keep distortion elegant and controlled.
+
+Never sacrifice readability.
+
+HTML text should remain crisp DOM text and generally sit above the WebGL layer.
+
+Canvas elements should support the page, not dominate it.
+
+## PERFORMANCE
+
+The page must remain production-grade.
+
+* Lazy-load heavy Three.js functionality where appropriate.
+* Avoid unnecessarily large textures.
+* Optimize DPR.
+* Dispose Three.js resources correctly.
+* Avoid permanent expensive render loops where unnecessary.
+* Pause/reduce rendering outside the viewport when possible.
+* Avoid excessive shaders and particles.
+* Respect `prefers-reduced-motion`.
+* Provide a graceful non-WebGL/reduced-motion experience.
+* Keep mobile GPU limitations in mind.
+* Avoid scroll-jacking.
+
+Use native scrolling with smooth motion layered on top.
+
+Do not make the page difficult to navigate.
+
+## PAGE STRUCTURE
+
+Create a complete narrative rather than disconnected service cards.
+
+### 1. HERO — “Growth should work as one system.”
+
+Create an extremely strong opening.
+
+Possible messaging direction:
+
+**Marketing that moves your business forward.**
+
+Supporting idea:
+
+CubeIQ brings your advertising, content, website and customer journey together so more people discover your business, trust it and become customers.
+
+Avoid overloading the hero.
+
+Include:
+
+* Strong headline
+* Short clear supporting paragraph
+* Primary CTA such as **Grow With CubeIQ**
+* Secondary CTA such as **Explore What We Do**
+
+Hero visual should use a premium Three.js/WebGL composition.
+
+Possible concept:
+Multiple floating fragmented visual elements representing:
+
+* Social media
+* Ads
+* Search
+* Website
+* Content
+* Customer conversations
+
+As the visitor scrolls, these fragments begin aligning into one connected visual ecosystem.
+
+Make the opening visually impressive but sophisticated.
+
+### 2. THE PROBLEM
+
+Explain the common problem in very simple language.
+
+Potential headline:
+
+**Running ads is easy. Building growth is harder.**
+
+Explain that businesses often have:
+
+* Ads running separately
+* Social media managed separately
+* A website that does not convert
+* Customers who enquire but never get followed up
+* No clear understanding of what is actually working
+
+Present this visually rather than through a boring bullet list.
+
+Use an interactive/scroll sequence where disconnected elements feel chaotic.
+
+Then transition visually toward organization.
+
+Key idea:
+
+**CubeIQ connects the pieces.**
+
+### 3. OUR GROWTH SYSTEM
+
+Build an elegant scroll-driven section around:
+
+**Attract → Engage → Convert → Reconnect → Retain → Scale**
+
+Each stage should have one very simple explanation.
+
+Example:
+
+ATRACT
+Put your business in front of the right people.
+
+ENGAGE
+Give them a reason to stop, notice and care.
+
+CONVERT
+Turn interest into messages, enquiries and sales.
+
+RECONNECT
+Bring interested people back instead of losing them.
+
+RETAIN
+Stay connected so customers return.
+
+SCALE
+Use what works to grow smarter and faster.
+
+Animate the stages progressively as the user scrolls.
+
+A subtle connected line/path or 3D spatial journey can visually move between them.
+
+Do not make this look like a corporate flowchart.
+
+### 4. WHAT CUBEIQ DOES
+
+Create visually rich sections/cards for the main service pillars.
+
+Do not simply display ten identical cards in a grid.
+
+Use a varied editorial layout with imagery, motion and strong hierarchy.
+
+#### Performance Advertising
+
+Plain-language explanation:
+
+We create and manage advertising that puts your business in front of people who are most likely to become customers.
+
+Includes:
+
+* Facebook & Instagram Ads
+* Google Ads/Search
+* Campaign strategy
+* Audience testing
+* Retargeting
+* Continuous improvement
+
+Do not overuse technical terms.
+
+#### Social Media & Content
+
+Explain:
+
+We help your brand stay active, relevant and worth following.
+
+Includes:
+
+* Content strategy
+* Social media management
+* Creative direction
+* Reels and short-form content
+* Captions and communication
+* Community growth
+
+#### Creative & Brand Design
+
+Explain:
+
+We make sure your business looks professional, recognizable and trustworthy everywhere customers see it.
+
+Includes:
+
+* Campaign creatives
+* Social graphics
+* Branding
+* Visual identity
+* Promotional content
+* Marketing assets
+
+#### Search & SEO
+
+Explain:
+
+We help people find your business when they are already searching for what you offer.
+
+Includes:
+
+* Search visibility
+* SEO
+* Local discovery
+* Google presence
+* Search-focused content
+
+Keep language extremely simple.
+
+#### Website & Conversion Improvement
+
+Explain:
+
+Getting visitors is not enough. We improve the experience so more visitors actually take action.
+
+Includes:
+
+* Landing pages
+* Website improvements
+* E-commerce optimization
+* Better calls-to-action
+* Mobile experience
+* Conversion-focused design
+
+#### Customer Follow-Up & Automation
+
+Explain:
+
+Not every interested customer buys immediately. We help businesses follow up automatically and stay connected.
+
+Includes:
+
+* WhatsApp journeys
+* Lead follow-up
+* CRM connections
+* Re-engagement
+* Automated reminders
+* AI-assisted workflows
+
+Keep this positioned as a major CubeIQ advantage because CubeIT has a technology background.
+
+### 5. THE CUBEIQ DIFFERENCE
+
+Strong section.
+
+Headline direction:
+
+**Most agencies stop at the ad. We look at what happens next.**
+
+Show visually:
+
+Ad
+↓
+Landing Page / Website
+↓
+Message / Enquiry
+↓
+Follow-Up
+↓
+Customer
+↓
+Repeat Customer
+
+Explain:
+
+A great advertisement cannot fix a confusing website.
+
+A beautiful social page cannot help if nobody follows up with interested customers.
+
+More website traffic means nothing if visitors do not take action.
+
+CubeIQ looks at the entire journey.
+
+This section should be one of the page’s strongest storytelling moments.
+
+Use scroll-linked Three.js/image planes to visually move the visitor through the complete customer journey.
+
+### 6. BUILT BY CUBEIT
+
+Clearly connect CubeIQ back to the parent CubeIT brand.
+
+Possible headline:
+
+**Marketing backed by technology.**
+
+Explain simply:
+
+Because CubeIQ is part of CubeIT, we can go further than traditional marketing agencies.
+
+When a business needs more than advertising, we can also connect:
+
+* Websites
+* Custom software
+* AI
+* Automation
+* CRM systems
+* Business tools
+* Analytics
+* Integrations
+
+The message:
+
+**We do not force businesses to work around disconnected tools. We can build the system around the business.**
+
+Keep this section elegant and concise.
+
+### 7. HOW WE WORK
+
+Use:
+
+**Test → Learn → Improve → Reconnect → Scale**
+
+Explain that CubeIQ does not launch something once and hope it works.
+
+We continuously:
+
+* Test ideas
+* Learn what customers respond to
+* Improve what works
+* Reconnect with interested people
+* Scale successful strategies
+
+Create a smooth horizontal or spatial scroll-inspired sequence, but do not create uncomfortable scroll hijacking.
+
+### 8. SERVICES OVERVIEW
+
+Include a concise, easy-to-scan complete services area so visitors can understand the full capability.
+
+Possible categories:
+
+GROW
+
+* Meta Ads
+* Google Ads
+* Campaign Strategy
+* Retargeting
+
+CREATE
+
+* Social Media
+* Content Strategy
+* Graphic Design
+* Branding
+* Reels / Short Content
+
+BE FOUND
+
+* SEO
+* Search Strategy
+* Local Visibility
+
+CONVERT
+
+* Landing Pages
+* Website Optimization
+* E-commerce Growth
+* Conversion Improvement
+
+CONNECT
+
+* WhatsApp Follow-Up
+* CRM
+* Lead Automation
+* Customer Re-engagement
+
+INTELLIGENCE
+
+* Analytics
+* Tracking
+* AI-assisted marketing
+* Marketing automation
+
+Make this visually refined rather than a giant plain list.
+
+### 9. IDEAL CLIENTS
+
+Communicate naturally that CubeIQ works well for:
+
+* Startups
+* Growing businesses
+* E-commerce brands
+* Service businesses
+* Restaurants / hospitality
+* Real estate
+* Professional services
+* Businesses needing a stronger digital presence
+
+Do not make the page feel restricted to these industries.
+
+### 10. FINAL CTA
+
+Finish with a premium high-impact section.
+
+Possible direction:
+
+**You do not need more disconnected marketing.
+You need a system that grows with your business.**
+
+CTA:
+
+**Build Your Growth System**
+
+Secondary supportive text:
+
+Tell us where your business is today. We’ll help you identify what should happen next.
+
+Tie the ending visually back to the opening Three.js scene.
+
+At the beginning everything was fragmented.
+
+At the end, everything should feel connected and organized into one CubeIQ growth ecosystem.
+
+This gives the entire page a visual narrative arc.
+
+## NAVIGATION
+
+Add **CubeIQ** to the existing website navigation in the most appropriate location.
+
+Do not restructure the navbar.
+
+Do not change existing nav behavior.
+
+Ensure:
+
+* Desktop works correctly
+* Mobile menu works correctly
+* Active route state works if one exists
+* Existing navigation remains untouched otherwise
+
+## RESPONSIVE BEHAVIOR
+
+The page must feel intentionally designed at:
+
+* Large desktop
+* Laptop
+* Tablet
+* Mobile
+
+Do not simply shrink desktop layouts.
+
+For mobile:
+
+* Simplify WebGL scenes
+* Reduce texture count
+* Reduce simultaneous animations
+* Recompose layouts vertically
+* Preserve strong typography
+* Maintain comfortable spacing
+* Keep CTAs obvious
+* Maintain excellent performance
+
+## ACCESSIBILITY
+
+* Semantic HTML
+* Keyboard-safe interactions
+* Appropriate contrast
+* Alt text
+* Reduced-motion support
+* No important information exclusively inside canvas
+* Text remains selectable and accessible
+* Canvas visuals are enhancement, not required for understanding
+
+## QUALITY BAR
+
+The page should feel like a custom-designed **Awwwards-level modern agency/technology experience**, but without sacrificing usability.
+
+Avoid:
+
+* Generic Tailwind landing-page appearance
+* Repetitive card grids
+* Excessive rounded boxes everywhere
+* Random gradient blobs
+* Meaningless 3D objects
+* Excessive particles
+* Over-animation
+* Huge amounts of text
+* Marketing jargon
+* Fake statistics
+* Fake testimonials
+* Fake client logos
+* Fake case studies
+* Fake performance numbers
+* Template-like layouts
+
+Use motion, spacing, imagery, typography and storytelling to create sophistication.
+
+Every section should have a purpose.
+
+## COPY STYLE
+
+Write final production-ready copy yourself.
+
+Tone:
+
+* Clear
+* Human
+* Confident
+* Premium
+* Simple
+* Intelligent
+* Outcome-focused
+
+Avoid language such as:
+
+“Leverage cutting-edge omnichannel synergistic performance ecosystems.”
+
+Prefer:
+
+“We help more of the right people discover your business — and give them a better reason to become customers.”
+
+Do not make claims we cannot prove.
+
+## TECHNICAL SAFETY
+
+Before finishing:
+
+* Ensure no existing page was unintentionally modified.
+* Ensure no unrelated components were refactored.
+* Ensure TypeScript passes.
+* Ensure lint/build passes where applicable.
+* Check console for runtime warnings/errors.
+* Check hydration.
+* Check responsive navigation.
+* Check mobile.
+* Check WebGL cleanup.
+* Check route transitions.
+* Check scroll restoration.
+* Check performance.
+* Check `prefers-reduced-motion`.
+* Check canvas does not block pointer interactions with normal page content.
+* Check z-index layering carefully.
+* Check that the new page works even if WebGL is unavailable.
+
+Do not finish with placeholder implementation.
+
+Implement the complete polished page.
+
+The result should make a visitor think:
+
+**“CubeIQ doesn’t just advertise businesses. It builds the complete system that helps them get discovered, convert customers and keep growing.”**
