@@ -155,7 +155,6 @@ function WorkCard({
   work: (typeof works)[0];
   originalIndex: number;
   animationIndex: number;
-  isBento: boolean;
   reduceMotion: boolean;
 }) {
   return (
@@ -511,7 +510,7 @@ function OurWorkDropdown() {
   );
 }
 
-function Navbar() {
+export function Navbar() {
   const lastScrollY = useRef(0);
   const navRef = useRef<HTMLElement>(null);
 
@@ -816,7 +815,6 @@ function Work() {
                 work={work}
                 originalIndex={works.indexOf(work)}
                 animationIndex={i}
-                isBento={isBento}
                 reduceMotion={!!reduced}
               />
             ))}
