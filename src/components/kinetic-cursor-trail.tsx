@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from "react";
 
-// The 18 supplied vibrant SVG asset files
 const KINETIC_SVG_ASSETS = [
   { src: "/kinetic-svgs/01_folded_bow.svg", baseSize: 48 },
   { src: "/kinetic-svgs/02_gold_spark.svg", baseSize: 28 },
@@ -50,13 +49,10 @@ export default function KineticCursorTrail({
   const lastSpawnTimeRef = useRef<number>(0);
   const mouseVelRef = useRef<{ vx: number; vy: number }>({ vx: 0, vy: 0 });
   const lastMousePosRef = useRef<{ x: number; y: number; time: number } | null>(null);
-
-  // Shuffled bag for non-repeating random SVG selection
   const svgBagRef = useRef<number[]>([]);
 
   const getNextSvgIndex = () => {
     if (svgBagRef.current.length === 0) {
-      // Refill & shuffle bag
       const indices = Array.from({ length: KINETIC_SVG_ASSETS.length }, (_, i) => i);
       for (let i = indices.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -72,46 +68,62 @@ export default function KineticCursorTrail({
     const layer = layerRef.current;
     if (!container || !layer) return;
 
-    // Check media accessibility & pointer capabilities
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const isFinePointer = window.matchMedia("(pointer: fine)").matches;
     if (prefersReducedMotion || !isFinePointer) return;
 
     const MAX_PARTICLES = 25;
-    const MIN_SPAWN_DIST = 45; // pixels mouse must travel before emitting
-    const MIN_SPAWN_INTERVAL = 40; // ms minimum interval
+    const MIN_SPAWN_DIST = 45;
+    const MIN_SPAWN_INTERVAL = 40;
+
+    const isPointerInHeroCanvas = (clientX: number, clientY: number) => {
+      if (clientX < 0 || clientX > window.innerWidth || clientY < 0 || clientY > window.innerHeight) {
+        return false;
+      }
+
+      const currentContainer = containerRef.current;
+      if (currentContainer) {
+        const rect = currentContainer.getBoundingClientRect();
+        if (rect.top > window.innerHeight || rect.bottom < 0) {
+          return false;
+        }
+        const heroBottomLimit = Math.max(rect.bottom, window.innerHeight);
+        if (clientY > heroBottomLimit) {
+          return false;
+        }
+      } else {
+        if (window.scrollY > window.innerHeight) {
+          return false;
+        }
+      }
+
+      return true;
+    };
 
     const updatePhysics = (now: number) => {
       if (!lastTimeRef.current) lastTimeRef.current = now;
-      const dt = Math.min((now - lastTimeRef.current) / 1000, 0.033); // cap dt at 33ms
+      const dt = Math.min((now - lastTimeRef.current) / 1000, 0.033);
       lastTimeRef.current = now;
 
-      const rect = container.getBoundingClientRect();
       const particles = particlesRef.current;
       const activeParticles: Particle[] = [];
 
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
 
-        // Apply physics
         p.vy += p.gravity * dt;
-        p.vx *= Math.pow(0.985, dt * 60); // air drag damping
+        p.vx *= Math.pow(0.985, dt * 60);
         p.x += p.vx * dt;
         p.y += p.vy * dt;
         p.rotation += p.angularVelocity * dt;
 
         const ageSec = (now - p.createdAt) / 1000;
 
-        // Check if particle is still within hero bounds or within lifetime (8s max)
-        if (p.y < rect.height + 80 && ageSec < 8) {
-          // Direct DOM transform update for 60fps hardware accelerated rendering
+        if (p.y < window.innerHeight + 80 && ageSec < 8) {
           p.el.style.transform = `translate3d(${p.x}px, ${p.y}px, 0) translate(-50%, -50%) rotate(${p.rotation}deg) scale(${p.scale})`;
           activeParticles.push(p);
         } else {
-          // Remove DOM node safely
-          if (p.el.parentNode === layer) {
-            layer.removeChild(p.el);
-          }
+          if (p.el.parentNode === layer) layer.removeChild(p.el);
         }
       }
 
@@ -120,7 +132,7 @@ export default function KineticCursorTrail({
       if (activeParticles.length > 0) {
         animFrameIdRef.current = requestAnimationFrame(updatePhysics);
       } else {
-        animFrameIdRef.current = null; // Pause RAF loop when no particles are moving
+        animFrameIdRef.current = null;
       }
     };
 
@@ -131,24 +143,19 @@ export default function KineticCursorTrail({
       }
     };
 
-    const spawnParticle = (clientX: number, clientY: number) => {
-      const rect = container.getBoundingClientRect();
-      const x = clientX - rect.left;
-      const y = clientY - rect.top;
-
-      // Select SVG asset from shuffled bag
+    const spawnParticle = (
+      clientX: number,
+      clientY: number,
+      opts?: { isClick?: boolean }
+    ) => {
       const assetIndex = getNextSvgIndex();
       const asset = KINETIC_SVG_ASSETS[assetIndex];
 
-      // Enforce max active particle limit
       if (particlesRef.current.length >= MAX_PARTICLES) {
         const oldest = particlesRef.current.shift();
-        if (oldest && oldest.el.parentNode === layer) {
-          layer.removeChild(oldest.el);
-        }
+        if (oldest && oldest.el.parentNode === layer) layer.removeChild(oldest.el);
       }
 
-      // Create DOM element
       const img = document.createElement("img");
       img.src = asset.src;
       img.alt = "";
@@ -161,28 +168,26 @@ export default function KineticCursorTrail({
       img.style.pointerEvents = "none";
       img.style.willChange = "transform";
 
-      // Small random offset near cursor (-6px to +6px)
-      const offsetX = (Math.random() - 0.5) * 12;
-      const offsetY = (Math.random() - 0.5) * 12;
-      const initialX = x + offsetX;
-      const initialY = y + offsetY;
+      const isClick = opts?.isClick ?? false;
 
-      // Initial physics parameters
-      const randomVx = (Math.random() - 0.5) * 90; // horizontal drift -45 to +45 px/s
-      const randomVy = (Math.random() - 0.55) * 80 - 15; // vertical impulse (-55 to +25 px/s)
-      const mouseVxInfluence = Math.max(-120, Math.min(120, mouseVelRef.current.vx * 0.12));
-      const mouseVyInfluence = Math.max(-80, Math.min(80, mouseVelRef.current.vy * 0.08));
+      const offsetX = (Math.random() - 0.5) * (isClick ? 24 : 12);
+      const offsetY = (Math.random() - 0.5) * (isClick ? 24 : 12);
+
+      const randomVx = (Math.random() - 0.5) * (isClick ? 220 : 90);
+      const randomVy = (Math.random() - 0.55) * (isClick ? 200 : 80) - (isClick ? 80 : 15);
+      const mouseVxInfluence = isClick ? 0 : Math.max(-120, Math.min(120, mouseVelRef.current.vx * 0.12));
+      const mouseVyInfluence = isClick ? 0 : Math.max(-80, Math.min(80, mouseVelRef.current.vy * 0.08));
 
       const particle: Particle = {
         el: img,
-        x: initialX,
-        y: initialY,
+        x: clientX + offsetX,
+        y: clientY + offsetY,
         vx: randomVx + mouseVxInfluence,
         vy: randomVy + mouseVyInfluence,
         rotation: Math.random() * 360,
-        angularVelocity: (Math.random() - 0.5) * 220, // -110 to +110 deg/s
-        gravity: 340 + Math.random() * 120, // 340 to 460 px/s^2
-        scale: 0.85 + Math.random() * 0.35, // 0.85 to 1.2
+        angularVelocity: (Math.random() - 0.5) * (isClick ? 360 : 220),
+        gravity: 340 + Math.random() * 120,
+        scale: 0.85 + Math.random() * 0.35,
         createdAt: performance.now(),
       };
 
@@ -194,20 +199,10 @@ export default function KineticCursorTrail({
     };
 
     const handlePointerMove = (e: PointerEvent) => {
+      if (!isPointerInHeroCanvas(e.clientX, e.clientY)) return;
+
       const now = performance.now();
-      const rect = container.getBoundingClientRect();
 
-      // Ensure pointer is inside container bounds
-      if (
-        e.clientX < rect.left ||
-        e.clientX > rect.right ||
-        e.clientY < rect.top ||
-        e.clientY > rect.bottom
-      ) {
-        return;
-      }
-
-      // Compute mouse velocity
       if (lastMousePosRef.current) {
         const dt = (now - lastMousePosRef.current.time) / 1000;
         if (dt > 0) {
@@ -219,7 +214,23 @@ export default function KineticCursorTrail({
       }
       lastMousePosRef.current = { x: e.clientX, y: e.clientY, time: now };
 
-      // Distance-based spawn check
+      // Gentle proximity reaction for nearest active floating icons
+      const REACTION_RADIUS = 130;
+      const particles = particlesRef.current;
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        const dx = p.x - e.clientX;
+        const dy = p.y - e.clientY;
+        const dist = Math.hypot(dx, dy);
+        if (dist < REACTION_RADIUS && dist > 0) {
+          const factor = 1 - dist / REACTION_RADIUS;
+          const pushAngle = Math.atan2(dy, dx);
+          p.vx += Math.cos(pushAngle) * factor * 110;
+          p.vy += Math.sin(pushAngle) * factor * 110;
+          p.angularVelocity += (Math.random() - 0.5) * 140 * factor;
+        }
+      }
+
       if (!lastSpawnPosRef.current) {
         lastSpawnPosRef.current = { x: e.clientX, y: e.clientY };
         lastSpawnTimeRef.current = now;
@@ -237,23 +248,43 @@ export default function KineticCursorTrail({
       }
     };
 
-    container.addEventListener("pointermove", handlePointerMove, { passive: true });
+    const handlePointerDown = (e: PointerEvent) => {
+      if (!isPointerInHeroCanvas(e.clientX, e.clientY)) return;
+
+      const CLICK_REACTION_RADIUS = 200;
+      const particles = particlesRef.current;
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        const dx = p.x - e.clientX;
+        const dy = p.y - e.clientY;
+        const dist = Math.hypot(dx, dy);
+        if (dist < CLICK_REACTION_RADIUS && dist > 0) {
+          const factor = 1 - dist / CLICK_REACTION_RADIUS;
+          const pushAngle = Math.atan2(dy, dx);
+          p.vx += Math.cos(pushAngle) * factor * 350;
+          p.vy += Math.sin(pushAngle) * factor * 350 - 60;
+          p.angularVelocity += (Math.random() - 0.5) * 360 * factor;
+        }
+      }
+
+      spawnParticle(e.clientX, e.clientY, { isClick: true });
+    };
+
+    window.addEventListener("pointermove", handlePointerMove, { passive: true });
+    window.addEventListener("pointerdown", handlePointerDown, { passive: true });
 
     return () => {
-      container.removeEventListener("pointermove", handlePointerMove);
-      if (animFrameIdRef.current) {
-        cancelAnimationFrame(animFrameIdRef.current);
-      }
-      if (layer) {
-        layer.innerHTML = "";
-      }
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerdown", handlePointerDown);
+      if (animFrameIdRef.current) cancelAnimationFrame(animFrameIdRef.current);
+      if (layer) layer.innerHTML = "";
     };
   }, [containerRef]);
 
   return (
     <div
       ref={layerRef}
-      className="pointer-events-none absolute inset-0 z-1 overflow-hidden"
+      className="pointer-events-none fixed inset-0 z-[1] overflow-hidden"
       aria-hidden="true"
     />
   );

@@ -457,18 +457,23 @@ function CubeThemeToggle() {
 
 function OurWorkDropdown() {
   const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleMouseEnter = () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    setOpen(true);
+  };
+
+  const handleMouseLeave = () => {
+    closeTimer.current = setTimeout(() => setOpen(false), 180);
+  };
 
   useEffect(() => {
-    const onOutside = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    };
     const onEsc = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
-    document.addEventListener("mousedown", onOutside);
     document.addEventListener("keydown", onEsc);
     return () => {
-      document.removeEventListener("mousedown", onOutside);
       document.removeEventListener("keydown", onEsc);
+      if (closeTimer.current) clearTimeout(closeTimer.current);
     };
   }, []);
 
@@ -478,29 +483,30 @@ function OurWorkDropdown() {
   };
 
   return (
-    <div className="nav-work-wrap" ref={ref}>
+    <div
+      className="nav-work-wrap"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       <button
         type="button"
         className="nav-work-trigger"
-        onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-haspopup="menu"
       >
         Our Work
         <ChevronDown className="nav-work-chevron" aria-hidden="true" />
       </button>
-      {open && (
-        <div className="nav-work-menu" role="menu">
-          <button className="nav-work-item" type="button" role="menuitem" onClick={() => go("client-projects")}>
-            <Briefcase aria-hidden="true" />
-            Client&apos;s Projects
-          </button>
-          <button className="nav-work-item" type="button" role="menuitem" onClick={() => go("labs-projects")}>
-            <FlaskConical aria-hidden="true" />
-            Labs Projects
-          </button>
-        </div>
-      )}
+      <div className="nav-work-menu" role="menu" data-open={open}>
+        <button className="nav-work-item" type="button" role="menuitem" onClick={() => go("client-projects")}>
+          <Briefcase aria-hidden="true" />
+          Client&apos;s Projects
+        </button>
+        <button className="nav-work-item" type="button" role="menuitem" onClick={() => go("labs-projects")}>
+          <FlaskConical aria-hidden="true" />
+          Labs Projects
+        </button>
+      </div>
     </div>
   );
 }
@@ -555,6 +561,7 @@ function Navbar() {
       <nav className="nav-links" aria-label="Main navigation">
         <a href="#home">Home</a>
         <a href="#services">Services</a>
+        <a href="/cubeiq">CubeIQ</a>
         <OurWorkDropdown />
       </nav>
       <div className="nav-actions">
@@ -579,51 +586,19 @@ function SectionHeader({ eyebrow, title, subtitle, second = "See Work", secondHr
   );
 }
 
-/* ── Tech tagline data ─────────────────────────────────────────────────── */
-const TECH_TERMS = [
-  { label: "AI Products",         ghost: "AI"         },
-  { label: "Enterprise Software", ghost: "ENTERPRISE" },
-  { label: "Digital Systems",     ghost: "SYSTEMS"    },
-] as const;
-
+/* ── Tech tagline pill below navbar ────────────────────────────────────── */
 function TechTagline() {
-  const [active, setActive] = useState<number | null>(null);
   return (
     <div
       className="tech-tagline"
       role="text"
-      aria-label="AI Products · Enterprise Software · Digital Systems"
+      aria-label="AI Products • Enterprise Software • Intelligent Automation"
     >
-      {active !== null && (
-        <span className="tech-tagline__ghost" aria-hidden="true" key={active}>
-          {TECH_TERMS[active].ghost}
-        </span>
-      )}
-      {TECH_TERMS.map((term, i) => (
-        <Fragment key={term.label}>
-          {i > 0 && (
-            <span
-              className="tech-tagline__sep"
-              aria-hidden="true"
-              style={{ animationDelay: `${0.2 + i * 0.22 - 0.08}s` } as CSSProperties}
-            />
-          )}
-          <span
-            className="tech-tagline__word-wrap"
-            style={{ animationDelay: `${0.1 + i * 0.22}s` } as CSSProperties}
-          >
-            <span
-              className="tech-tagline__term"
-              data-active={active === i ? "" : undefined}
-              data-dim={active !== null && active !== i ? "" : undefined}
-              onMouseEnter={() => setActive(i)}
-              onMouseLeave={() => setActive(null)}
-            >
-              {term.label}
-            </span>
-          </span>
-        </Fragment>
-      ))}
+      <span>AI Products</span>
+      <span className="tech-tagline-bullet" aria-hidden="true">•</span>
+      <span>Enterprise Software</span>
+      <span className="tech-tagline-bullet" aria-hidden="true">•</span>
+      <span>Intelligent Automation</span>
     </div>
   );
 }

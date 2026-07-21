@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 
 const interactiveSelector = [
-  "button:not(.technology-marquee-card):not(.expandable-card):not(.expandable-backdrop)",
+  "button:not(.technology-marquee-card):not(.expandable-card):not(.expandable-backdrop):not(.nav-work-trigger):not(.nav-work-item)",
   "a.nav-cta",
   "a.btn",
   "a.hero-scroll",
