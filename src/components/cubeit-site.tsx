@@ -559,10 +559,10 @@ export function Navbar() {
     <header ref={navRef} className="nav-shell">
       <a className="nav-logo" href="/" aria-label="CubeIT home"><LogoMark /></a>
       <nav className="nav-links" aria-label="Main navigation">
-        <a href="#home">Home</a>
-        <a href="#services">Services</a>
+        <a href="/">Home</a>
+        <a href="/services">Services</a>
+        <a href="/our-work">Our Work</a>
         <a href="/cubeiq">CubeIQ</a>
-        <OurWorkDropdown />
       </nav>
       <div className="nav-actions">
         <CubeThemeToggle />
