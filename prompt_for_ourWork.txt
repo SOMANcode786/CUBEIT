@@ -1,0 +1,1492 @@
+I want you to implement a premium interactive “Our Works” experience for my existing CubeIT website.
+
+IMPORTANT:
+You are NOT being given the visual reference video, so do not make assumptions or implement a generic animated portfolio grid. I am describing the observed behavior in detail below. Reproduce the EXPERIENCE and MOTION SYSTEM described here, but integrate it completely into CubeIT’s existing design language, architecture, typography, navigation, spacing system, project data and theme.
+
+Do not copy branding, colors, text, navigation or project content from another website.
+
+Before writing code, inspect the entire relevant CubeIT codebase:
+- current framework and routing
+- existing Our Works / Projects components
+- project data source
+- current global navigation
+- typography
+- CSS variables/design tokens
+- animation libraries already installed
+- Three.js / React Three Fiber availability
+- smooth scrolling implementation if one already exists
+- responsive breakpoints
+- page transition system
+
+Reuse the existing architecture wherever sensible.
+
+Do not rewrite unrelated sections.
+
+==================================================
+CORE EXPERIENCE
+==================================================
+
+The Our Works page should feel like a physical, elastic digital gallery living in a Three.js world.
+
+It should NOT feel like:
+
+“normal HTML cards + CSS skew on scroll”
+
+and should NOT simply animate every card with identical Framer Motion transforms.
+
+The desired system is:
+
+DOM layout / semantic content
+        +
+a fixed WebGL canvas
+        +
+Three.js textured project planes synchronized with DOM positions
+        +
+smooth scroll physics
+        +
+scroll-velocity-driven mesh deformation
+        +
+a shallow cylindrical/perspective spatial curvature.
+
+The resulting motion must feel organic, fluid, physically connected and premium.
+
+Think of the entire project gallery as being mounted onto a huge, slightly curved flexible digital wall.
+
+==================================================
+1. ARCHITECTURE — DOM + THREE.JS HYBRID
+==================================================
+
+Build this as a hybrid system.
+
+Keep these as real DOM:
+
+- CubeIT navigation
+- headings
+- project names
+- categories
+- years
+- accessibility content
+- links / clickable hit areas
+- semantic project structure
+
+Render the actual project imagery through WebGL textured planes.
+
+Recommended conceptual structure:
+
+WorksPage
+ ├─ ExistingCubeITHeader
+ ├─ DOMProjectLayout
+ │   ├─ ProjectHitArea
+ │   ├─ ProjectHitArea
+ │   └─ ...
+ └─ WorksCanvas
+     ├─ CurvedGridBackground
+     ├─ ProjectPlane[]
+     └─ optional transition layer
+
+Possible modules:
+
+/works
+/components/works/
+    WorksCanvas
+    WorksGallery
+    ProjectPlane
+    CurvedGrid
+    WebGLMedia
+    SmoothScrollController
+    ProjectHover
+    WorkTransition
+
+/shaders/
+    project.vert
+    project.frag
+    grid.vert
+    grid.frag
+
+Adapt names to the existing project structure.
+
+Do not force React Three Fiber into the project if CubeIT already uses direct Three.js.
+
+Likewise, if R3F is already part of the project, use it cleanly rather than creating a second renderer architecture.
+
+There must be ONE central render loop.
+
+Do not create requestAnimationFrame loops per card.
+
+==================================================
+2. PROJECT IMAGES ARE ACTUAL SUBDIVIDED WEBGL MESHES
+==================================================
+
+Each visible project image should correspond to a PlaneGeometry with enough subdivisions for genuine deformation.
+
+Do NOT use:
+
+new PlaneGeometry(width, height, 1, 1)
+
+because a four-vertex rectangle cannot create the required soft bending.
+
+Use something approximately like:
+
+PlaneGeometry(width, height, 24–40, 24–40)
+
+depending on device performance.
+
+The project image becomes a texture on this plane.
+
+Preserve the original image aspect ratio using shader-side “cover” calculations rather than distorting textures.
+
+The WebGL plane must align precisely with its DOM placeholder.
+
+Use:
+
+getBoundingClientRect()
+ResizeObserver
+viewport-to-world coordinate conversion
+
+to synchronize:
+
+x
+y
+width
+height
+
+between DOM placeholders and WebGL planes.
+
+DOM placeholders can remain visually transparent while providing:
+
+layout
+SEO
+focus
+click targets
+accessibility.
+
+Text should remain DOM whenever possible so it stays razor sharp.
+
+==================================================
+3. THE MOST IMPORTANT VISUAL: CURVED 3D WORLD
+==================================================
+
+The gallery does not sit on a perfectly flat XY plane.
+
+The reference behaves like a shallow cylindrical / concave wall.
+
+Looking across the viewport:
+
+- center content feels almost front-facing
+- left-side cards subtly rotate in perspective
+- right-side cards rotate in the opposite direction
+- outer cards feel like they are wrapping around a huge cylinder
+- background grid lines reinforce this curvature
+- depth is subtle, not dramatic
+
+Create a continuous horizontal curvature.
+
+A useful conceptual mapping is:
+
+normalizedX = x / viewportHalfWidth
+
+zCurve =
+    -curveDepth * normalizedX²
+
+rotationY =
+    normalizedX * curveAngle
+
+Do not blindly use those exact values.
+Tune visually.
+
+The curve needs to be elegant and shallow.
+
+It should NEVER look like:
+
+a carousel,
+a globe,
+a fisheye filter,
+or cards arranged around a small cylinder.
+
+Imagine an enormous-radius curved display wall.
+
+The center may have almost zero rotation.
+
+The edges can reach only a few degrees of Y rotation.
+
+This spatial curvature should be shared conceptually by:
+
+- project planes
+- background perspective grid
+- large case-study media
+
+so the entire site feels spatially coherent.
+
+==================================================
+4. BACKGROUND GRID
+==================================================
+
+Behind the media is a subtle geometric perspective grid.
+
+For CubeIT, DO NOT reproduce the saturated blue background from the reference.
+
+Use CubeIT’s existing visual identity:
+
+Primary:
+white / very light clean canvas
+
+Dominant accents:
+deep navy
+electric blue
+
+Secondary accent:
+vivid orange only sparingly.
+
+Create a very subtle technical grid using CubeIT blue/navy at low opacity.
+
+The grid should feel integrated into the Three.js space.
+
+It should bend with the shallow cylindrical world.
+
+It must NOT simply be:
+
+CSS repeating-linear-gradient fixed to the screen.
+
+Prefer a subdivided shader plane or procedural shader grid so its geometry/depth can respond to the same perspective.
+
+Visual characteristics:
+
+- extremely thin lines
+- large grid cells
+- low contrast
+- elegant
+- no visual noise
+- more visible around empty spaces
+- should nearly disappear behind busy content
+
+The grid should gently bow across the viewport because of the spatial curvature.
+
+At rest it should still feel alive but almost static.
+
+Do not create constant distracting sine-wave motion.
+
+==================================================
+5. SCROLL SYSTEM
+==================================================
+
+Scrolling is one of the defining parts of this effect.
+
+Do NOT map project positions directly to raw window.scrollY with no smoothing.
+
+Maintain at least:
+
+targetScroll
+currentScroll
+previousScroll
+scrollVelocity
+
+Conceptually:
+
+targetScroll = native/virtual scroll destination
+
+currentScroll +=
+    (targetScroll - currentScroll) * smoothing
+
+velocity =
+    currentScroll - previousScroll
+
+previousScroll = currentScroll
+
+Then create a separately damped shader velocity:
+
+shaderVelocity = damp(shaderVelocity, velocity, ...)
+
+Clamp extreme values.
+
+Scrolling must feel responsive rather than floaty.
+
+I want:
+
+immediate user response
++
+slight inertial smoothing
++
+elastic mesh reaction.
+
+Do not make Lenis-style smoothing so heavy that input feels delayed.
+
+If CubeIT already has Lenis, Locomotive or another scroll manager:
+
+integrate with it.
+
+Do NOT create a competing scroll system.
+
+==================================================
+6. IMAGE STRETCH / WAVE / ELASTIC DEFORMATION
+==================================================
+
+THIS IS CRITICAL.
+
+During scrolling, images are NOT rigid rectangles.
+
+Their surfaces temporarily deform.
+
+Observed feeling:
+
+At rest:
+
+- images mostly return to their intended proportions
+- perspective curvature remains
+- no obvious wobbling
+
+As scroll speed increases:
+
+- images elongate very slightly in the direction of movement
+- the surface bends like flexible photographic material
+- vertical edges subtly bow
+- parts of the image lag behind other parts
+- there is slight shear
+- the plane develops temporary depth
+- motion has a “rubber sheet / flexible film” feeling
+- distortion strength depends on scroll SPEED
+
+When scrolling suddenly stops:
+
+the surface must not snap instantly flat.
+
+It should:
+
+overshoot extremely slightly if appropriate
+→ damp
+→ settle smoothly back to rest.
+
+Use REAL vertex deformation.
+
+A useful conceptual vertex shader structure is:
+
+vec2 centeredUv = uv - 0.5;
+
+float verticalProfile =
+    sin(uv.y * PI);
+
+float velocity =
+    clamp(uScrollVelocity, -maxVelocity, maxVelocity);
+
+position.x +=
+    velocity
+    * bendStrength
+    * verticalProfile;
+
+position.z +=
+    abs(velocity)
+    * depthStrength
+    * verticalProfile;
+
+position.y *=
+    1.0 +
+    abs(velocity) * stretchStrength;
+
+This is only the starting concept.
+
+Improve it.
+
+Use multiple smooth profiles if necessary so deformation is organic rather than a single obvious sine function.
+
+For example combine:
+
+sin(uv.y * PI)
+sin(uv.y * PI * 2.0)
+
+at very restrained amplitudes.
+
+The top, center and bottom of the image should react slightly differently, giving the impression that the surface has inertia.
+
+You can also introduce a tiny velocity-based UV shear in the fragment shader:
+
+uv.x +=
+    velocity *
+    (uv.y - 0.5) *
+    uvShearStrength;
+
+Keep this subtle.
+
+The effect MUST NOT:
+
+melt faces excessively
+warp typography beyond recognition
+look like liquid
+look like jelly constantly
+look glitchy.
+
+It should resemble a flexible, high-quality printed photograph being moved quickly through space.
+
+==================================================
+7. DIRECTIONAL INERTIA
+==================================================
+
+The deformation direction must react correctly to scrolling direction.
+
+Scrolling downward and upward should bend in opposite ways.
+
+Do not just use:
+
+abs(scrollVelocity)
+
+for everything.
+
+Use signed velocity for:
+
+- shear
+- lateral bending
+- slight rotation
+- directional lag
+
+and absolute velocity only for:
+
+- amount of depth
+- stretch intensity
+- magnitude.
+
+This is essential.
+
+Fast downward scroll:
+mesh should trail in one direction.
+
+Fast upward scroll:
+mesh should trail in the opposite direction.
+
+==================================================
+8. PER-CARD VARIATION
+==================================================
+
+All cards should exist in the same physical system but should not deform as synchronized clones.
+
+Give very small deterministic differences based on:
+
+index
+column
+world X position.
+
+Examples:
+
+slightly different bend multipliers
+tiny phase offsets
+slightly different response damping.
+
+Variation should be around perhaps 5–15%, not random chaos.
+
+The whole gallery should still feel like one coherent surface.
+
+Cards near the left and right edges should also inherit more visible Y perspective rotation from the global cylinder.
+
+==================================================
+9. GALLERY LAYOUT
+==================================================
+
+Create an editorial grid rather than standard SaaS cards.
+
+Desktop should roughly feel like:
+
+4 visual columns
+
+with generous horizontal and vertical negative space.
+
+Project covers can have different portrait-ish / near-square aspect ratios according to their actual artwork.
+
+Do NOT surround everything with:
+
+rounded cards
+shadows
+white containers
+borders.
+
+The image itself is the visual object.
+
+CubeIT project cards should feel like floating pieces of digital work.
+
+Use CubeIT’s CURRENT actual number of projects.
+
+Do not assume there are 16 projects because a reference happened to show many.
+
+Build the system dynamically from the project data:
+
+projects.map(...)
+
+It must work cleanly with:
+
+3 projects
+6 projects
+10 projects
+20+ projects.
+
+Use varying vertical offsets or an editorial rhythm if appropriate, but keep alignment intentional.
+
+==================================================
+10. INFINITE / CONTINUOUS VERTICAL GALLERY
+==================================================
+
+The gallery in the reference behaves continuously rather than ending like a conventional page.
+
+On desktop, implement an elegant vertical wrapping system where appropriate.
+
+Once a group of project planes has moved sufficiently above the viewport, it can re-enter below the complete project sequence.
+
+Likewise when scrolling in the opposite direction.
+
+Conceptually:
+
+wrappedY =
+    modulo(
+        baseY - currentScroll,
+        totalGalleryHeight
+    )
+
+then remap into the visible world range.
+
+However:
+
+DO NOT allow duplicate DOM accessibility content to become confusing.
+
+The WebGL presentation can wrap while the semantic DOM source remains clean.
+
+Because CubeIT may currently have only a few projects, make the behavior intelligent.
+
+If there are too few unique projects to create a convincing endless gallery:
+
+repeat visual instances internally ONLY for the WebGL world.
+
+Do not duplicate semantic project content unnecessarily.
+
+The loop seam must be invisible.
+
+No jump.
+
+No flashing.
+
+No resetting scrollbar.
+
+==================================================
+11. HOVER INTERACTION
+==================================================
+
+Hover should be sophisticated and restrained.
+
+Do not simply:
+
+scale(1.1)
+
+the whole project card.
+
+On desktop pointer hover:
+
+- slightly reduce/increase depth position
+- very subtly modify mesh bend
+- reveal project metadata cleanly
+- maybe show project name/category/year adjacent to the card or pointer
+- maintain CubeIT typography
+- use fast but smooth opacity/translate transitions
+
+The image can become fractionally more frontal or move a few pixels toward the viewer.
+
+No giant scale-up.
+
+Possible custom pointer:
+
+small central dot
++
+thin circular outline
+
+but ONLY if CubeIT already uses or benefits from a custom cursor.
+
+Do not add a gimmicky cursor just to imitate another site.
+
+Hover hit detection should preferably use DOM hit areas rather than expensive unnecessary raycasting unless the WebGL interaction architecture benefits from raycasting.
+
+==================================================
+12. CLICKING A PROJECT — TRANSITION
+==================================================
+
+Opening a project must feel connected to the selected image.
+
+Do not:
+
+click
+→ instantly white flash
+→ normal route load.
+
+Create a cinematic shared transition.
+
+Desired sequence:
+
+1. User clicks project.
+
+2. Gallery scrolling is temporarily locked.
+
+3. Non-selected project planes:
+   fade,
+   drift,
+   or move smoothly out of the visual field.
+
+4. Selected plane remains visually important.
+
+5. Selected plane transitions from its grid position toward the project-detail hero position.
+
+6. Background and metadata transition cleanly.
+
+7. Route/detail content becomes active without a jarring remount flash.
+
+The reference has a moment of breathing room between gallery and detail introduction.
+
+Use approximately 700–1200ms depending on the existing CubeIT transition language.
+
+Do not make the screen sit blank for multiple seconds.
+
+Use a shared-state or shared-element approach if compatible with routing.
+
+If a direct WebGL-to-WebGL shared element becomes architecturally excessive, emulate it convincingly:
+
+capture selected plane state
+animate it
+load detail route underneath
+handoff to detail WebGL media.
+
+No hydration mismatch.
+
+No texture flashing.
+
+==================================================
+13. PROJECT DETAIL INTRO
+==================================================
+
+Build a reusable case-study layout.
+
+The opening should be minimal.
+
+Suggested composition:
+
+Project name ---------------- Year
+                 [hero cover]
+
+or an equivalent layout appropriate to CubeIT.
+
+Do NOT blindly copy reference typography.
+
+Use CubeIT’s existing type scale.
+
+The first screen should include:
+
+project name
+year
+project category/service
+hero/cover image
+
+Then as the user begins scrolling:
+
+reveal a structured project overview.
+
+Possible information:
+
+Client / Project
+Industry
+Services
+Role
+Year
+Challenge
+Solution
+Technology
+Outcome
+
+Only show fields actually available in CubeIT’s project data.
+
+Do not fabricate fake project results.
+
+==================================================
+14. CASE-STUDY MEDIA — SAME WEBGL PHYSICS
+==================================================
+
+This is another CRITICAL part.
+
+The WebGL system must not disappear after entering a project.
+
+Large case-study images and screenshots should continue to use the same physical media system.
+
+As the user scrolls through:
+
+full-width screenshots
+two-column imagery
+asymmetric layouts
+browser/device mockups
+design screens
+
+the media should:
+
+bend slightly according to the global cylindrical space
+stretch with scroll velocity
+develop subtle depth
+settle back naturally.
+
+This is especially noticeable on large images.
+
+Large image edges must visibly but subtly curve during motion.
+
+For example:
+
+A wide image occupying most of the viewport may have its side edges bow slightly while scrolling quickly.
+
+When scroll velocity returns to zero:
+
+the image settles back to its normal intended geometry.
+
+This should be the SAME unified shader system as the gallery wherever possible.
+
+Create reusable:
+
+<WebGLMedia />
+
+or equivalent.
+
+Do not implement separate random CSS effects for each section.
+
+==================================================
+15. LARGE MEDIA COMPOSITIONS
+==================================================
+
+Project case studies should support several editorial arrangements:
+
+A. full-bleed wide media
+
+B. 2-column image pair
+
+C. one large + one smaller image
+
+D. 3-column screenshots
+
+E. centered portrait screen
+
+F. full-width website preview
+
+Maintain generous CubeIT whitespace between them.
+
+When media reaches viewport edges, the cylindrical perspective becomes slightly more apparent.
+
+This creates the feeling that screenshots occupy a single continuous virtual environment.
+
+Do not over-round screenshots.
+
+Use the image’s natural corners unless CubeIT’s design language already defines a border radius.
+
+==================================================
+16. SCROLL VELOCITY NORMALIZATION
+==================================================
+
+Different input devices generate wildly different deltas.
+
+Normalize velocity across:
+
+mouse wheel
+trackpad
+touch
+high-refresh displays.
+
+Do not directly feed raw wheel.deltaY into shader strength.
+
+Derive deformation from actual smoothed displacement per frame and normalize by delta time.
+
+Conceptually:
+
+velocity =
+    (currentScroll - previousScroll)
+    / deltaTime;
+
+normalizedVelocity =
+    clamp(
+        velocity * normalizationFactor,
+        -1,
+        1
+    );
+
+Then spring/damp this value.
+
+The experience must remain consistent on:
+
+60 Hz
+90 Hz
+120 Hz
+144 Hz displays.
+
+Do not make shader animation frame-count dependent.
+
+==================================================
+17. PHYSICS FEEL
+==================================================
+
+Target feel:
+
+Responsive input:
+near-immediate.
+
+Mesh reaction:
+instant enough to feel physically attached.
+
+Elastic recovery:
+approximately 250–600ms depending on velocity.
+
+Strong fast-scroll distortion:
+noticeable.
+
+Slow-scroll distortion:
+barely visible.
+
+Stationary:
+almost perfectly stable.
+
+Use spring/damping logic rather than an arbitrary timeout.
+
+Conceptually maintain:
+
+deformationTarget
+deformationCurrent
+deformationVelocity
+
+or use critically damped interpolation.
+
+Never create perpetual wobble.
+
+==================================================
+18. CUBEIT VISUAL DIRECTION
+==================================================
+
+Do NOT make this page a clone of the visual reference.
+
+Translate the interaction into CubeIT.
+
+CubeIT identity:
+
+- premium modern technology company
+- clean
+- intelligent
+- engineering-led
+- high-end digital transformation aesthetic
+
+Primary canvas:
+white / off-white
+
+Core colors:
+deep navy
+electric vivid blue
+
+Secondary:
+refined vivid orange used only sparingly.
+
+Suggested visual direction:
+
+white or subtle cool-white background
+
+very faint electric-blue perspective grid
+
+deep navy typography
+
+electric blue for:
+hover state
+small UI indicators
+active states
+links
+technical labels
+
+orange only for:
+tiny emphasis
+selected status
+directional detail
+rare CTA accent.
+
+Do NOT fill the whole page with aggressive gradients.
+
+Do NOT use excessive glassmorphism.
+
+Do NOT add random floating particles.
+
+Do NOT add generic glowing orbs.
+
+The Three.js media physics should be the hero.
+
+==================================================
+19. TYPOGRAPHY AND NAVIGATION
+==================================================
+
+Keep CubeIT’s existing header/navigation.
+
+Do not recreate the navigation seen in a reference.
+
+Ensure header z-index is above Three.js canvas.
+
+Conceptual stack:
+
+WebGL canvas
+z-index: 0
+
+content / metadata
+z-index: 2
+
+header
+z-index: 10+
+
+interactive overlays as needed.
+
+The canvas should not accidentally intercept navigation clicks.
+
+Use pointer-events strategically.
+
+==================================================
+20. PROJECT DATA MODEL
+==================================================
+
+Do not hard-code the page around the current number of projects.
+
+Create/adapt a reusable data structure similar to:
+
+{
+    slug,
+    title,
+    shortTitle,
+    year,
+    category,
+    services,
+    cover,
+    gallery,
+    hero,
+    description,
+    challenge,
+    solution,
+    technologies,
+    outcome
+}
+
+Use the project data already present in the repository first.
+
+Only add fields genuinely required by the implementation.
+
+Do not populate fake metrics or fake clients.
+
+==================================================
+21. TEXTURE LOADING
+==================================================
+
+Avoid texture popping.
+
+Before gallery reveal:
+
+load at least the first visible textures.
+
+Show a tasteful CubeIT loading state only if genuinely necessary.
+
+Use:
+
+THREE.TextureLoader
+
+or the existing asset pipeline.
+
+Configure:
+
+correct color space
+texture filtering
+anisotropy within reasonable limits.
+
+Dispose textures/materials/geometries correctly on unmount.
+
+Prevent GPU memory leaks when navigating repeatedly between:
+
+Works
+→ Project
+→ Works.
+
+==================================================
+22. IMAGE SHADER
+==================================================
+
+Implement a custom shader rather than relying entirely on MeshBasicMaterial.
+
+Uniforms may include:
+
+uTexture
+uTime
+uScrollVelocity
+uHover
+uCurveStrength
+uBendStrength
+uStretchStrength
+uViewport
+uImageResolution
+uPlaneResolution
+uIndexVariation
+
+Vertex responsibilities:
+
+global cylindrical positioning
+scroll deformation
+signed directional bend
+depth displacement
+elastic stretch
+tiny hover depth response.
+
+Fragment responsibilities:
+
+correct cover UV
+tiny velocity-responsive UV compensation
+optional very subtle hover treatment
+
+Do NOT add:
+
+chromatic aberration
+RGB splitting
+noise overlays
+glitch effects
+
+unless CubeIT already uses such effects.
+
+Keep imagery sharp and premium.
+
+==================================================
+23. BACKGROUND GRID SHADER
+==================================================
+
+Grid shader should support:
+
+subtle perspective depth
+cylindrical curvature
+responsive viewport resizing.
+
+Optionally allow an extremely restrained mouse parallax.
+
+For example cursor movement may affect camera/world target by a fraction of a degree.
+
+Maximum movement should be tiny.
+
+Do not make the page follow the mouse aggressively.
+
+The user should subconsciously feel depth rather than consciously see “mouse parallax”.
+
+==================================================
+24. RESIZE BEHAVIOR
+==================================================
+
+On resize:
+
+- update renderer dimensions
+- update camera projection
+- update viewport uniforms
+- remeasure DOM placeholders
+- update all WebGL plane dimensions/positions
+- recalculate gallery total height
+- preserve scroll state appropriately
+
+Debounce expensive DOM measurement.
+
+Do NOT debounce actual render updates so heavily that resizing becomes visibly broken.
+
+Support:
+
+orientation change
+browser zoom
+dynamic viewport height.
+
+==================================================
+25. RESPONSIVE BEHAVIOR
+==================================================
+
+Desktop:
+full Three.js experience.
+
+Tablet:
+retain curvature and mild elastic deformation.
+
+Mobile:
+do not attempt to cram a four-column gallery.
+
+Use approximately:
+1–2 columns depending on width.
+
+Reduce:
+
+geometry subdivisions
+curve strength
+shader deformation
+DPR
+
+if necessary.
+
+Touch scrolling must remain native and smooth.
+
+Do not interfere with mobile overscroll unnecessarily.
+
+If infinite wrap causes poor mobile UX, use a finite semantic gallery on mobile while preserving the WebGL elastic-media feel.
+
+==================================================
+26. PERFORMANCE
+==================================================
+
+This must feel extremely smooth.
+
+Target:
+
+60 FPS baseline
+
+and naturally support 90/120/144 Hz displays where hardware allows.
+
+Do not tie animation to 60-frame assumptions.
+
+Use delta time.
+
+Performance rules:
+
+single WebGL renderer
+single RAF loop
+shared geometry where possible
+shared shader material patterns
+avoid React setState every frame
+use refs/uniform mutation
+batch DOM measurement
+avoid layout reads during every render frame unless necessary
+ResizeObserver
+reasonable texture dimensions
+lazy loading
+frustum/visibility handling
+cap devicePixelRatio
+
+Suggested DPR:
+
+desktop high-end:
+min(devicePixelRatio, ~1.5–2)
+
+mobile:
+often lower.
+
+Do not render 4K textures when a card occupies 300px.
+
+==================================================
+27. ACCESSIBILITY
+==================================================
+
+The WebGL canvas is decorative/presentational.
+
+Semantic project links must exist in DOM.
+
+Keyboard users must be able to:
+
+tab through projects
+see focus states
+open projects
+navigate back.
+
+prefers-reduced-motion:
+
+disable or drastically reduce:
+
+infinite inertial effects
+mesh stretching
+page transition duration
+mouse parallax.
+
+The layout should still look excellent without motion.
+
+==================================================
+28. NAVIGATION BACK TO WORKS
+==================================================
+
+When returning from a project:
+
+where reasonably possible preserve the previous gallery position.
+
+Do not always dump the user at the very beginning.
+
+A reversed shared transition would be ideal:
+
+detail hero
+→ selected project cover
+→ gallery restores.
+
+Only implement this if it can remain stable.
+
+Correctness and smoothness are more important than excessive complexity.
+
+==================================================
+29. FINAL / NEXT PROJECT SECTION
+==================================================
+
+At the bottom of a case study, create a refined transition into another CubeIT project.
+
+Possible arrangement:
+
+a few supporting screenshots finishing the current project
+
+then generous whitespace/grid
+
+small label:
+NEXT PROJECT
+
+next project cover enters progressively from below as the user scrolls.
+
+Use the same WebGL physics.
+
+Do not create a conventional giant “Next Project →” button unless CubeIT’s existing UI needs it.
+
+Make it visually connected.
+
+==================================================
+30. WHAT MAKES THE EFFECT CORRECT
+==================================================
+
+The final implementation should produce this sequence:
+
+USER IS STATIONARY
+
+Project imagery appears mounted onto a subtle curved spatial field.
+
+Outer project cards naturally carry slightly more perspective.
+
+Grid reinforces depth.
+
+Everything feels stable.
+
+↓
+
+USER STARTS SCROLLING SLOWLY
+
+The gallery moves immediately but smoothly.
+
+Meshes show almost imperceptible flexible movement.
+
+↓
+
+USER SCROLLS FAST
+
+Scroll velocity increases.
+
+Project planes:
+
+stretch slightly
+bend
+shear directionally
+develop depth
+trail behind the scroll movement.
+
+The background/world perspective remains coherent.
+
+↓
+
+USER RELEASES SCROLL
+
+Movement decelerates.
+
+Mesh deformation follows inertia for a brief moment.
+
+Then:
+
+damps
+settles
+returns to its resting geometry.
+
+No snapping.
+
+↓
+
+USER CHANGES SCROLL DIRECTION
+
+Deformation reverses naturally.
+
+↓
+
+USER HOVERS PROJECT
+
+Subtle focus/metadata interaction.
+
+No giant scale animation.
+
+↓
+
+USER OPENS PROJECT
+
+Selected work transitions naturally into a detailed case study.
+
+↓
+
+USER SCROLLS CASE STUDY
+
+Large screenshots continue behaving as WebGL flexible surfaces.
+
+The same physical world is preserved.
+
+==================================================
+31. DO NOT FAKE THE EFFECT
+==================================================
+
+Do not solve this using only:
+
+transform: skewY(...)
+transform: scaleY(...)
+CSS perspective on rigid images
+Framer Motion translateY
+GSAP skew based on velocity.
+
+Those can assist surrounding DOM motion but are NOT the core effect.
+
+I specifically need:
+
+subdivided geometry
++
+vertex shader deformation
++
+scroll velocity uniforms
++
+Three.js spatial curvature.
+
+The actual pixels of the photographs/screenshots must visibly exist on deformable surfaces.
+
+==================================================
+32. TUNING — KEEP IT PREMIUM
+==================================================
+
+The most common mistake will be overdoing the shader.
+
+Use this hierarchy:
+
+1. smooth scrolling
+2. shallow global curvature
+3. subtle mesh deformation
+4. clear project imagery
+5. typography
+6. hover extras.
+
+At maximum normal scroll speed, distortion should be obvious enough to feel special but still preserve visual comprehension.
+
+Do not make this look like a WebGL shader demo.
+
+It is a portfolio first.
+
+==================================================
+33. IMPLEMENTATION WORKFLOW
+==================================================
+
+Work in this order.
+
+PHASE 1
+Audit the existing CubeIT repo.
+
+PHASE 2
+Implement DOM project layout using real project data.
+
+PHASE 3
+Build fixed Three.js canvas and coordinate conversion.
+
+PHASE 4
+Make WebGL planes perfectly overlay DOM project media.
+
+PHASE 5
+Implement shallow cylindrical world curvature.
+
+PHASE 6
+Implement scroll smoothing and normalized velocity.
+
+PHASE 7
+Implement subdivided vertex deformation.
+
+PHASE 8
+Tune elastic recovery.
+
+PHASE 9
+Implement optional continuous gallery wrapping.
+
+PHASE 10
+Add hover interaction.
+
+PHASE 11
+Build reusable project-detail WebGL media.
+
+PHASE 12
+Implement project opening/closing transition.
+
+PHASE 13
+Responsive/performance/accessibility optimization.
+
+Do not proceed with hacks if an earlier architectural layer is incorrect.
+
+==================================================
+34. DEBUG CONTROLS
+==================================================
+
+During development, create temporary configurable parameters for:
+
+curveDepth
+curveAngle
+bendStrength
+stretchStrength
+depthStrength
+velocityMultiplier
+velocityClamp
+scrollLerp
+deformationDamping
+hoverStrength
+
+A small development-only debug object or Leva panel is acceptable if Leva already exists.
+
+REMOVE or disable debug UI in production.
+
+Centralize these values so the effect can be tuned without editing shaders in ten places.
+
+==================================================
+35. ACCEPTANCE CRITERIA
+==================================================
+
+Do not consider this task complete until all of these are true:
+
+1. Project images are real subdivided WebGL meshes.
+
+2. Their positions remain synchronized with the intended layout.
+
+3. Scroll direction changes the direction of deformation.
+
+4. Faster scrolling creates stronger deformation.
+
+5. Slow scrolling creates minimal deformation.
+
+6. Stopping scrolling creates smooth elastic recovery.
+
+7. Left/right viewport positions exhibit subtle cylindrical perspective.
+
+8. Background grid shares the same spatial language.
+
+9. There is no obvious loop seam if infinite gallery mode is active.
+
+10. Clicking projects works correctly.
+
+11. Project detail pages use the same WebGL media behavior.
+
+12. Navigation/text stays sharp and interactive above canvas.
+
+13. No layout shifts when textures load.
+
+14. No canvas flashes during navigation.
+
+15. No GPU resource leak after repeated navigation.
+
+16. Desktop remains smooth.
+
+17. Mobile remains usable and performant.
+
+18. prefers-reduced-motion works.
+
+19. Existing CubeIT sections and styling are not unintentionally broken.
+
+20. The final result looks like CubeIT — not like a copied website.
+
+==================================================
+FINAL IMPORTANT INSTRUCTION
+==================================================
+
+Do not immediately start by pasting a giant implementation.
+
+First inspect the repository and reason about how this effect should integrate with the ACTUAL existing architecture.
+
+Then implement it properly.
+
+The visual goal is:
+
+“A premium editorial portfolio where project imagery physically inhabits a shallow curved Three.js world. Vertical scrolling sends an elastic wave of inertia through photographic meshes: they stretch, bow, shear and gain subtle depth according to scroll velocity, then smoothly recover. The effect continues seamlessly from the Works gallery into each case study, while CubeIT’s clean white, navy and electric-blue visual identity remains dominant.”
+
+It should feel intentional enough that the Three.js effect is almost invisible as a technology — the viewer should simply feel that the entire page has physical depth and elasticity.
+
+Prioritize precision, synchronization, smoothness and restraint over adding more effects.

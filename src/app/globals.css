@@ -4942,3 +4942,175 @@ h4 {
   border-top-color: rgba(255, 255, 255, 0.12);
   color: rgba(255, 255, 255, 0.55);
 }
+
+/* Service cards: rigid four-face X-axis drum roll */
+.service-drum-card {
+  --service-drum-depth: 560px;
+  --service-drum-rotation: 0deg;
+  position: relative;
+  overflow: visible !important;
+  isolation: isolate;
+  cursor: pointer;
+  perspective: 960px;
+  perspective-origin: 50% 48%;
+  transform: none !important;
+}
+
+.service-drum-card:hover {
+  transform: none !important;
+  filter: none;
+}
+
+.service-drum-card:focus-visible {
+  outline: 2px solid rgba(30, 99, 244, 0.72);
+  outline-offset: 6px;
+}
+
+.service-drum-card[data-rolling="true"] {
+  z-index: 24;
+}
+
+.service-drum-scene {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  border-radius: inherit;
+  overflow: visible;
+  transform-style: preserve-3d;
+}
+
+.service-drum-rotor {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  transform-style: preserve-3d;
+  transform:
+    translateZ(calc(var(--service-drum-depth) * -0.5))
+    rotateX(var(--service-drum-rotation));
+  transition: transform 540ms cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.service-drum-card[data-rolling="true"] .service-drum-rotor {
+  will-change: transform;
+}
+
+.service-drum-face {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  border-radius: inherit;
+  overflow: hidden;
+  color: inherit;
+  background: inherit;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+.service-drum-front {
+  transform: rotateX(0deg) translateZ(calc(var(--service-drum-depth) * 0.5));
+}
+
+.service-drum-quarter {
+  transform: rotateX(-90deg) translateZ(calc(var(--service-drum-depth) * 0.5));
+}
+
+.service-drum-back {
+  transform: rotateX(180deg) translateZ(calc(var(--service-drum-depth) * 0.5));
+}
+
+.service-drum-three-quarter {
+  transform: rotateX(90deg) translateZ(calc(var(--service-drum-depth) * 0.5));
+}
+
+.service-drum-solid {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background:
+    radial-gradient(circle at 20% 18%, rgba(255, 255, 255, 0.2), transparent 24%),
+    linear-gradient(135deg, #1e63f4 0%, #0c4bd7 54%, #081d49 100%);
+}
+
+.service-drum-three-quarter {
+  background:
+    radial-gradient(circle at 76% 20%, rgba(107, 158, 255, 0.18), transparent 26%),
+    linear-gradient(135deg, #081d49 0%, #102f78 52%, #1e63f4 100%);
+}
+
+.service-drum-solid-grid {
+  position: absolute;
+  inset: 0;
+  opacity: 0.18;
+  background-image:
+    linear-gradient(rgba(255,255,255,.42) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.42) 1px, transparent 1px);
+  background-size: 34px 34px;
+}
+
+.service-drum-solid::after {
+  content: "";
+  position: absolute;
+  inset: 26px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 18px;
+}
+
+.service-drum-card .service-card-inner {
+  height: 100%;
+}
+
+.service-drum-card .service-photo,
+.service-drum-card .service-photo img {
+  pointer-events: none;
+}
+
+.service-drum-card:hover .service-photo-1,
+.service-drum-card .service-photo-stack:has(.service-photo-1:hover) .service-photo-1 {
+  transform: rotate(-2deg) translateZ(24px) !important;
+  translate: 0 0;
+  scale: 1;
+  animation: none;
+}
+
+.service-drum-card:hover .service-photo-2,
+.service-drum-card .service-photo-stack:has(.service-photo-2:hover) .service-photo-2 {
+  transform: rotate(-9deg) translateZ(4px) !important;
+  translate: 0 0;
+  scale: 1;
+  animation: none;
+}
+
+.service-drum-card:hover .service-photo-3,
+.service-drum-card .service-photo-stack:has(.service-photo-3:hover) .service-photo-3 {
+  transform: rotate(8deg) translateZ(40px) !important;
+  translate: 0 0;
+  scale: 1;
+  animation: none;
+}
+
+.service-drum-card .service-photo-stack:has(.service-photo-1:hover) .service-photo-2,
+.service-drum-card .service-photo-stack:has(.service-photo-1:hover) .service-photo-3,
+.service-drum-card .service-photo-stack:has(.service-photo-2:hover) .service-photo-1,
+.service-drum-card .service-photo-stack:has(.service-photo-2:hover) .service-photo-3,
+.service-drum-card .service-photo-stack:has(.service-photo-3:hover) .service-photo-1,
+.service-drum-card .service-photo-stack:has(.service-photo-3:hover) .service-photo-2 {
+  translate: 0 0;
+  scale: 1;
+}
+
+@media (max-width: 760px) {
+  .service-drum-card {
+    perspective: 820px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .service-drum-rotor {
+    transition: none;
+    transform: translateZ(calc(var(--service-drum-depth) * -0.5)) rotateX(0deg);
+  }
+
+  .service-drum-card[data-rolling="true"] {
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.95),
+      0 0 0 1px rgba(30,99,244,.32) !important;
+  }
+}

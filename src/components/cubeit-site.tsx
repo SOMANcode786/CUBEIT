@@ -155,6 +155,7 @@ function WorkCard({
   work: (typeof works)[0];
   originalIndex: number;
   animationIndex: number;
+  isBento?: boolean;
   reduceMotion: boolean;
 }) {
   return (
@@ -556,7 +557,7 @@ export function Navbar() {
 
   return (
     <header ref={navRef} className="nav-shell">
-      <a className="nav-logo" href="#home" aria-label="CubeIT home"><LogoMark /></a>
+      <a className="nav-logo" href="/" aria-label="CubeIT home"><LogoMark /></a>
       <nav className="nav-links" aria-label="Main navigation">
         <a href="#home">Home</a>
         <a href="#services">Services</a>
@@ -1224,7 +1225,7 @@ function Blog() {
   );
 }
 
-function Footer() {
+export function Footer() {
   return (
     <footer className="footer page-shell" id="contact">
       <div className="footer-card" data-glass>
@@ -1236,9 +1237,9 @@ function Footer() {
         <div className="footer-links">
           <div>
             <h3>Company</h3>
-            <a href="#home">Home</a>
-            <a href="#services">Services</a>
-            <a href="#work">Things We Build</a>
+            <a href="/">Home</a>
+            <a href="/services">Services</a>
+            <a href="/our-work">Things We Build</a>
             <a href="/contact">Contact</a>
           </div>
           <div>

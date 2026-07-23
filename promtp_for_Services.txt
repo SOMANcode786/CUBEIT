@@ -1,0 +1,1694 @@
+You are working inside my existing CubeIT website.
+
+I need you to completely redesign / implement the SERVICES PAGE using the scroll choreography, spatial composition, Three.js behavior, sticky sections, horizontal-scroll behavior, and interaction philosophy described below.
+
+IMPORTANT:
+
+I am NOT asking you to copy another website's branding, colors, typography, text, images, product, or aesthetic theme.
+
+Use CubeIT's EXISTING:
+- design system
+- typography
+- colors
+- navigation
+- spacing philosophy
+- button styles
+- service content
+- existing assets
+- responsive conventions
+
+CubeIT's visual identity should remain dominant:
+- clean white / light surfaces where appropriate
+- deep navy
+- vivid electric blue as the primary accent
+- orange only as a very restrained secondary accent if already appropriate
+- premium modern technology-company feel
+
+DO NOT introduce a brown/beige product-brand aesthetic.
+
+What I want recreated is the EXPERIENCE:
+- page layout rhythm
+- scroll behavior
+- sticky/pinned choreography
+- persistent Three.js object behavior
+- horizontal scrolling gallery
+- layering
+- transition mechanics
+- interactions
+- premium editorial pacing
+
+The page must feel like one continuous cinematic experience.
+
+==================================================
+0. FIRST AUDIT THE EXISTING PROJECT
+==================================================
+
+Before coding:
+
+1. Inspect the existing Services route/page.
+2. Inspect CubeIT's global design tokens and CSS variables.
+3. Inspect current navbar/footer implementations.
+4. Find the existing source of truth for services.
+5. Determine whether the project already uses:
+   - three
+   - @react-three/fiber
+   - @react-three/drei
+   - GSAP / ScrollTrigger
+   - Lenis or another smooth-scroll system
+   - Motion / Framer Motion
+
+REUSE existing libraries wherever possible.
+
+Do not duplicate scroll engines.
+
+Do not rewrite global site behavior unnecessarily.
+
+Do not hardcode the implementation for a fixed number of services.
+
+The entire page must be DATA DRIVEN.
+
+Something conceptually like:
+
+services.map(...)
+
+The number of services can change later without breaking:
+- horizontal scroll distances
+- selectors
+- layout
+- service cards
+- section heights
+- responsive behavior
+
+==================================================
+1. CORE SCROLL PHILOSOPHY
+==================================================
+
+This is critical.
+
+Do NOT make a collection of unrelated entrance animations.
+
+The page needs a continuous scroll timeline.
+
+Animations must be SCRUBBED by actual scroll position.
+
+Meaning:
+
+scroll position = animation state.
+
+If the user scrolls backward:
+- every animation reverses naturally
+- the cube reverses its rotation
+- horizontal movement reverses
+- section transitions reverse
+
+There should be no arbitrary autoplay animation controlling the main experience.
+
+Use requestAnimationFrame efficiently.
+
+Preferred architecture if compatible with the project:
+
+Lenis or existing smooth scrolling
+        ↓
+GSAP ScrollTrigger
+        ↓
+DOM transforms + Three.js state
+
+or an equally robust existing architecture.
+
+Do NOT create nested competing RAF loops.
+
+Scrolling should feel:
+- weighted
+- smooth
+- immediate
+- premium
+- deterministic
+
+Do not make it sluggish.
+
+Avoid excessive scroll smoothing that makes the site feel disconnected from the wheel.
+
+==================================================
+2. PAGE STRUCTURE
+==================================================
+
+Build the Services page as approximately these major chapters:
+
+01 — SERVICES HERO
+02 — CAPABILITY / INTRO GRID
+03 — IMMERSIVE 3D SERVICES STORY
+04 — STICKY 3D + SCROLLING SERVICE CONTENT
+05 — PINNED HORIZONTAL SERVICES SHOWCASE
+06 — SERVICE SELECTOR / CHOOSE A CAPABILITY
+07 — CAPABILITY MATRIX OR SUPPORTING DETAILS
+08 — SERVICE DEEP-DIVE CONTENT
+09 — LARGE CTA / FOOTER TRANSITION
+
+The exact text must come from CubeIT.
+
+Do not invent another brand's copy.
+
+==================================================
+3. SECTION 01 — LARGE EDITORIAL HERO
+==================================================
+
+Start with a generous viewport-scale hero.
+
+Approximately:
+
+min-height: 95–110svh
+
+The layout should feel editorial rather than like a conventional SaaS card grid.
+
+Use:
+
+- one very large service-related heading
+- small supporting eyebrow
+- concise supporting copy
+- restrained decorative background material from CubeIT's visual language
+
+The massive heading can intentionally approach / exceed the visible width.
+
+Do not shrink typography simply to fit everything perfectly.
+
+The visual feeling should be:
+confident, oversized, spacious.
+
+IMPORTANT:
+
+This section scrolls normally.
+
+Do not pin it.
+
+As the user begins scrolling:
+- headline moves naturally upward
+- background decorative elements may have VERY slight parallax
+- no excessive fade/scale effects
+
+Keep motion subtle here.
+
+The navbar should follow the site's existing behavior.
+
+==================================================
+4. SECTION 02 — STRUCTURED INTRO GRID
+==================================================
+
+Immediately below the hero, introduce a structured information band/grid.
+
+Desktop:
+approximately 3 columns or an arrangement appropriate to current CubeIT content.
+
+Use it for things like:
+- service philosophy
+- capability metric
+- delivery model
+- engineering principle
+- relevant supporting information
+
+This section should visually contrast the oversized hero with a precise modular layout.
+
+Use:
+- thin dividers
+- strong alignment
+- generous padding
+- asymmetrical but intentional content
+
+Normal vertical scroll.
+
+No major Three.js interaction yet.
+
+Then transition into the immersive section.
+
+==================================================
+5. GLOBAL / PERSISTENT THREE.JS CANVAS
+==================================================
+
+The next part is essential.
+
+Create ONE persistent Three.js canvas for the important immersive chapters.
+
+Do NOT create and destroy separate WebGL canvases for every subsection.
+
+Architecture conceptually:
+
+<section class="immersive-services-region">
+
+    <Canvas className="persistent-canvas" />
+
+    <DOM content layers />
+
+</section>
+
+The canvas should be:
+- sticky or fixed within the immersive region
+- transparent
+- correctly layered between DOM content where required
+
+Recommended layering idea:
+
+background DOM      z: 0
+Three.js canvas     z: 1
+selected foreground panels/text z: 2
+navigation          existing top layer
+
+This allows certain DOM elements to appear:
+- behind the cube
+- in front of the cube
+
+That depth layering is a major part of the reference experience.
+
+Do NOT make the Three.js object look like a normal rectangular embedded widget.
+
+There should be no visible canvas box.
+
+It must feel integrated into the page.
+
+==================================================
+6. THE CUBEIT 3D OBJECT
+==================================================
+
+The reference uses one highly polished product object as a recurring anchor.
+
+For CubeIT, replace that object with a bespoke premium THREE.JS CUBE.
+
+DO NOT use:
+
+new THREE.BoxGeometry(...)
+with one basic material
+
+That will look cheap.
+
+I want a carefully engineered object representing CubeIT.
+
+--------------------------------------------------
+CUBE DESIGN
+--------------------------------------------------
+
+Create a precision-engineered modular cube.
+
+Overall proportions:
+roughly 2.0–2.2 Three.js world units.
+
+The cube should have a sophisticated 3-layer construction:
+
+A. INNER CORE
+
+A slightly smaller rounded cube:
+approximately 1.55–1.7 units.
+
+Use a high-quality MeshPhysicalMaterial.
+
+Characteristics:
+- deep CubeIT navy base
+- subtle reflections
+- controlled roughness
+- moderate clearcoat
+- extremely restrained transparency/transmission only if it fits current theme
+
+Suggested approximate material starting point:
+
+metalness: 0.35–0.60
+roughness: 0.16–0.28
+clearcoat: 0.7–1
+clearcoatRoughness: 0.08–0.18
+
+Do not make it look like chrome.
+
+Do not make it look like a plastic toy.
+
+--------------------------------------------------
+
+B. SIX PRECISION FACE PANELS
+
+Create six slightly separated face plates around the inner core.
+
+Think of a highly engineered modular computing object.
+
+Each face panel:
+- rounded square
+- very small distance away from the core
+- finely beveled edges
+- approximately 0.025–0.05 unit visual separation
+
+This tiny gap should reveal subtle electric-blue illumination.
+
+The gap light should feel like:
+precision hardware / intelligent system seams
+
+NOT:
+gaming RGB.
+
+The six panels must preserve a recognizable cube silhouette.
+
+The slight separation creates sophistication when light passes over the edges.
+
+--------------------------------------------------
+
+C. EDGE / BEVEL DETAIL
+
+All external edges must have proper bevels.
+
+No mathematically razor-sharp BoxGeometry edges.
+
+Use:
+- RoundedBoxGeometry,
+- custom beveled BufferGeometry,
+or another high-quality geometry approach.
+
+Use enough bevel segments that close-up rotation remains perfectly smooth.
+
+Target:
+8–16 bevel segments depending on geometry implementation.
+
+Corners should catch thin specular highlights.
+
+Optional:
+very subtle micro-inset line / precision groove near the perimeter of each face.
+
+Do not overdecorate it.
+
+--------------------------------------------------
+
+D. OPTIONAL CUBEIT BRAND DETAIL
+
+If an existing clean CubeIT SVG/logo asset is available:
+
+Add an extremely subtle embossed/debossed or mapped logo treatment to ONE primary face.
+
+Do not paste a blurry raster image on all six sides.
+
+It should only become visible when lighting catches it.
+
+If this cannot be done cleanly, skip it rather than doing it badly.
+
+--------------------------------------------------
+
+E. INTERNAL LIGHT / SEAMS
+
+The gaps between modules can use a very controlled emissive electric blue.
+
+Intensity must remain subtle.
+
+When the object rotates:
+the viewer should occasionally see the inner blue energy/seam between the panels.
+
+No neon bloom explosion.
+
+If bloom is used:
+very restrained threshold and intensity.
+
+--------------------------------------------------
+LIGHTING
+--------------------------------------------------
+
+Lighting is extremely important.
+
+Create a premium studio lighting setup.
+
+Use approximately:
+
+- soft key light above/front/side
+- cooler or neutral fill from opposite side
+- subtle rim light
+- ambient environment reflection
+
+Prefer RoomEnvironment / PMREM or a local equivalent rather than relying on a network HDR.
+
+Object should have:
+- strong readable silhouette
+- gentle highlights along beveled edges
+- sufficient dark-to-light variation to reveal geometry
+
+Avoid flat ambient lighting.
+
+--------------------------------------------------
+CAMERA
+--------------------------------------------------
+
+Use PerspectiveCamera.
+
+Starting point:
+
+FOV around 28–35 degrees.
+
+This produces a premium product-photography feel instead of wide-angle game-camera distortion.
+
+Camera approximately:
+
+position z: 5–7 depending on object scale.
+
+Object should occupy roughly:
+30–42% of viewport height during main showcase states.
+
+Use responsive camera/object scale for mobile.
+
+--------------------------------------------------
+RENDER QUALITY
+--------------------------------------------------
+
+Use:
+- antialiasing
+- sRGB / correct color management
+- ACESFilmicToneMapping where compatible
+- good normals
+- controlled device pixel ratio
+
+Cap DPR approximately:
+
+1 to 1.75 desktop
+lower where appropriate on low-powered/mobile devices
+
+Do NOT blindly render DPR 3 on retina screens.
+
+Aim for smooth performance even at 120Hz displays.
+
+==================================================
+7. THREE.JS MICRO MOTION
+==================================================
+
+The cube must never look completely dead.
+
+Even when the user stops scrolling:
+
+add a nearly imperceptible floating motion.
+
+Example:
+
+vertical float:
+±0.015–0.03 world units
+
+rotation drift:
+±0.005–0.015 radians
+
+very slow.
+
+This must NOT compete with scroll-driven animation.
+
+Use damping.
+
+No obvious perpetual spinning.
+
+Pointer movement may influence the cube very subtly:
+
+maximum approximately 3–5 degrees of extra tilt.
+
+Use smooth damping.
+
+Do not track pointer 1:1.
+
+When scroll velocity is high, pointer influence can be reduced.
+
+==================================================
+8. SECTION 03 — IMMERSIVE 3D INTRO
+==================================================
+
+Transition from the light/editorial intro area into a darker or more immersive CubeIT surface according to existing theme.
+
+Do not hard-cut awkwardly.
+
+Give this section at least around:
+100–130vh
+
+At entry:
+
+the cube begins below the primary focal point.
+
+Map scroll progress approximately like:
+
+progress 0:
+y = lower
+scale = 0.70–0.82
+rotation = introductory 3/4 angle
+
+progress 0.4–0.7:
+cube rises toward center
+scale approaches 1
+rotation settles into a strong product pose
+
+progress 1:
+cube established as central visual anchor
+
+Use easing only on transform interpolation.
+
+Animation state itself must remain tied to scroll.
+
+Place:
+- a large service-oriented heading toward one side
+- short supporting copy opposite
+- cube in the visual center
+
+Think of a three-point editorial composition:
+
+LEFT CONTENT
+        CUBE
+                  RIGHT CONTENT
+
+Do not put everything in one centered column.
+
+==================================================
+9. SECTION 04 — LONG STICKY 3D STORY
+==================================================
+
+This is one of the most important behaviors.
+
+Create a long section around:
+
+300–500vh depending on content count.
+
+Inside it:
+
+make the Three.js viewport/object sticky:
+
+position: sticky
+top: 0
+height: 100svh
+
+while DOM content continues scrolling vertically.
+
+The cube should remain visually anchored approximately around the center / slightly offset center while service information moves through the viewport.
+
+The scroll content can contain:
+- service statements
+- mini case-study snippets
+- outcomes
+- technical capabilities
+- relevant visual thumbnails
+- concise proof points
+
+Do not turn it into generic cards floating everywhere.
+
+Use editorial rows separated with thin horizontal rules.
+
+Each row can use compositions such as:
+
+left:
+category / heading / short text
+
+center:
+space occupied visually by cube
+
+right:
+supporting image / visual / secondary statement
+
+As new rows scroll past, the cube continuously changes orientation.
+
+--------------------------------------------------
+SCROLL ROTATION CHOREOGRAPHY
+--------------------------------------------------
+
+Do NOT rotate it at a constant mechanical speed.
+
+Map the sticky section's normalized progress to deliberate poses.
+
+Example key poses:
+
+P0 = entry:
+rotationX = -0.18
+rotationY = 0.45
+rotationZ = 0.00
+
+P1:
+rotationX = 0.05
+rotationY = 0.95
+rotationZ = -0.06
+
+P2:
+rotationX = 0.30
+rotationY = 1.45
+rotationZ = -0.12
+
+P3:
+rotationX = 0.48
+rotationY = 2.05
+rotationZ = -0.20
+
+P4 = exit:
+rotationX = 0.28
+rotationY = 2.55
+rotationZ = -0.08
+
+Do not use these values blindly if another angle looks visually better.
+
+The principle is:
+
+one long controlled reveal of different cube faces.
+
+The reference object progressively moves from a frontal presentation toward much more angled/edge-oriented views.
+
+For CubeIT, because a cube is symmetrical, create more interesting multi-axis rotation so the silhouette does not appear static.
+
+Use interpolation between key poses.
+
+Also subtly vary:
+
+position.x
+position.y
+scale
+
+but keep movement restrained.
+
+The object should feel anchored, not flying around.
+
+==================================================
+10. CONTENT LAYERING AROUND THE CUBE
+==================================================
+
+Use masking / z-index layering intelligently.
+
+Some row graphics may pass visually:
+- behind the cube
+
+Some text/UI should pass:
+- in front of the canvas
+
+This creates spatial depth.
+
+Do NOT simply place the canvas above every element.
+
+Where useful, create:
+
+.layer-behind-canvas
+.canvas
+.layer-above-canvas
+
+Never allow important readable text to become illegible.
+
+==================================================
+11. SECTION 05 — PINNED HORIZONTAL SERVICES SHOWCASE
+==================================================
+
+This is the biggest structural interaction on the page.
+
+At the end of the long sticky cube sequence:
+
+transition directly into a full viewport horizontal showcase.
+
+The user still scrolls VERTICALLY.
+
+But while this section is active:
+
+the viewport becomes pinned
+
+and vertical scroll progress translates a wide horizontal track:
+
+vertical scroll
+        ↓
+translateX(horizontal track)
+
+The browser should NOT show a horizontal scrollbar.
+
+--------------------------------------------------
+STRUCTURE
+--------------------------------------------------
+
+Conceptually:
+
+<section class="horizontal-services">
+    <div class="sticky-viewport">
+        <div class="horizontal-track">
+            service visual panel
+            service panel
+            narrow transition panel
+            large service story panel
+            supporting panel
+            ...
+        </div>
+    </div>
+</section>
+
+Use a dynamically measured track.
+
+Do NOT use fixed translateX values based on a specific number of services.
+
+After layout:
+
+maxTranslate =
+track.scrollWidth - viewport.clientWidth
+
+Map scroll progress:
+
+translateX =
+-progress * maxTranslate
+
+Use ResizeObserver to recalculate after:
+- resize
+- fonts
+- images
+- content changes
+
+--------------------------------------------------
+PIN DISTANCE
+--------------------------------------------------
+
+Calculate section height based on horizontal travel.
+
+Conceptually:
+
+pinDistance ≈ horizontalOverflow
+
+with a reasonable multiplier if required for pacing.
+
+Do not make the section move too quickly.
+
+Every wheel movement should produce elegant horizontal movement.
+
+--------------------------------------------------
+CARD / PANEL COMPOSITION
+--------------------------------------------------
+
+Do NOT make every card identical.
+
+The reference gains sophistication through mixed panel widths.
+
+Create a controlled rhythm such as:
+
+- 38vw visual panel
+- 20vw narrow supporting panel
+- 55vw major feature panel
+- 24vw image panel
+- 48vw service narrative panel
+- etc.
+
+These should derive from service data / panel type.
+
+Use:
+- large imagery
+- typography integrated into imagery
+- cropped media
+- clean structural borders
+- occasional tall/narrow cards
+- asymmetric composition
+
+Panels should feel edge-to-edge.
+
+Gaps:
+0–4px or controlled separators,
+not generic 24px card gaps.
+
+Avoid:
+rounded SaaS cards floating on a background.
+
+Think:
+interactive editorial wall / horizontal exhibition.
+
+==================================================
+12. HORIZONTAL SECTION TRANSITION WITH THE CUBE
+==================================================
+
+At the transition into the horizontal rail:
+
+DO NOT abruptly remove the cube.
+
+For approximately the first 15–25% of the horizontal sequence:
+
+keep the existing Three.js cube visually present.
+
+Allow the first horizontal panels to slide past it.
+
+Use layering so that:
+- some visual panels can temporarily occlude part of the cube
+- other portions remain behind it
+
+This creates the impression that the same 3D world is continuing into the gallery.
+
+During this phase:
+
+cube:
+- scale slightly down
+- move slightly backward visually
+- rotate a little
+- gradually reduce its prominence
+
+Then either:
+- fade it subtly
+or
+- move it outside the visual focal region
+
+Do NOT hard display:none at the section boundary.
+
+==================================================
+13. HORIZONTAL SCROLL BEHAVIOR
+==================================================
+
+The horizontal track movement must be perfectly scrubbed.
+
+NO autoplay carousel.
+
+NO snapping on every panel unless CubeIT's current UX strongly requires it.
+
+The page should allow the user to pause at arbitrary points.
+
+Add optional very subtle inertial smoothing.
+
+Do NOT allow momentum to overshoot the actual ScrollTrigger progress.
+
+When scrolling backward:
+the entire gallery must travel backward naturally.
+
+On touch/mobile:
+do NOT force a broken desktop pin experience.
+
+More about mobile later.
+
+==================================================
+14. EXIT FROM HORIZONTAL SECTION
+==================================================
+
+At the final horizontal panel:
+
+the pin must release seamlessly.
+
+There should be no:
+- blank frame
+- scroll jump
+- sudden height collapse
+- visible transform reset
+
+The final visual panel should naturally leave upward as normal vertical scrolling resumes.
+
+The next section should already visually exist below it.
+
+==================================================
+15. SECTION 06 — "CHOOSE YOUR SERVICE" IMMERSIVE SELECTOR
+==================================================
+
+After the horizontal showcase, create a major full-screen service-selection moment.
+
+Concept:
+
+small eyebrow
+
+very large central heading:
+services / choose a capability / equivalent CubeIT wording
+
+service selector pills/buttons
+
+Three.js cube behind or slightly below the typography
+
+The important behavior:
+
+As this section enters:
+
+cube re-enters from above/behind the content.
+
+Example scroll choreography:
+
+entry:
+cube y = -0.7
+scale = 0.8
+partially obscured
+
+mid:
+cube passes behind huge heading
+scale = 1
+
+settled:
+cube ends slightly below heading
+fully visible in a strong 3/4 orientation
+
+Use proper DOM/canvas z-index so the large heading can visually sit IN FRONT of the cube.
+
+This overlap is intentional.
+
+==================================================
+16. SERVICE SELECTOR INTERACTION
+==================================================
+
+Below the large heading:
+
+create pill-style or CubeIT-equivalent selectors generated from services.
+
+Example:
+
+[ AI SOLUTIONS ]
+[ CUSTOM SOFTWARE ]
+[ WEB & MOBILE ]
+[ AUTOMATION ]
+...
+
+Do not hardcode those labels if the current service names differ.
+
+Clicking a service should:
+
+1. Update selected state.
+2. Animate supporting copy/details without layout jank.
+3. Update the cube's orientation smoothly.
+4. Optionally alter a VERY subtle internal cube accent/seam configuration.
+5. Update relevant capability details below.
+
+Do NOT completely rebuild/reinitialize the WebGL scene on selection.
+
+Use state and animate existing meshes/material values.
+
+--------------------------------------------------
+SELECTED CUBE POSES
+--------------------------------------------------
+
+Each service may have a deterministic target orientation.
+
+For example:
+
+service index n
+→ generate or define a stable orientation
+
+Clicking should spring/damp to that pose over approximately:
+500–900ms
+
+No random rotations.
+
+Avoid making the cube spin multiple revolutions.
+
+Use the shortest rotational path.
+
+==================================================
+17. CUBE PANEL MICRO-INTERACTION ON SERVICE CHANGE
+==================================================
+
+Add one refined detail:
+
+When a new service is selected:
+
+the six outer cube face panels may expand outward by only approximately:
+
+0.015–0.04 world units
+
+then settle back.
+
+Duration:
+roughly 500–700ms.
+
+Very subtle.
+
+Like the machine is reconfiguring.
+
+Do NOT explode the cube.
+
+Do NOT separate pieces dramatically.
+
+This is a precision micro-interaction.
+
+Optionally increase electric-blue seam illumination briefly and settle it back.
+
+==================================================
+18. POINTER INTERACTIONS
+==================================================
+
+Desktop only:
+
+When pointer moves around the immersive area:
+
+cube may lean subtly toward pointer.
+
+Maximum:
+~3–5 degrees.
+
+Use damped interpolation.
+
+On pointer leave:
+smoothly return to timeline/service-selected base pose.
+
+Important:
+
+Pointer rotation is an OFFSET on top of the scroll-controlled base rotation.
+
+Do not overwrite the base scroll state.
+
+Think:
+
+finalRotation =
+scrollBaseRotation
++ selectedServiceOffset
++ smallPointerOffset
+
+==================================================
+19. SECTION 07 — CAPABILITY MATRIX / SUPPORTING INFORMATION
+==================================================
+
+After the immersive selector:
+
+return temporarily to normal vertical scrolling.
+
+Create a structured information section.
+
+Could be:
+- service comparison
+- capability matrix
+- process
+- technology alignment
+- engagement models
+
+Use CubeIT's actual content.
+
+The reference uses a clean multi-column structured table-like area here.
+
+Recreate the structural discipline:
+
+desktop:
+approximately 3 columns or dynamic service columns
+
+thin dividers
+strong whitespace
+small labels
+concise information
+
+Do not make every item a raised/shadow card.
+
+==================================================
+20. SECTION 08 — SERVICE DEEP DIVES
+==================================================
+
+Continue with detailed content for selected/individual services.
+
+Use large headings and editorial text.
+
+A possible structure:
+
+large service title
+small metadata pills
+short introduction
+capabilities
+technologies
+outcomes
+process / deliverables
+
+Normal vertical scroll.
+
+Keep animation minimal:
+- subtle reveal
+- no repetitive fade-up on every paragraph
+
+The page should become quieter after the intense horizontal section.
+
+This contrast is intentional.
+
+==================================================
+21. SECTION 09 — FINAL CTA
+==================================================
+
+End with a large cinematic CTA.
+
+Use CubeIT's existing CTA messaging.
+
+Layout can use:
+
+large headline on one side
+button / action
+abstract CubeIT 3D elements or repeated cube fragments toward another edge
+
+If using repeated 3D elements:
+
+do NOT instantiate hundreds of expensive unique meshes.
+
+Use:
+InstancedMesh
+
+or a low-cost equivalent.
+
+The CTA should feel like a visual culmination of the 3D language introduced earlier.
+
+==================================================
+22. SCROLL TIMELINE ARCHITECTURE
+==================================================
+
+Create clearly separated normalized progress variables.
+
+For example:
+
+introProgress        0..1
+stickyStoryProgress  0..1
+horizontalProgress   0..1
+selectorEntryProgress 0..1
+
+Do NOT put hundreds of magical scrollY pixel checks throughout components.
+
+Create a clean controller/hook.
+
+Example architecture:
+
+useServicesScrollTimeline()
+
+returns:
+{
+  introProgress,
+  storyProgress,
+  horizontalProgress,
+  selectorProgress,
+  scrollVelocity,
+  activeChapter
+}
+
+Three.js components consume this state.
+
+DOM animation controllers consume the same state.
+
+Keep animation logic centralized.
+
+==================================================
+23. THREE.JS ARCHITECTURE
+==================================================
+
+Suggested organization:
+
+/services
+  ServicesPage
+  ServicesHero
+  ServicesIntroGrid
+  ServicesImmersiveRegion
+  ServicesStoryRows
+  HorizontalServicesShowcase
+  ServiceSelector
+  CapabilityMatrix
+  ServiceDeepDive
+  ServicesCTA
+
+/three
+  ServicesCanvas
+  PrecisionCube
+  CubeLighting
+  CubeController
+
+/hooks
+  useServicesScrollTimeline
+  useReducedMotion
+  useResponsive3D
+
+/data
+  services.ts or reuse existing source
+
+Do not necessarily use these exact paths if the project's structure differs.
+
+Respect the existing architecture.
+
+==================================================
+24. NEVER MUTATE OBJECT TRANSFORMS DIRECTLY FROM REACT RENDERS
+==================================================
+
+For Three.js animation:
+
+Use refs + useFrame.
+
+Maintain target values.
+
+Use damping such as:
+
+THREE.MathUtils.damp()
+
+or a robust spring system.
+
+Do not cause React re-render on every mousemove/scroll frame.
+
+Scroll state that updates at high frequency should use:
+- refs
+- animation values
+- GSAP
+or another efficient mechanism.
+
+==================================================
+25. SMOOTHING
+==================================================
+
+We need premium motion.
+
+Use damping rather than crude linear assignment.
+
+Examples:
+
+position:
+damp toward target
+
+rotation:
+damp toward target
+
+pointer:
+damp
+
+But:
+
+main scroll timeline must still remain responsive.
+
+Do not apply so much damping that the cube remains seconds behind the scroll position.
+
+Target visual lag:
+subtle, approximately 80–180ms feeling,
+not a floating delayed animation.
+
+==================================================
+26. HORIZONTAL TRACK IMAGE BEHAVIOR
+==================================================
+
+For horizontal visual panels:
+
+Images should feel alive but subtle.
+
+Use a small internal parallax.
+
+As a panel travels across viewport:
+
+image inner layer can translate approximately:
+-3% to +3%
+
+or scale around:
+1.03 → 1.0 → 1.03
+
+depending on position.
+
+No dramatic zooming.
+
+Use overflow hidden.
+
+The outer panel moves with track.
+
+The image moves slightly at a different rate.
+
+This creates dimensional movement.
+
+==================================================
+27. HOVER STATES ON HORIZONTAL PANELS
+==================================================
+
+Where panels are clickable:
+
+On hover:
+
+- image scale approximately 1 → 1.015/1.025
+- text/arrow shifts only a few pixels
+- optional border/accent changes
+- pointer cursor
+
+Duration:
+250–450ms
+
+Do NOT stop horizontal scrolling.
+
+Do NOT animate massive layout changes.
+
+On click:
+link to relevant service detail route/anchor if such routes already exist.
+
+==================================================
+28. RESPONSIVE BEHAVIOR
+==================================================
+
+This is extremely important.
+
+DESKTOP >= ~1024px:
+
+Use full experience:
+- sticky cube
+- persistent canvas
+- horizontally pinned showcase
+- mixed-width panels
+- pointer tilt
+
+TABLET:
+
+Keep Three.js.
+Reduce:
+- pin distances
+- cube size
+- typography
+- number of simultaneous columns
+
+Horizontal showcase may remain pinned if performance/layout is good.
+
+MOBILE:
+
+Do NOT force a giant desktop horizontal-scroll pin if it harms usability.
+
+Create an intentional mobile adaptation.
+
+Preferred:
+
+- vertical stacked service panels
+OR
+- native touch horizontal snap gallery
+
+The page itself must still scroll vertically naturally.
+
+The cube can remain in shortened sticky scenes.
+
+Reduce 3D complexity if necessary.
+
+Disable pointer tilt.
+
+Lower DPR.
+
+Ensure:
+- no horizontal body overflow
+- no trapped scrolling
+- no viewport-height bugs with mobile browser chrome
+
+Use:
+svh / dvh carefully.
+
+==================================================
+29. REDUCED MOTION
+==================================================
+
+Respect:
+
+prefers-reduced-motion: reduce
+
+For reduced motion:
+
+- disable Lenis/smooth-scroll enhancement where needed
+- remove long scrubbed cube rotations
+- disable pinned horizontal conversion if it creates excessive movement
+- show services in a static accessible layout
+- keep all information available
+
+Do NOT hide content.
+
+==================================================
+30. ACCESSIBILITY
+==================================================
+
+The Three.js canvas is decorative unless it conveys unique information.
+
+If decorative:
+aria-hidden appropriately.
+
+All actual service content must exist in DOM.
+
+Selector:
+proper buttons
+keyboard navigation
+focus states
+aria-selected or relevant semantics
+
+Horizontal cards:
+real links/buttons if interactive.
+
+No click handlers on plain divs.
+
+Maintain correct heading hierarchy.
+
+Ensure high contrast according to CubeIT's theme.
+
+==================================================
+31. PERFORMANCE
+==================================================
+
+Target smooth performance on modern 60Hz and 120Hz displays.
+
+Requirements:
+
+- one major persistent WebGL canvas
+- no unnecessary Canvas remounting
+- cap DPR
+- pause or reduce rendering when completely offscreen if possible
+- reuse geometries/materials
+- dispose resources properly
+- lazy load heavy secondary images
+- optimized Next/Image if appropriate
+- avoid large layout reads every animation frame
+- measure horizontal width only when necessary
+- ResizeObserver for recalculation
+- GPU transforms for horizontal track
+- transform: translate3d(...)
+- will-change only on elements actively animated
+
+Avoid unnecessary postprocessing.
+
+If bloom / SSAO causes meaningful performance loss:
+remove it.
+
+Good geometry + lighting is more important.
+
+==================================================
+32. ROUTING / PAGE RESTORATION
+==================================================
+
+If navigating away and back:
+
+do not leave stale ScrollTrigger positions.
+
+Refresh measurements correctly.
+
+Kill timelines/listeners on unmount.
+
+Handle route transitions safely.
+
+No duplicate scroll listeners.
+
+No accumulated ScrollTriggers.
+
+==================================================
+33. IMPORTANT VISUAL PACING
+==================================================
+
+Do not animate everything simultaneously.
+
+The experience should breathe.
+
+Sequence:
+
+large calm hero
+
+↓
+
+precise structured grid
+
+↓
+
+immersive 3D introduction
+
+↓
+
+long slow cube rotation while information scrolls
+
+↓
+
+major kinetic horizontal showcase
+
+↓
+
+calm immersive service-selection moment
+
+↓
+
+structured information
+
+↓
+
+deep details
+
+↓
+
+final CTA
+
+This alternation between:
+CALM → IMMERSIVE → KINETIC → CALM
+is essential.
+
+==================================================
+34. SCROLL TRANSITIONS MUST BE CONTINUOUS
+==================================================
+
+Pay special attention to boundaries.
+
+HERO → GRID:
+normal continuous document flow.
+
+GRID → 3D:
+background/environment changes while cube enters gradually.
+
+3D STORY → HORIZONTAL:
+cube persists momentarily while the horizontal panels enter.
+
+HORIZONTAL → SELECTOR:
+pin releases without jump;
+3D object reappears/repositions behind major heading.
+
+SELECTOR → MATRIX:
+return to normal document flow.
+
+No component should look like an isolated demo stacked under another demo.
+
+==================================================
+35. WHAT NOT TO DO
+==================================================
+
+DO NOT:
+
+- copy the reference site's text
+- copy its logo
+- copy its brown product aesthetic
+- use its product images
+- build a basic BoxGeometry cube
+- use CSS perspective as a substitute for Three.js
+- render a prerecorded cube animation
+- autoplay the main animations
+- make the horizontal section a normal carousel
+- create arbitrary setTimeout animation sequences
+- hardcode for exactly 3/4/6 services
+- add generic glass cards everywhere
+- overuse gradients
+- overuse blur
+- overuse bloom
+- overuse scroll fade-ins
+- add excessive bouncing/spring effects
+- make scroll sluggish
+- hijack mobile scrolling
+- break current CubeIT navbar/footer
+- rewrite the whole application
+- remove existing useful service content
+
+==================================================
+36. IMPLEMENTATION QUALITY
+==================================================
+
+This needs to look intentionally handcrafted.
+
+Spend time refining:
+
+- exact cube scale
+- exact camera FOV
+- bevel quality
+- material response
+- lighting
+- section heights
+- sticky thresholds
+- horizontal scroll speed
+- overlap timing
+- typography/cube layering
+- transitions between pinned/unpinned states
+
+Do not stop after technically implementing the effects.
+
+Visually tune them.
+
+The difference between mediocre and premium here is timing.
+
+==================================================
+37. ACCEPTANCE TESTS
+==================================================
+
+Before finishing, verify manually:
+
+TEST 1:
+Slowly scroll from top to bottom.
+There must be no visual jump at section boundaries.
+
+TEST 2:
+Scroll backward.
+Every scrubbed interaction must reverse properly.
+
+TEST 3:
+Stop midway through sticky cube section.
+Cube must hold the exact appropriate orientation.
+
+TEST 4:
+Horizontal section:
+vertical scrolling must convert smoothly to horizontal movement.
+
+TEST 5:
+Reach end of horizontal section.
+Pin must release seamlessly.
+
+TEST 6:
+Resize browser while inside horizontal section.
+Measurements must recalculate correctly.
+
+TEST 7:
+Change service count in data.
+Layout and horizontal calculations must still work.
+
+TEST 8:
+Rapid scroll.
+Animations must not explode, overshoot, or lag several seconds behind.
+
+TEST 9:
+Navigate away/back.
+No duplicated listeners or broken scroll offsets.
+
+TEST 10:
+Mobile device.
+No body horizontal overflow or trapped scroll.
+
+TEST 11:
+Reduced-motion mode.
+All service information remains accessible.
+
+TEST 12:
+Performance.
+No constant React re-rendering at scroll FPS.
+
+==================================================
+38. FINAL DESIGN GOAL
+==================================================
+
+When the implementation is finished, the user should feel that the page is one long, continuous interactive composition.
+
+The Three.js cube should act like the protagonist of the Services page.
+
+It should:
+
+enter the experience,
+become sticky,
+rotate as services are revealed,
+coexist with scrolling DOM layers,
+transition into the horizontal showcase,
+temporarily become occluded by visual panels,
+reappear behind the large service selector heading,
+respond subtly to service selection,
+and finally hand the page back to normal content.
+
+The cube should feel:
+
+precise
+engineered
+premium
+physical
+intelligent
+high-end
+game-like
+NOT:
+
+
+cartoonish
+generic
+overly neon
+cheap WebGL demo
+
+The horizontal section must feel like an exhibition wall being pulled through the viewport by vertical scrolling.
+
+The entire implementation must remain unmistakably CubeIT.
+
+==================================================
+39. EXECUTION ORDER
+==================================================
+
+Implement in this order:
+
+PHASE 1
+Audit current code and service data.
+
+PHASE 2
+Create data-driven DOM page structure with no animation.
+
+PHASE 3
+Build the precision Three.js CubeIT cube and perfect lighting/materials independently.
+
+PHASE 4
+Create one persistent immersive canvas architecture.
+
+PHASE 5
+Implement sticky 3D service story.
+
+PHASE 6
+Implement dynamic pinned horizontal showcase.
+
+PHASE 7
+Connect the transitions so cube/canvas continuity is preserved.
+
+PHASE 8
+Implement choose-service interaction and cube response.
+
+PHASE 9
+Responsive/reduced motion/accessibility.
+
+PHASE 10
+Performance optimization and visual tuning.
+
+Do not skip directly to random animation code before the structural layout and canvas architecture are correct.

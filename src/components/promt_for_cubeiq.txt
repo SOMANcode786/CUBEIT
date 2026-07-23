@@ -1,0 +1,1871 @@
+CODEX MASTER PROMPT — REDESIGN CUBEIQ AS A TRUE CUBEIT EXPERIENCE
+
+Redesign and implement the CubeIQ page so it feels like a genuinely custom, highly art-directed digital marketing experience created specifically for CubeIT.
+
+The current direction feels too AI-generated, too template-like, too generic, and too much like a completely separate marketing-agency website.
+
+Correct that completely.
+
+0. ABSOLUTE ARCHITECTURAL RULE — CUBEIQ IS NOT A SEPARATE WEBSITE
+
+CubeIQ is a division/page inside the existing CubeIT website.
+
+This is non-negotiable.
+
+Do NOT create:
+
+A separate CubeIQ navbar
+A separate CubeIQ header
+A separate website shell
+A separate footer
+A separate design system
+A separate router architecture
+A duplicate mobile menu
+A separate logo/navigation system
+A standalone “agency website inside the website”
+
+CubeIQ must exist naturally inside the existing CubeIT site.
+
+Use the existing:
+
+CubeIT navbar
+CubeIT footer
+Existing layout/root shell
+Existing routing conventions
+Existing responsive navigation
+Existing typography
+Existing design tokens
+Existing button language
+Existing global spacing logic
+Existing route transitions where appropriate
+
+Only add CubeIQ as a navigation destination in the existing navbar.
+
+Do not reconstruct components that already exist.
+
+Do not redesign unrelated CubeIT pages.
+
+Do not modify global behavior merely to make CubeIQ work.
+
+The experience should feel like:
+
+“I am still on CubeIT, but I have entered the part of CubeIT dedicated to growth and marketing.”
+
+Not:
+
+“I clicked a link and entered another company’s website.”
+
+1. CREATIVE DIRECTION
+
+Do not create a normal marketing agency landing page.
+
+Avoid the usual AI-generated formula:
+
+Hero
+→ logo strip
+→ 3 cards
+→ 6 service cards
+→ stats
+→ testimonials
+→ CTA
+
+Absolutely avoid that.
+
+Do not make a generic “futuristic AI SaaS” website either.
+
+No:
+
+Random glowing orb
+Giant generic rotating sphere
+Neural-network visuals
+Floating glass cards everywhere
+Random particles with no purpose
+Dashboard mockups floating in space
+Generic 3D cube spinning in hero
+Gradient blob backgrounds everywhere
+Fake metrics
+Fake dashboards
+Fake testimonials
+Fake brand logos
+Generic Bento-grid overload
+Purple cyberpunk aesthetic
+“AI brain” imagery
+Stock marketing imagery inside WebGL
+
+CubeIQ is about:
+
+attention, communication, movement, persuasion, conversion, reconnection and growth.
+
+The visual language should come from those ideas.
+
+2. CORE CREATIVE CONCEPT
+“THE GROWTH SIGNAL”
+
+Build the entire CubeIQ page around one persistent visual metaphor:
+
+A signal.
+
+A thin electric-blue visual signal begins in the hero.
+
+At first it is surrounded by noise.
+
+It is uncertain.
+
+Fragmented.
+
+Scattered.
+
+As the visitor moves through CubeIQ, that signal:
+
+Finds attention
+Gains direction
+Splits into channels
+Creates engagement
+Moves toward conversion
+Reconnects lost opportunities
+Creates customer relationships
+Feeds information back into itself
+Becomes stronger
+Finally becomes a complete growth system
+
+This “Growth Signal” should visually connect multiple sections.
+
+It can move between:
+
+WebGL curves
+SVG paths
+typography
+section dividers
+nodes
+diagrams
+grids
+masks
+
+It should feel like one continuous visual language rather than unrelated animation tricks.
+
+The signal should be predominantly:
+
+CubeIT Electric Blue
+
+with occasional:
+
+Deep navy structural lines
+Very pale blue traces
+White negative space
+Extremely restrained orange only where a conversion/action moment needs emphasis
+3. THE MOST IMPORTANT MOTION PRINCIPLE
+SCROLL MUST CONTROL STATE — NOT JUST TRIGGER ANIMATIONS
+
+Most important animations should be tied to scroll progress.
+
+Scrolling down:
+
+→ progresses the visual system forward.
+
+Scrolling upward:
+
+→ naturally reverses the same system.
+
+Example:
+
+If an SVG line draws from A → B → C while scrolling down,
+
+then scrolling upward must:
+
+C → B → A
+
+and progressively erase/retract the line.
+
+Do not make scroll animations that simply fire once and remain completed.
+
+For narrative sections, build a single coordinated GSAP timeline controlled by ScrollTrigger progress.
+
+Prefer:
+
+scrubbed timelines
+reversible progress
+pinned storytelling where justified
+continuous interpolation
+
+over:
+
+dozens of unrelated onEnter animations
+independent competing ScrollTriggers
+one-shot animations everywhere
+
+Every major scene should feel physically attached to scroll.
+
+4. MOTION SYSTEM
+
+Use GSAP thoughtfully.
+
+Potential tools where appropriate:
+
+GSAP core timelines
+ScrollTrigger
+ScrollSmoother only if it can be safely scoped without disrupting CubeIT’s existing shell/scroll behavior
+DrawSVGPlugin
+MotionPathPlugin
+MorphSVGPlugin
+SplitText
+Flip
+CustomEase
+ExpoScaleEase
+gsap.matchMedia()
+useGSAP()/GSAP context depending on existing implementation
+
+Do not install/use plugins just to say they were used.
+
+Every plugin must serve a visible design purpose.
+
+5. CREATE A CUBEIQ MOTION LANGUAGE
+
+Define a small family of motion behaviors and reuse them consistently.
+
+Do NOT randomly choose a new transition for every element.
+
+A. Precision Reveal
+
+For headings.
+
+Text should not simply:
+
+opacity: 0 → 1
+
+Instead:
+
+split by lines
+place each line inside an overflow mask
+reveal with small vertical travel
+slight skew/rotation correction
+carefully staggered timing
+
+Motion should feel editorial and premium.
+
+Not exaggerated.
+
+B. Signal Draw
+
+For SVG diagrams.
+
+Use stroke drawing progressively with scroll.
+
+Lines should:
+
+grow
+branch
+join
+retract
+reroute
+
+based on scroll direction.
+
+Use DrawSVG or equivalent stroke-progress behavior.
+
+C. Signal Travel
+
+A small luminous node/pulse travels along important SVG paths using MotionPath.
+
+Important:
+
+The line and traveling pulse must share the same scroll-controlled timeline.
+
+Scrolling backward must send the pulse backward.
+
+D. Structural Morph
+
+Use MorphSVG where meaningful.
+
+Examples:
+
+Disconnected marketing paths
+
+morph into:
+
+one connected growth pathway.
+
+A straight customer journey
+
+morphs into:
+
+a retention loop.
+
+A loose marketing network
+
+morphs into:
+
+CubeIT-style structured geometry.
+
+Do not morph shapes randomly for decoration.
+
+E. Spatial Continuity
+
+Use Flip where one visual concept logically changes physical location or scale between states.
+
+For example:
+
+A conversion node in one stage could visually become the central node of the next stage.
+
+The user should sometimes perceive:
+
+“That same thing just became the next idea.”
+
+Instead of:
+
+“Old section disappeared. New section appeared.”
+
+F. Camera Drift
+
+For WebGL:
+
+Never use aggressive orbiting.
+
+Camera motion should be subtle:
+
+dolly
+lateral drift
+depth push
+slight perspective shifts
+
+Scroll should control the scene like a cinematic camera dolly.
+
+6. EASING
+
+Do not use identical default easing everywhere.
+
+Create a very small authored easing system.
+
+Example conceptual families:
+
+Precision ease
+
+For typography and interface elements.
+
+Quick initial response, long elegant settle.
+
+Flow ease
+
+For paths, sections and large spatial transitions.
+
+Very smooth in-out movement.
+
+Magnetic ease
+
+For elements converging/aligning.
+
+Slightly stronger deceleration.
+
+Scale ease
+
+Use perceptually smooth scaling rather than raw linear-looking scale animation.
+
+Avoid:
+
+excessive elastic
+bounce
+cartoon spring motion
+
+CubeIQ should feel sophisticated.
+
+7. SMOOTH SCROLL
+
+The page must feel extremely smooth.
+
+However:
+
+Do NOT break or replace the existing CubeIT scroll architecture globally.
+
+If CubeIT already has a smooth-scroll implementation:
+
+Reuse/integrate with it.
+
+If not:
+
+Only introduce route-safe smoothing if it does not require restructuring the entire website shell.
+
+Do not wrap/rebuild the root application merely for CubeIQ.
+
+The existing navbar must continue behaving correctly.
+
+Mobile scroll must remain natural.
+
+Never aggressively scroll-jack.
+
+8. WEBGL CONCEPT
+
+Do NOT use the downloaded stock images inside WebGL.
+
+Do NOT create floating photo planes.
+
+Do NOT create product screenshots floating in 3D.
+
+Create an entirely procedural Three.js experience.
+
+THE SIGNAL FIELD
+
+The main WebGL visual represents:
+
+attention moving through a market.
+
+Imagine a calm three-dimensional field containing:
+
+hundreds of extremely subtle signal traces
+tiny directional pulses
+curved trajectories
+sparse points
+invisible forces
+depth
+occasional intersections
+
+Not a particle galaxy.
+
+Not outer space.
+
+It should resemble a sophisticated abstract visualization of:
+
+communication and attention flowing through a market.
+
+Use concepts such as:
+
+CatmullRom curves
+tube/ribbon geometry
+instanced points
+procedural shaders
+soft additive highlights
+subtle depth fog
+thin geometric structures
+
+Keep it minimal.
+
+Mostly white/transparent space with electric-blue and navy signals.
+
+9. HERO — “FIND THE SIGNAL”
+
+The hero must immediately feel unlike a template.
+
+No giant centered heading with a generic 3D orb behind it.
+
+Create an asymmetric editorial composition that still respects CubeIT’s existing design system.
+
+Possible copy:
+
+Eyebrow
+
+CUBEIT / CUBEIQ
+
+Hero
+
+Turn attention into growth.
+
+or an equally strong refined line.
+
+Supporting copy:
+
+CubeIQ connects the way people discover your business, understand it, trust it and become customers.
+
+Simple language.
+
+No marketing jargon.
+
+CTA:
+
+Start Growing
+
+Secondary:
+
+See How It Works
+
+HERO WEBGL
+
+On the right/background exists the Signal Field.
+
+Initially:
+
+Many faint paths move independently.
+
+One electric-blue signal begins to become visible.
+
+As the user begins scrolling:
+
+The camera subtly advances.
+
+The primary signal moves forward through the field.
+
+Nearby lines gently respond to it.
+
+The signal becomes more intentional.
+
+Use pointer movement only as subtle force/disturbance.
+
+Mouse motion should gently influence nearby traces.
+
+Do not rotate the whole scene with the mouse.
+
+10. HERO → NEXT SECTION TRANSITION
+
+This transition must be exceptional.
+
+As the visitor reaches the end of the hero:
+
+The WebGL signal moves toward the front plane of the camera.
+
+Its final screen-space position should align visually with a DOM/SVG line beginning in the next section.
+
+The user should feel as if:
+
+the WebGL signal escaped the canvas and became an SVG line.
+
+It does not need literal technical continuity if that becomes fragile.
+
+It needs convincing visual continuity.
+
+The line continues the story.
+
+This is the first major “wow” moment.
+
+11. SECTION — THE REAL PROBLEM
+
+Heading direction:
+
+Your marketing isn’t one thing.
+So why is it working like six separate ones?
+
+Explain simply:
+
+An ad gets attention.
+
+But then what?
+
+Does the website make sense?
+
+Does the customer trust the brand?
+
+Does somebody follow up?
+
+Do they ever come back?
+
+CUSTOM SVG — “THE BROKEN JOURNEY”
+
+Create a custom editorial SVG diagram.
+
+Not icons in boxes.
+
+Visual:
+
+Several incomplete pathways:
+
+SOCIAL
+ADS
+SEARCH
+WEBSITE
+MESSAGE
+CUSTOMER
+
+They exist as separated fragments.
+
+Some lines stop short.
+
+Some almost connect.
+
+Some end in small empty nodes.
+
+The primary electric-blue Growth Signal attempts to travel through them but repeatedly reaches breaks.
+
+As user scrolls:
+
+Draw paths progressively
+Reveal broken junctions
+Small pulse reaches dead-end
+Reverses naturally on upward scroll
+
+Towards section end:
+
+The fragments begin magnetically aligning.
+
+The incomplete paths shift.
+
+They join.
+
+One clean path forms.
+
+Text appears:
+
+“CubeIQ connects what happens between the clicks.”
+
+That newly formed path becomes the entry into the next section.
+
+12. SECTION — THE GROWTH JOURNEY
+
+This should be a major pinned narrative section.
+
+Do not create six cards.
+
+Create a beautiful progressive scroll sequence:
+
+ATTRACT → ENGAGE → CONVERT → RECONNECT → RETAIN → SCALE
+
+Keep viewport stable while the story progresses for an appropriate scroll distance.
+
+Do not over-pin.
+
+VISUAL
+
+One large custom SVG path travels across the composition.
+
+Not a basic straight line.
+
+It bends through space in a carefully composed way.
+
+The path has six conceptual environments.
+
+1. ATTRACT
+
+Visual language:
+
+Wide signal field.
+
+Many faint incoming trajectories.
+
+One audience cluster begins responding.
+
+Copy:
+
+Be seen by the right people.
+
+2. ENGAGE
+
+The path widens.
+
+Small rhythmic shapes orbit or respond.
+
+Copy:
+
+Give them a reason to stop and care.
+
+3. CONVERT
+
+Multiple paths converge elegantly toward one decisive node.
+
+Do not draw a cliché funnel.
+
+Create converging directional geometry.
+
+Copy:
+
+Turn interest into action.
+
+4. RECONNECT
+
+A path that previously passed the node curls elegantly back.
+
+This is one of the most important visuals.
+
+Copy:
+
+Bring interested people back.
+
+5. RETAIN
+
+The path becomes a closed relationship loop.
+
+Copy:
+
+Give customers a reason to return.
+
+6. SCALE
+
+The loop feeds new signals outward.
+
+The visual expands while remaining ordered.
+
+Copy:
+
+Grow what is already working.
+
+ANIMATION
+
+DrawSVG:
+
+path draws exactly with scroll.
+
+MotionPath:
+
+small signal pulse travels along it.
+
+Nodes activate only as the signal reaches them.
+
+Scrolling backward:
+
+nodes deactivate
+signal moves backward
+path retracts
+copy states reverse
+
+Everything must be derived from the same progress timeline.
+
+13. SERVICES — DO NOT USE A GRID OF SIX GENERIC CARDS
+
+Build a large editorial services sequence.
+
+Each service deserves its own visual idea.
+
+They should feel like chapters within one system.
+
+Create custom SVG illustrations for each.
+
+SERVICE 01 — PERFORMANCE ADVERTISING
+
+Title:
+
+Put your business where attention already exists.
+
+Simple copy explaining Meta and Google advertising.
+
+SVG IDEA — ATTENTION FIELD
+
+Create concentric irregular fields rather than a target/bullseye.
+
+Small audience signals move along multiple trajectories.
+
+As scroll progresses:
+
+One strategic route becomes illuminated.
+
+Noise fades.
+
+The primary signal chooses the clearer route.
+
+Represent:
+
+finding the right audience.
+
+No cliché target icon.
+
+14. SERVICE 02 — SOCIAL & CONTENT
+
+Title:
+
+Stay worth noticing.
+
+Explain content and social presence simply.
+
+SVG IDEA — CONTENT RHYTHM
+
+Create an editorial cadence visualization.
+
+Vertical rhythm marks.
+
+Frames.
+
+Crop boundaries.
+
+Wave-like posting intervals.
+
+Pieces initially appear sporadic.
+
+As scroll progresses:
+
+They develop a coherent visual rhythm.
+
+Not Instagram mockups.
+
+Not phones.
+
+Not social-media icons flying around.
+
+Represent consistency and storytelling abstractly.
+
+15. SERVICE 03 — CREATIVE & BRAND
+
+Title:
+
+Look like a business people can trust.
+
+SVG IDEA — IDENTITY SYSTEM
+
+Begin with loose shapes:
+
+line
+type blocks
+geometry
+spacing markers
+
+On scroll:
+
+They progressively align to a clear visual system/grid.
+
+Think Swiss/editorial design process.
+
+Not Canva-style icons.
+
+Not paint brushes.
+
+The message:
+
+creativity becomes recognizable identity through consistency.
+
+16. SERVICE 04 — SEARCH & SEO
+
+Title:
+
+Be there when people are already looking.
+
+SVG IDEA — SEARCH FIELD
+
+Do not use a giant magnifying glass.
+
+Create a horizontal field of faint query-like typographic fragments.
+
+A scan line moves through.
+
+Relevant terms become sharp.
+
+Irrelevant terms remain soft.
+
+The Growth Signal finds and locks onto one clear path.
+
+Could combine:
+
+SVG masks
+typography
+line highlighting
+
+Keep it elegant.
+
+17. SERVICE 05 — WEBSITE & CONVERSION
+
+Title:
+
+Traffic means nothing if people don’t act.
+
+SVG IDEA — DECISION PATH
+
+Create several branching paths representing visitor decisions.
+
+Some lead away.
+
+Some terminate.
+
+One carefully improved path gradually becomes shorter and clearer.
+
+As scroll progresses:
+
+friction nodes disappear.
+
+The path simplifies.
+
+It ends at one strong conversion node.
+
+No cliché funnel graphic.
+
+Represent reducing friction.
+
+18. SERVICE 06 — FOLLOW-UP & AUTOMATION
+
+Title:
+
+Not every customer decides the first time.
+
+This must visually communicate a major CubeIQ advantage.
+
+SVG IDEA — RETURN LOOP
+
+The main Growth Signal passes a customer node.
+
+Some secondary signals continue away.
+
+Then:
+
+a smooth return arc forms.
+
+Signals return.
+
+Reconnect.
+
+Move forward again.
+
+This should feel sophisticated.
+
+Use DrawSVG + MotionPath.
+
+No robotic AI icons.
+
+No chatbot bubbles floating everywhere.
+
+19. SERVICE TRANSITIONS
+
+Do not hard-cut between these services.
+
+Find continuity.
+
+For example:
+
+The final line from one SVG should:
+
+extend
+bend
+morph
+or visually exit
+
+toward the beginning of the next visual.
+
+Use MorphSVG/Flip/scroll choreography where helpful.
+
+Sections should feel stitched together.
+
+Not isolated PowerPoint slides.
+
+20. “MOST AGENCIES STOP AT THE AD”
+
+This should be one of the strongest sections.
+
+Headline:
+
+Most agencies stop at the ad.
+
+Then:
+
+We look at what happens next.
+
+Create a powerful progressive customer journey:
+
+AD
+→ ATTENTION
+→ WEBSITE
+→ TRUST
+→ MESSAGE
+→ FOLLOW-UP
+→ CUSTOMER
+→ RETURN
+
+Do NOT render this as boxes with arrows.
+
+WEBGL / SVG HYBRID
+
+Create a conceptual tunnel/path.
+
+The camera slowly follows the Growth Signal.
+
+Each stage is represented by abstract geometry.
+
+For example:
+
+Attention
+
+A noisy field becomes focused.
+
+Website
+
+Several routes collapse into one navigable route.
+
+Trust
+
+Unstable geometry aligns.
+
+Message
+
+Two separated signal paths connect.
+
+Follow-up
+
+A returning curve forms.
+
+Customer
+
+Signal reaches a solid node.
+
+Return
+
+Node sends a loop back through the system.
+
+The camera movement should be subtle and scroll-controlled.
+
+Not a video-game flythrough.
+
+At the end:
+
+Pull camera back.
+
+Reveal that the entire journey is connected.
+
+Copy:
+
+Growth doesn’t happen at one click.
+It happens across the whole journey.
+
+21. BUILT BY CUBEIT
+
+This section must answer:
+
+Why is CubeIQ different?
+
+Because CubeIQ exists inside a technology company.
+
+Not as a random marketing agency.
+
+Heading:
+
+Marketing backed by builders.
+
+or:
+
+When marketing needs technology, we don’t have to stop.
+
+Explain simply:
+
+CubeIQ can work with CubeIT when growth requires:
+
+better websites
+automation
+CRM systems
+AI-assisted workflows
+custom software
+integrations
+business systems
+
+Do not overcomplicate.
+
+VISUAL TRANSFORMATION
+
+This is where the organic Growth Signal becomes more structurally “CubeIT.”
+
+Before this section:
+
+paths are fluid.
+
+During this transition:
+
+the curved signal gradually snaps into:
+
+precise coordinates
+isometric lines
+orthogonal structure
+cube-inspired geometry
+architectural grids
+
+The marketing flow becomes technological infrastructure.
+
+This is the perfect visual metaphor for:
+
+CubeIQ + CubeIT.
+
+Do NOT simply place a rotating CubeIT cube.
+
+Instead:
+
+make the page’s existing visual language evolve into CubeIT geometry.
+
+Subtle cube forms may emerge from the line system only after the transformation.
+
+This should be one of the most memorable transitions.
+
+22. CUSTOM SVG — “MARKETING + TECHNOLOGY”
+
+Create an isometric architectural diagram.
+
+One side:
+
+MARKETING SIGNALS
+
+Flow into:
+
+CUBEIT SYSTEM LAYER
+
+Then outward toward:
+
+GROWTH
+
+Use:
+
+thin navy structural strokes
+electric-blue active paths
+subtle orange only for one selected action/output
+empty white space
+
+Animate architecture progressively on scroll.
+
+Every structural line must retract when scrolling upward.
+
+23. HOW WE WORK
+
+Do not use five horizontal cards.
+
+Build the methodology:
+
+TEST → LEARN → IMPROVE → RECONNECT → SCALE
+
+as a continuous feedback mechanism.
+
+VISUAL IDEA — THE GROWTH LOOP
+
+Create a large asymmetrical circular/elliptical SVG system.
+
+Not a perfect infographic donut.
+
+The path should feel engineered.
+
+Signal travels around:
+
+TEST
+↓
+LEARN
+↓
+IMPROVE
+↓
+RECONNECT
+↓
+SCALE
+
+At SCALE:
+
+The line does NOT stop.
+
+It loops back to TEST.
+
+Meaning:
+
+growth is iterative.
+
+Scroll forward moves signal forward.
+
+Scroll backward reverses it.
+
+At strategic points:
+
+small observations/notes can appear.
+
+Example:
+
+“Try.”
+
+“See what people respond to.”
+
+“Improve.”
+
+“Bring people back.”
+
+“Grow what works.”
+
+Simple human language.
+
+24. SECTION-TO-SECTION TRANSITIONS
+
+Every large transition should have intention.
+
+Create approximately 4–5 transition families across the page.
+
+Do not invent twenty.
+
+Potential transitions:
+
+Signal handoff
+
+A line exits one section and enters another.
+
+Morph transition
+
+Current SVG geometry physically becomes the next geometry.
+
+Mask transition
+
+Large typographic or geometric shape reveals the next section.
+
+Spatial transition
+
+Element uses Flip-like continuity to change scale/location.
+
+Field transition
+
+WebGL field density/depth changes while background tone transitions.
+
+Do not use generic fade-outs for every section.
+
+Opacity can support transitions but should rarely be the entire effect.
+
+25. BACKGROUND CHOREOGRAPHY
+
+Keep mostly light/white CubeIT canvas.
+
+But introduce controlled tonal transitions.
+
+Example:
+
+Hero:
+White / cool light
+
+Problem:
+Slightly warmer off-white
+
+Growth Journey:
+Pure white with strong blue line
+
+Agency Difference:
+Deep navy immersive moment
+
+Built by CubeIT:
+Transition back toward luminous white/blue
+
+CTA:
+Deep navy or sophisticated high-contrast finish
+
+Color changes should crossfade smoothly with scroll.
+
+Never hard switch.
+
+Use background interpolation.
+
+26. DEEP NAVY IMMERSIVE SECTION
+
+Include only one major dark-mode moment.
+
+This gives contrast.
+
+Use it around:
+
+“Most agencies stop at the ad.”
+
+When entering:
+
+white environment gradually darkens.
+
+SVG signal remains electric blue.
+
+Typography becomes white.
+
+The visual journey becomes immersive.
+
+When leaving:
+
+the blue line should “open” the white background again.
+
+This creates rhythm.
+
+Do not make half the page dark.
+
+27. TEXT ANIMATIONS
+
+Do not animate every letter individually.
+
+That becomes distracting.
+
+Use hierarchy.
+
+Main headline
+
+Masked line reveals.
+
+Important statement
+
+Potential word-level stagger.
+
+Small labels
+
+Simple precision reveal.
+
+Paragraphs
+
+Subtle grouped reveal.
+
+For special lines like:
+
+Most agencies stop at the ad.
+
+Reveal “stop at the ad” differently:
+
+possibly hold first portion while final words slide/lock into place.
+
+Then reveal:
+
+We look at what happens next.
+
+as the signal continues beyond the apparent endpoint.
+
+Animation should reinforce meaning.
+
+28. HOVER INTERACTIONS
+
+Desktop interactions should feel tactile.
+
+Examples:
+
+Service titles
+
+Hover slightly energizes their SVG signal.
+
+CTA
+
+Electric-blue line subtly bends toward cursor.
+
+Links
+
+Underline behaves like a traveling signal rather than standard width animation.
+
+Service index
+
+Hover can temporarily activate that service’s line/glyph.
+
+Use quickTo/efficient interpolation or equivalent.
+
+No exaggerated magnetic buttons.
+
+Keep movement controlled.
+
+29. SERVICES OVERVIEW
+
+Near the lower portion, include a clean textual services index.
+
+Not cards.
+
+Think high-end agency index/editorial directory.
+
+Possible columns:
+
+GROW
+
+Meta Ads
+Google Ads
+Campaign Strategy
+Retargeting
+
+CREATE
+
+Social Media
+Content
+Graphic Design
+Brand Identity
+Reels
+
+DISCOVER
+
+SEO
+Search
+Local Visibility
+
+CONVERT
+
+Landing Pages
+Web Optimization
+E-commerce Growth
+
+CONNECT
+
+WhatsApp Follow-Up
+CRM
+Automation
+Re-engagement
+
+UNDERSTAND
+
+Analytics
+Tracking
+Marketing Intelligence
+
+Each group can have a tiny custom signal glyph.
+
+Hover:
+
+glyph activates.
+
+Minimal.
+
+30. IDEAL CLIENTS
+
+Avoid generic cards with icons.
+
+Use a typographic moving field or editorial list.
+
+Examples:
+
+STARTUPS
+E-COMMERCE
+SERVICE BUSINESSES
+REAL ESTATE
+HOSPITALITY
+PROFESSIONAL SERVICES
+GROWING BRANDS
+
+Create a subtle continuous layout.
+
+Not a cheesy marquee running endlessly at high speed.
+
+Maybe two slow opposing lines whose motion responds subtly to scroll velocity.
+
+Keep accessible.
+
+31. FINAL CTA
+
+The ending must resolve the entire visual narrative.
+
+Heading:
+
+Stop running disconnected marketing.
+
+Then:
+
+Build a growth system.
+
+CTA:
+
+Grow With CubeIQ
+
+Supporting:
+
+Tell us where your business is today.
+We’ll help you work out what should happen next.
+
+FINAL VISUAL RESOLUTION
+
+The Growth Signal that has traveled through the entire experience finally returns.
+
+All secondary lines settle.
+
+The loop becomes complete.
+
+The procedural geometry subtly organizes into:
+
+a CubeIT-inspired spatial structure.
+
+Not necessarily a literal logo reveal.
+
+A restrained geometric suggestion is better.
+
+The final state should communicate:
+
+the system is connected.
+
+When scrolling backward:
+
+it should naturally unravel.
+
+32. WEBGL TECHNICAL STRUCTURE
+
+Prefer one primary route-level WebGL canvas rather than many unrelated canvases.
+
+WebGL should serve several narrative states through:
+
+camera changes
+object visibility
+geometry morph/state changes
+material uniforms
+scene groups
+
+Drive state from ScrollTrigger progress.
+
+Avoid mounting/unmounting multiple heavy canvases during scroll.
+
+Keep DOM content separate and readable above WebGL.
+
+Use DOM/SVG for diagrams and text.
+
+Use WebGL only when depth adds something impossible/awkward in DOM.
+
+33. WEBGL PERFORMANCE
+
+Make it genuinely production-ready.
+
+Clamp DPR appropriately.
+Simplify scene on mobile.
+Use instancing where useful.
+Minimize draw calls.
+Reuse materials/geometries.
+Dispose resources.
+Avoid unnecessary post-processing stacks.
+Avoid huge bloom.
+Avoid permanent high-cost effects when offscreen.
+Pause or reduce rendering when scene is static/offscreen where architecture allows.
+Resize correctly.
+Avoid memory leaks across route changes.
+Canvas must clean up when leaving CubeIQ.
+No WebGL context accumulation.
+Provide fallback/reduced experience.
+
+No WebGL effect is worth lowering the entire site to 30 FPS.
+
+Target visual smoothness aggressively.
+
+34. SCROLLTRIGGER ENGINEERING
+
+For every pinned narrative:
+
+Create one master timeline where possible.
+
+Do NOT create multiple unrelated ScrollTriggers trying to control the same elements.
+
+Use scrub values intentionally.
+
+Use pin only when storytelling genuinely benefits.
+
+Use sufficient scroll distance so animations breathe.
+
+Do not make user scroll huge distances for tiny effects.
+
+Use:
+
+invalidateOnRefresh where dimensions are dynamic
+refresh correctly after fonts/layout settle
+appropriate pin spacing
+responsive start/end values
+
+Avoid layout jumps.
+
+Avoid flash/jitter when pins activate.
+
+Avoid transforms on parent containers that interfere with fixed/sticky elements.
+
+Navbar must remain unaffected.
+
+35. RESPONSIVE GSAP
+
+Desktop and mobile should not share blindly identical animation timelines.
+
+Use responsive GSAP setup.
+
+Desktop can use:
+
+pinned sequences
+more spatial WebGL movement
+longer DrawSVG paths
+deeper parallax
+
+Mobile should:
+
+shorten pinned sections
+simplify WebGL
+remove non-essential particle density
+use simpler SVG paths
+preserve narrative
+preserve smoothness
+
+Do not simply disable everything on mobile.
+
+Create a deliberately composed mobile experience.
+
+Respect:
+
+prefers-reduced-motion
+
+Reduced-motion users should still receive:
+
+complete content
+clear diagrams
+no broken pinned layouts
+no invisible text
+36. CUSTOM SVG DESIGN LANGUAGE
+
+All custom SVGs should share one visual family.
+
+Use:
+
+thin precision strokes
+rounded joins where appropriate
+electric-blue active routes
+pale inactive routes
+navy structure
+minimal labels
+occasional tiny coordinate/grid details
+strong negative space
+
+Avoid:
+
+cartoon illustrations
+icon packs
+emoji-like visuals
+giant gradient illustrations
+generic corporate line-art characters
+
+SVGs should look like they came from the same custom design studio.
+
+37. TRANSITION DETAILS THAT MATTER
+
+Pay attention to tiny continuity.
+
+Example:
+
+When an SVG line reaches the bottom of a section:
+
+Do not simply fade it.
+
+Let it continue outside its local composition.
+
+Mask its overflow strategically.
+
+Have the next section’s line begin at an aligned coordinate.
+
+Create the illusion of continuity.
+
+Likewise:
+
+If a circle/node becomes important in one section,
+
+reuse the same visual diameter/color/rhythm later.
+
+Create visual memory.
+
+The site should feel designed as a whole.
+
+38. SCROLL VELOCITY
+
+Where appropriate, respond subtly to scroll velocity.
+
+Examples:
+
+field traces stretch 1–2% more during faster scroll
+tiny signal particles accelerate slightly
+service index lines react subtly
+
+Do not cause readability problems.
+
+Do not create nausea.
+
+Never tie important UI placement directly to volatile velocity.
+
+Use velocity only for atmospheric secondary effects.
+
+39. LOADING / INITIALIZATION
+
+Do not show broken WebGL while initializing.
+
+Use a minimal route-level load state integrated into the design.
+
+Possible:
+
+A thin signal line initializes quickly.
+
+Then hero scene enters.
+
+No giant “Loading 0–100%” unless truly needed.
+
+Avoid layout shift.
+
+40. CUBEIQ BRAND RELATIONSHIP
+
+CubeIQ should not introduce an unrelated visual identity.
+
+It is:
+
+CubeIT intelligence applied to marketing and growth.
+
+Preserve:
+
+CubeIT white
+deep navy
+electric blue
+precise geometry
+generous whitespace
+premium engineering tone
+
+CubeIQ adds:
+
+more motion
+more communication
+more signal language
+more editorial energy
+slightly more expressive composition
+
+CubeIT feels like:
+
+structure.
+
+CubeIQ should feel like:
+
+structure in motion.
+
+That distinction should guide the design.
+
+41. COPY STYLE
+
+Use simple, human copy.
+
+Do not write:
+
+“Leverage omnichannel growth ecosystems to optimize consumer touchpoints.”
+
+Write:
+
+“We connect the moments between someone seeing your business and becoming a customer.”
+
+Avoid:
+
+jargon
+AI-sounding filler
+unnecessary buzzwords
+long paragraphs
+
+Use short, strong thoughts.
+
+The visuals explain complexity.
+
+The copy explains meaning.
+
+42. DO NOT ADD THESE GENERIC ELEMENTS
+
+Explicitly do not use:
+
+“Trusted by 500+ brands”
+Fake counters
+Fake revenue graphs
+Fake ROAS numbers
+Fake testimonial carousels
+Fake client logos
+Floating app icons everywhere
+Endless pill tags
+Generic gradient Bento cards
+3D chrome blobs
+Rotating torus
+Floating spheres
+DNA/neural visuals
+Giant glowing AI orb
+Generic cyber grid
+Stock photography in WebGL
+Mock laptop screens simply to fill space
+Random 3D objects unrelated to marketing
+“Our Services” followed by six equal cards
+
+Everything must have visual reasoning.
+
+43. PAGE RHYTHM
+
+The page should alternate between:
+
+Statement
+
+large typography / breathing room
+
+Explanation
+
+simple copy
+
+Visual proof
+
+animation / SVG / WebGL
+
+Interaction
+
+scroll-driven transformation
+
+Pause
+
+quiet whitespace
+
+Do not maintain equal visual density throughout.
+
+Give the user moments to breathe.
+
+The strongest animation becomes stronger when the page occasionally becomes calm.
+
+44. IMPLEMENTATION QUALITY
+
+Animations must never cause:
+
+horizontal overflow
+hydration mismatch
+layout flashes
+navbar bugs
+broken scroll restoration
+sticky conflicts
+incorrect route heights
+scroll jumps
+mobile viewport bugs
+canvas pointer blocking
+inaccessible text
+hidden content when JS fails
+runaway RAF loops
+memory leaks
+
+Clean up every:
+
+GSAP context
+ScrollTrigger
+event listener
+ResizeObserver
+WebGL resource
+animation frame
+
+when appropriate.
+
+45. EXISTING WEBSITE SAFETY
+
+Again:
+
+Do not refactor CubeIT merely to build CubeIQ.
+
+Do not change unrelated shared styles.
+
+Do not rebuild navigation.
+
+Do not create a parallel layout.
+
+Do not move existing route structures unnecessarily.
+
+Do not rename existing shared components.
+
+Only make the minimum shared-site change required:
+
+Add the CubeIQ nav destination.
+
+Everything else should remain isolated to the CubeIQ implementation unless reusing existing CubeIT primitives.
+
+46. FINAL QA
+
+Before considering this complete:
+
+Check:
+
+Existing CubeIT homepage unchanged
+Existing routes unchanged
+Existing navbar works
+CubeIQ nav link works
+Existing mobile menu works
+Existing footer remains consistent
+Direct navigation to CubeIQ works
+Browser refresh on CubeIQ works
+Back/forward navigation works
+No hydration errors
+No console errors
+No duplicate GSAP registrations causing issues
+ScrollTrigger cleanup works
+WebGL cleanup works
+Resize works
+Mobile orientation changes work
+Reduced motion works
+Smooth scrolling does not break anchor/navigation behavior
+60fps target on capable desktop hardware
+Graceful degradation on weaker/mobile devices
+No text depends on canvas to be understood
+47. FINAL CREATIVE TEST
+
+Before finishing, ask this question:
+
+“If I removed the words ‘marketing agency’, would the visual experience itself still communicate attention moving toward customers and growth?”
+
+If the answer is no:
+
+The design is too generic.
+
+And ask:
+
+“Could this exact design be reskinned purple and sold as an AI SaaS template?”
+
+If yes:
+
+Redesign it.
+
+CubeIQ must visually communicate:
+
+attention → connection → action → relationship → growth
+
+while still unmistakably belonging to:
+
+CubeIT.
+
+The final result should feel custom enough that another company could not simply swap the logo and reuse the page.
+
+It should feel deliberately designed around CubeIQ’s actual business model.
+
+Not generated.
+
+Not templated.
+
+Not merely animated.
+
+Build one continuous, beautifully choreographed growth story.
